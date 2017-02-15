@@ -16,28 +16,29 @@ _Note, these are all made-up examples, of course._
 
 Let's talk about each of those...
 
-### Burner email account. Example, nfdasd@yandex.com
+### Burner email account. Example, `nfdasd@yandex.com`
 
 Using a single purpose email account is important. If for whatever reason that account is compromised, your personal email
-is put at risk. For example, if my personal google account were compromised, I would be a world of hurt. We don't want that.
-Sure sing app-passwords reduces that possibility, and sure we compromise ourselves all the time by linking applications to
-our account, but... don't add one more when you don't have.
+is put at risk. For example, if my personal google account were compromised, I would be in a world of hurt. We don't want
+that. Sure sing app-passwords reduces that possibility, and sure we compromise ourselves all the time by linking
+applications to our account, but... don't add one more when you don't have.
 
-I am using yandex.com as an example, but you can use gmail.com, yahoo.com, whomever.
+I am using yandex.com as an example, but you can use gmail.com, yahoo.com, whomever. I use something like Lastpass'es password generator to cycle through random usernames until I find one I like. Or just pound randomly on the keyboard. That works too. :)
 
-* Create a <https://yandex.com> accout, for example.
+* Create a <https://yandex.com> account, for example.
 
-Caveat: They, like many providers now require an associated cell phone number. They let you create an
-account temporarily without one, but eventually they force you to cough up your cell phone number. I don't know if we can
-avoid this anymore unless we set up our own domain for this purpose. That may be a separate howto.
+Caveat: They, like many providers, now require an associated cell phone number. They let you create an account temporarily
+without one, but eventually they force you to cough up your cell phone number. I don't know if we can
+avoid this anymore unless we set up our own domain for this purpose. That may be a separate HowTo.
 
 * Set up an app password.
 
 In order to use a scripted interface with most 3rd party accounts, they will provide you some means to access the account
-with a password that is not your login password. This password is effectively send only. With Yandex, you do this in
-Settings > Security > App password. Create a label, copy the generated password. Save that for later.
+with a password that is not your login password. The password allows certain activities on the account but not "admin"
+activities. With Yandex, you do this in `Settings > Security > App password`. Create a label, copy the generated password.
+Save that for later.
 
-### Google Group to send notifications. Example, my-awesome-notifications@googlegroups.com
+### Google Group to send notifications. Example, `my-awesome-notifications@googlegroups.com`
 
 Instead of sending alert emails directly to some 1 account, send them to a google group account. It will serve like a
 message bus of events and historical record. Plus multiple accounts can be attached to it if you want to have other people
@@ -52,9 +53,9 @@ that you only receive daily digests, no email at all (web view only), etc.
 * Send a test email to <mailto:my-awesome-notifications@googlegroups.com> from one of those group members.
 * Everyone should receive that email.
 
-## Configure Fedora sytem to send email as `nfdasd@yandex.com`
+## Configure you Fedora Linux server to send email as `nfdasd@yandex.com`
 
-We are going to ...
+Summary of next steps...
 
 * Install postfix and mailx
 * Configure postfix
@@ -74,9 +75,9 @@ Search for your email provider's smtp domain and port and any special requiremen
 I fould out that...
 
 * `smtp.yandex.com` is the server -- even though they have a lot of various web targets for their service.
-* ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
-* app password needs to be set up to use it. You can't just use your username and password. You need to set up an app
-  password as was described earlier.
+* Ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
+* App password needs to be set up to use it. You can't just use your username and password. You need to set up an "app
+  password" as was described earlier.
 
 
 ### Configure postfix
@@ -114,11 +115,13 @@ mailbox_size_limit = 0
 [smtp.yandex.com]:587 nfdasd@yandex.com:kjsadkjbfsfasdfqwfq
 ```
 
-That file use your password in it. Lock it down: `sudo chmod 600 /etc/postfix/sasl_passwd`
+That file has your password in it. Lock it down: `sudo chmod 600 /etc/postfix/sasl_passwd`
 
 * "Compile" that password file: `sudo postmap /etc/postfix/sasl_passwd`
 
 It should produce a file called `/etc/postfix/sasl_passwd.db`
+
+_Note: If you see permission errors, check ownership and permissions in that directory: `ls -l /etc/postfix`_
 
 ## Crank up Postfix
 
