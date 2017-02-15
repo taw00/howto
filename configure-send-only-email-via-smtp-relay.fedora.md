@@ -7,7 +7,7 @@ through a 3rd party email vendor to myself, or a group of people.
 > Note, these instructions have been tested on Fedora Linux 25, but they should be easily adaptable to any unix/linux. Check
 out the reference at the end for some excellent guidance on that topic.
 
-## What you need...
+## Prep: Burner Email and Google Group
 
 _Note, these are all made-up examples, of course._
 
@@ -53,7 +53,7 @@ that you only receive daily digests, no email at all (web view only), etc.
 * Send a test email to <mailto:my-awesome-notifications@googlegroups.com> from one of those group members.
 * Everyone should receive that email.
 
-## Configure you Fedora Linux server to send email as `nfdasd@yandex.com`
+## Configure you Fedora Linux server to send email
 
 Summary of next steps...
 
@@ -71,8 +71,8 @@ sudo dnf install -y postfix mailx
 
 ### Get your email provider's SMTP server information
 
-Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com for example,
-I fould out that...
+Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com, for example,
+I found out that...
 
 * `smtp.yandex.com` is the server -- even though they have a lot of various web targets for their service.
 * Ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
