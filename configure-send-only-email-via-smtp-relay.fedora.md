@@ -16,7 +16,7 @@ _Note, these are all made-up examples, of course._
 
 Let's talk about each of those...
 
-### Burner email account.<br />_Example, `nfdasd@yandex.com`_
+### Burner email account.<br />_...example, `nfdasd@yandex.com`_
 
 Using a single purpose email account is important. If for whatever reason that account is compromised, your personal email
 is put at risk. For example, if my personal google account were compromised, I would be in a world of hurt. We don't want
@@ -38,7 +38,7 @@ with a password that is not your login password. The password allows certain act
 activities. With Yandex, you do this in `Settings > Security > App password`. Create a label, copy the generated password.
 Save that for later.
 
-### Google Group to send notifications.<br />_Example, `my-awesome-notifications@googlegroups.com`_
+### Google Group to send notifications.<br />_...example, `my-awesome-notifications@googlegroups.com`_
 
 Instead of sending alert emails directly to some 1 account, send them to a google group account. It will serve like a
 message bus of events and historical record. Plus multiple accounts can be attached to it if you want to have other people
