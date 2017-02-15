@@ -1,4 +1,4 @@
-# HowTo Configure "Send-Only" Email via an SMTP 3rd Party Relay on a Fedora Linux 25 -based System using Postfix
+# HowTo Configure "Send-Only" Email via an SMTP 3rd Party Relay on a Fedora Linux 25 System using Postfix
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes when something bad happens on a remote
 system that I manage. There are a number of ways you can do this, but I found the easiest is to simply pump automated email
