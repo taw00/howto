@@ -177,3 +177,5 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 ## References
 
 * [Configure Postfix to use Gmail as a Mail Relay](https://www.howtoforge.com/tutorial/configure-postfix-to-use-gmail-as-a-mail-relay/)
+* [Fedora Linux Postfix Documentation](https://docs.fedoraproject.org/en-US/Fedora/25/html/System_Administrators_Guide/s1-email-mta.html) - Educational, if not overly helpful
+
