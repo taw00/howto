@@ -1,31 +1,20 @@
-# HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System
+# HowTo Configure Send-Only Email via an 3rd Party SMTP Relay on a Fedora Linux 25 Server
 
-I want to be able to send automated alerts and whatnot so that my phone buzzes when something bad happens on a remote
-system that I manage. There are a number of ways you can do this, but I found the easiest is to simply pump automated email
-through a 3rd party email vendor to myself, or a group of people.
+I want to be able to send automated alerts and whatnot so that my phone buzzes
+when something bad happens on a remote system that I manage. There are a number
+of ways you can do this, but I found the easiest is to simply pump automated
+email through a 3rd party email vendor to myself, or a group of people.
 
 I'm going to illustrate how to do this with two different MTAs:
 
-1. **Postfix** - An all-singing and all-dancing MTA that is fortunately not Sendmail
-2. **sSMTP** - An MTA that only performs this use case: Send via 3rd party SMTP server
+1. **Postfix** - An all-singing and all-dancing MTA that is fortunately not
+   Sendmail
+2. **sSMTP** - An MTA that only performs this use case: Send via 3rd party SMTP
+   server
 
-> Note, these instructions have been tested on Fedora Linux 25, but they should be easily adaptable to any unix/linux. Check
-out the references at the end for further discussion on this topic.
-
-----
-
-> **BIG CAVEAT!**
-> 
-> I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails a day
-> through their pipeline, they start rejecting them as spam. Google is a better choice at 500 per day, but that still has
-> it's limitations if something goes wrong with your application. Yahoo seems to allow 100 per hour, but I can't currently
-> confirm that.
->
-> **Bottom line**
->
-> It is getting harder and harder to use these large 3rd party email providers for this kind of activity. Consider
-> purchasing a domain and use a specific email address for these kinds of activities and either set up your own email
-> server or use your domain name providers email services.
+> Note, these instructions have been tested on Fedora Linux 25, but they should
+> be easily adaptable to any unix/linux. Check out the references at the end for
+> further discussion on this topic.
 
 ----
 
@@ -33,71 +22,122 @@ out the references at the end for further discussion on this topic.
 
 _Note, these are all made-up examples, of course._
 
-* A burner email account. Example, nfdasd@yandex.com
+* A burner email account. Example, nfdasd@yandex.com (or nfdasd@yahoo.com, etc.)
 * A google group to send notifications. Example, my-notifications@googlegroups.com
 
 Let's talk about each of those...
 
 #### Burner email account.<br />_...example, `nfdasd@yandex.com`_
 
-Using a single purpose email account is important. If for whatever reason that account is compromised, your personal email
-is put at risk. For example, if my personal google account were compromised, I would be in a world of hurt. We don't want
-that. Sure sing app-passwords reduces that possibility, and sure we compromise ourselves all the time by linking
-applications to our account, but... don't add one more when you don't have.
+Using a single purpose email account is important. If for whatever reason that
+account is compromised, your personal email is put at risk. For example, if my
+personal google account were compromised, I would be in a world of hurt. We
+don't want that. Sure sing app-passwords reduces that possibility, and sure we
+compromise ourselves all the time by linking applications to our account,
+but... don't add one more when you don't have.
 
-I am using yandex.com as an example, but you can use gmail.com, yahoo.com, whomever. I use something like Lastpass'es password generator to cycle through random usernames until I find one I like. Or just pound randomly on the keyboard. That works too. :)
+I am using yandex.com as an example, but you can use gmail.com, yahoo.com,
+whomever. I use something like Lastpass'es password generator to cycle through
+random usernames until I find one I like (alphanumeric and 6 or 8 characters).
+Or just pound randomly on the keyboard. That works too. :)
 
-* Create a <https://yandex.com> account, for example.
+* Create an email account
 
-Caveat: They, like many providers, now require an associated cell phone number. They let you create an account temporarily
-without one, but eventually they force you to cough up your cell phone number. I don't know if we can
-avoid this anymore unless we set up our own domain for this purpose. That may be a separate HowTo.
+[Yahoo](https://mail.yahoo.com), [Google](https://mail.google.com),
+[Yandex](https://mail.yandex.com)
 
-* Set up an app password.
+Caveat: Yandex and Yahoo like many providers, now require an associated cell
+phone number. They let you create an account temporarily without one, but
+eventually they force you to cough up your cell phone number. I don't know if
+we can avoid this anymore unless we set up our own domain for this purpose.
+That may be a separate HowTo.
 
-In order to use a scripted interface with most 3rd party accounts, they will provide you some means to access the account
-with a password that is not your login password. The password allows certain activities on the account but not "admin"
-activities. With Yandex, you do this in `Settings > Security > App password`. Create a label, copy the generated password.
+* Set up an app password
+
+In order to use a scripted interface with most 3rd party accounts, they will
+provide you some means to access the account with a password that is not your
+login password. The password allows certain activities on the account but not
+"admin" activities.
+
+With Yandex, you do this in `Gear icon > Settings > Security > App password`.
+Create a label, copy the generated password. Save that for later.
+
+With Yahoo, you do this in `Gear icon > Account info > Account Security`. Here
+you _must_ turn on 2-factor authentication and you will then have access to the
+"Generate app password" button. Choose "Other app" and create the password.
 Save that for later.
-
-Yahoo, for example, provides a [similar feature](https://help.yahoo.com/kb/SLN15241.html): Gear icon > Account info > Account Security&mdash;Here you _must_ turn on 2-factor authentication and you will then have access to the "Get app password" button.
 
 * Get your email provider's SMTP server information
 
-Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com, for example,
-I found out that...
+Search for your email provider's smtp domain and port and any special
+requirements to use it.
 
-  - `smtp.yandex.com` is the server -- even though they have a lot of various web targets for their service.
-  - Ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
-  - App password needs to be set up to use it. You can't just use your username and password. You need to set up an "app
-    password" as was described earlier.
+For yandex.com...
 
-#### Google Group to send notifications.<br />_...example, `my-notifications@googlegroups.com`_
+  - `smtp.yandex.com` is the server
+  - 587 is the port. 465 is supported, but don't use it (dated).
+  - Username: username@yandex.com
+  - Password: App password. And it _must_ be set to use this service.
 
-Instead of sending alert emails directly to some 1 account, send them to a google group account. It will serve like a
-message bus of events and historical record. Plus multiple accounts can be attached to it if you want to have other people
-watch what is going on with a particular system. Additionally, if you want to be all passive about it, you can set it up
-that you only receive daily digests, no email at all (web view only), etc.
+For yahoo.com...
+
+  - `smtp.mail.yahoo.com` is the server
+  - 587 is the port. 465 is supported, but don't use it (dated).
+  - Username: username@yahoo.com
+  - Password: App password. And it _must_ be set to use this service.
+
+For google.com (not tested for this exercise)...
+
+  - `smtp.gmail.com` is the server
+  - 587 is the port. 465 is supported, but don't use it (dated).
+  - Username: username@gmail.com
+  - Password: your password. I'm unsure if a separate app password is required.
+  - Browse to <https://mail.google.com>, click on Settings, Forwarding/IMAP.
+    Enable IMAP to alert gmail to place sent mail in the sent folder.
+
+
+#### Create a Google Group to serve as your "message bus"
+
+Instead of sending alert emails directly to some individual personal account,
+send alerts to a Google Group. It will serve like a message bus of events and
+historical record. Additionally, any number of interested parties can subscribe
+to the group in order to receive alerts. Finally, a group allows you control
+over the message you get: All email, daily digest, web-only.
 
 * Browse to <https://groups.google.com>
 * Create a group. Our example is, `my-notifications`
 * Set permissions so that it is invite only
 * Set a description
-* Add `nfdasd@yandex.com` and interested admin emails to the group.
-* Send a test email to <my-notifications@googlegroups.com> from one of those group members.
-* Everyone should receive that email.
+* Add two members to it directly: The burner email address you just created and
+  your personal email address
+* Set the burner address to not receive email (web-view only)
+* Send a test email to <my-notifications@googlegroups.com> from one of those
+  group members.
+* You should receive that email.
 
 ----
 
-## Postfix: Configure you Fedora Linux server to send email with Postfix
+# Choose your MTA poison: Postfix or sSMTP
+
+----
+
+## Postfix: Configure your Fedora Linux server to send email with Postfix
+
+Postfix is the swiss-army-knife of
+[MTA](https://en.wikipedia.org/wiki/Message_transfer_agent)s. And, to be
+honest, it is not really any more complicated than setting up sSMTP. But it is
+a bigger tool that is overkill for this use case, so... You decide. Here are
+Postfix configuration instructions...
 
 Summary of next steps...
 
-* Install postfix and mailx
-* Configure postfix
+* Install the postfix and mailx packages
+* Tell the OS which MTA you are going to be using
+* Configure Postfix
+* Start and enable the Postfix systemd service
 * Send test email
 
-#### Install postfix and mailx
+#### Install the postfix and mailx packages
 
 Easy peasy...
 
@@ -105,12 +145,21 @@ Easy peasy...
 sudo dnf install -y postfix mailx
 ```
 
-#### Configure postfix
+#### Configure Postfix
 
-Configuring postfix is pretty easy, though not entirely straight forward.
+For this example, I am using Yandex, therefore...
 
-* Backup the original configuration file: `sudo cp -a /etc/postfix/mail.cf /etc/postfix/main.cf-orig`
-* Edit postfix configuration file: `sudo nano /etc/postfix/main.cf`
+* Server: smtp.yandex.com:587
+* Example username: nfdasd@yandex.com
+* Example (app) password: kjsadkjbfsfasdfqwfq
+
+
+Configuring postfix is pretty easy, though not entirely obvious.
+
+* Backup the original configuration file:    
+  `sudo cp -a /etc/postfix/mail.cf /etc/postfix/main.cf-orig`
+* Edit postfix configuration file:    
+  `sudo nano /etc/postfix/main.cf`
 
 Change these settings, or add if they are missing...
 
@@ -135,22 +184,46 @@ recipient_delimiter = +
 mailbox_size_limit = 0
 ```
 
-* Edit SMTP username and password in postfix sasl file: `sudo nano /etc/postfix/sasl_passwd`    
-  For example for, yandex.com it will look like this. For gmail and such, it will be similar...
+* Edit SMTP username and password in postfix sasl file:    
+  `sudo nano /etc/postfix/sasl_passwd`    
 
 ```
 [smtp.yandex.com]:587 nfdasd@yandex.com:kjsadkjbfsfasdfqwfq
 ```
 
-That file has your password in it. Lock it down: `sudo chmod 600 /etc/postfix/sasl_passwd`
+That file has your password in it. Lock it down:
+`sudo chmod 600 /etc/postfix/sasl_passwd`
 
-* "Compile" that password file: `sudo postmap /etc/postfix/sasl_passwd`
+* "Compile" that password file:    
+  `sudo postmap /etc/postfix/sasl_passwd`
 
 It should produce a file called `/etc/postfix/sasl_passwd.db`
 
-_Note: If you see permission errors, check ownership and permissions in that directory: `ls -l /etc/postfix`_
+_Note: If you see permission errors, check ownership and permissions in that
+directory: `ls -l /etc/postfix`_
 
-#### Crank up Postfix
+
+#### Tell the OS which MTA you are going to be using...
+
+```
+sudo alternatives --config mta
+```
+
+It will look something like this, select Postfix with the right number and exit...
+
+```
+There are 3 programs which provide 'mta'.
+
+  Selection    Command
+-----------------------------------------------
+   1           /usr/bin/esmtp-wrapper
+*  2           /usr/sbin/sendmail.postfix
+ + 3           /usr/sbin/sendmail.ssmtp
+
+Enter to keep the current selection[+], or type selection number: 2
+```
+
+#### Start and enable the Postfix systemd service
 
 If you haven't enabled it upon reboot, do it now...
 
@@ -161,10 +234,10 @@ sudo systemctl enable postfix
 Start it up...
 
 ```
-sudo systemctl start postfix # if not previously started
+sudo systemctl start postfix    # if not previously started
 #sudo systemctl restart postfix # if already started
-#sudo systemctl stop postfix # if you need to stop it
-#sudo systemctl status postfix # is it already started?
+#sudo systemctl stop postfix    # if you need to stop it
+#sudo systemctl status postfix  # is it already started?
 ```
 
 Monitor it...
@@ -175,19 +248,27 @@ sudo journalctl -u postfix -f -n25
 
 #### Send a test email...
 
-Send one to someone directly (this is sending an email to me, please use your own email address)...
+For this example, I am using Yandex and Google Groups, therefore...
+
+* Server: smtp.yandex.com:587
+* Example username: nfdasd@yandex.com
+* Example (app) password: kjsadkjbfsfasdfqwfq
+* Example personal email: your-email-address@example.com
+* Example group email: my-notifications@googlegroups.com
+
+Send an email to someone directly...
 
 ```
-echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r nfdasd@yandex.com t0dd@protonmail.com 
+echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r nfdasd@yandex.com your-email-address@example.com
 ```
 
-If that works fine, send one to your google group...
+If that works fine, send an email to your google group...
 
 ```
 echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-notifications@googlegroups.com
 ```
 
-If you are monitoring the system log with that journalctl command, you should see something like...
+If you are monitoring the system, log with that journalctl command, you should see something like...
 
 ```
 Feb 15 17:50:59 mn0 postfix/pickup[20874]: D5100DC63A: uid=1000 from=<nfdasd@yandex.com>
@@ -197,18 +278,29 @@ Feb 15 17:51:04 mn0 postfix/smtp[21889]: D5100DC63A: to=<my-notifications@google
 Feb 15 17:51:04 mn0 postfix/qmgr[19914]: D5100DC63A: removed
 ```
 
+
 ----
 
-## sSMTP: Configure you Fedora Linux server to send email with sSMTP
+
+## sSMTP: Configure your Fedora Linux server to send email with sSMTP
+
+sSMTP is a much simpler service than Postfix. Its singular purpose is to send
+email through an smtp relay. It is much lighter weight than Postfix, but
+setting things up for this use case are not worlds easier than Postfix. There
+are advantages to using a lighter weight program to do the things you need to
+do. Six of one; half dozen of the other. I am currently using this method
+personally. You decide. :)
 
 Summary of next steps...
 
-* Install sSMTP and mailx
-* Configure sSMTP
+* Install the ssmtp and mailx packages
+* Tell the OS which MTA you are going to be using
+* Configure sSMTP    
+  _note, sSMTP is not required to be running as a daemon - no service to manage._
 * Send test email
 
 
-#### Install ssmtp and mailx
+#### Install the ssmtp and mailx packages
 
 Easy peasy...
 
@@ -222,7 +314,7 @@ sudo dnf install -y ssmtp mailx
 sudo alternatives --config mta
 ```
 
-It will look something like this, select ssmtp with the right number and exit...
+It will look something like this, select sSMTP with the right number and exit...
 
 ```
 There are 3 programs which provide 'mta'.
@@ -236,27 +328,36 @@ There are 3 programs which provide 'mta'.
 Enter to keep the current selection[+], or type selection number: 3
 ```
 
-#### Configure ssmtp
+#### Configure sSMTP
 
-Configuring ssmtp is pretty easy, though not entirely straight forward.
+Just like with the Postfix instructions, for this example, I am using Yandex,
+therefore...
 
-* Backup the original configuration file: `sudo cp -a /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf`
-* Edit ssmtp configuration file: `sudo nano /etc/ssmtp/ssmtp.conf`
+* Server: smtp.yandex.com:587
+* Example username: nfdasd@yandex.com
+* Example (app) password: kjsadkjbfsfasdfqwfq
+
+Configuring sSMTP is pretty easy, and only a bit more obvious than Postfix.
+
+* Backup the original configuration file:    
+  `sudo cp -a /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf`
+* Edit ssmtp configuration file:    
+  `sudo nano /etc/ssmtp/ssmtp.conf`
 
 Change these settings, or add if they are missing...
 
 ```
 Debug=YES                                    # For now, stick that at the very top of the config file
-#root=nfdasd@yandex.com                       # Who gets all mail to userid < 1000
+#root=nfdasd@yandex.com                      # Who gets all mail to userid < 1000
 MailHub=smtp.yandex.com:587                  # SMTP server hostname and port
 #MailHub=smtp.yandex.com:465                 # SMTP server hostname and port
 RewriteDomain=yandex.com                     # The host the mail appears to be coming from
-#Hostname=localhost                           # The name of this host
+#Hostname=localhost                          # The name of this host
 FromLineOverride=YES                         # Allow forcing the From: line at the commandline
 UseSTARTTLS=YES                              # Secure connection (SSL/TLS) - don't use UseTLS
 TLS_CA_File=/etc/pki/tls/certs/ca-bundle.crt # The TLS cert
 AuthUser=nfdasd@yandex.com                   # The mail account
-AuthPass=kjsadkjbfsfasdfqwfq                # The password for the mail account
+AuthPass=kjsadkjbfsfasdfqwfq                 # The password for the mail account
 ```
 
 * Edit ssmtp alias mapping: `sudo nano /etc/ssmtp/revaliases`
@@ -279,17 +380,28 @@ sudo tail -f /var/log/maillog
 
 #### Send a test email...
 
-Send one to someone directly (this is sending an email to me, please use your own email address)...
+Just like with the Postfix instructions, for this example, I am using Yandex
+and Google Groups, therefore...
+
+* Server: smtp.yandex.com:587
+* Example username: nfdasd@yandex.com
+* Example (app) password: kjsadkjbfsfasdfqwfq
+* Example personal email: your-email-address@example.com
+* Example group email: my-notifications@googlegroups.com
+
+Send an email to someone directly...
 
 ```
-echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r nfdasd@yandex.com t0dd@protonmail.com 
+echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r nfdasd@yandex.com your-email-address@example.com
 ```
 
-If that works fine, send one to your google group...
+If that works fine, send an email to your google group...
 
 ```
 echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-notifications@googlegroups.com
 ```
+
+----
 
 ## All done!
 
@@ -297,6 +409,7 @@ Now you have a scripting pattern for using with something like a monitoring syst
 
 Good luck. Comments or feedback: <t0dd@protonmail.com>
 
+----
 
 ## References
 
@@ -304,5 +417,29 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 * [Fedora Linux Postfix Documentation](https://docs.fedoraproject.org/en-US/Fedora/25/html/System_Administrators_Guide/s1-email-mta.html) - Educational, if not overly helpful
 * [Yandex email send rate limits](https://yandex.com/support/mail/spam/sending-limits.xml) -- 35 per day
 * [Google email send rate limits](https://support.google.com/mail/answer/22839?hl=en) -- 500 per day
-* [webpage talking about various send-limits](http://www.yetesoft.com/free-email-marketing-resources/email-sending-limit/) -- not sure how accurate
+* [Webpage talking about various send-limits](http://www.yetesoft.com/free-email-marketing-resources/email-sending-limit/) -- not sure how accurate
+
+----
+
+> **A big caveat about 3rd party email providers!**
+> 
+> I used yandex.com for this example (I have included yahoo information as
+> well). I recently discovered that Yandex has among the most limiting send
+> rates (how many emails you are allowed to send per X time-period) of all the
+> large email providers. If you send over 35 emails per day via Yandex, they
+> begin rejecting them as spam (then you wait 24 hours for a reset).
+>
+> Google is a better choice at 500 per day, and Yahoo seems to allow 100 per
+> hour (I believe). But those services still have their limitations if
+> something goes wrong with your application. Plus, email is slow. :)
+>
+> **Recommendation**
+>
+> It is getting harder and harder to use these large 3rd party email providers
+> for this kind of activity. For general use they likely work just fine, but if
+> you absolutely MUST have rock solid and fast alerting, you should probably
+> look at SMS messaging (maybe a later howto?), a dedicated email server that
+> you manage yourself, or use some other alerting service. For the rest of us,
+> the Google, Yahoo, and maybe even Yandex solution works well enough.
+
 
