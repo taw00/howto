@@ -302,4 +302,5 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 * [Fedora Linux Postfix Documentation](https://docs.fedoraproject.org/en-US/Fedora/25/html/System_Administrators_Guide/s1-email-mta.html) - Educational, if not overly helpful
 * [Yandex email send rate limits](https://yandex.com/support/mail/spam/sending-limits.xml) -- 35 per day
 * [Google email send rate limits](https://support.google.com/mail/answer/22839?hl=en) -- 500 per day
+* [webpage talking about various send-limits](http://www.yetesoft.com/free-email-marketing-resources/email-sending-limit/) -- not sure how accurate
 
