@@ -1,22 +1,34 @@
-# HowTo Configure "Send-Only" Email via an SMTP 3rd Party Relay on a Fedora Linux 25 System using Postfix
+> BIG CAVEAT! I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails in a day
+> through their pipeline, they start rejecting them as spam. It is getting harder and harder to use these large 3rd party
+> email providers, consider purchasing a domain and use a specific email address for these kinds of activities and either
+> set up your own email server or use your domain name providers email services.
+
+# HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System using Postfix
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes when something bad happens on a remote
 system that I manage. There are a number of ways you can do this, but I found the easiest is to simply pump automated email
 through a 3rd party email vendor to myself, or a group of people.
 
+I'm going to illustrate how to do this with two different MTAs:
+
+1. Postfix - An all-singing and all-dancing MTA)
+2. sSMTP - An MTA that only performs this use case: Send via 3rd party SMTP server
+
 > Note, these instructions have been tested on Fedora Linux 25, but they should be easily adaptable to any unix/linux. Check
-out the reference at the end for some excellent guidance on that topic.
+out the references at the end for further discussion on this topic.
+
+----
 
 ## Prep: Burner Email and Google Group
 
 _Note, these are all made-up examples, of course._
 
 * A burner email account. Example, nfdasd@yandex.com
-* A google group to send notifications. Example, my-awesome-notifications@googlegroups.com
+* A google group to send notifications. Example, my-notifications@googlegroups.com
 
 Let's talk about each of those...
 
-### Burner email account.<br />_...example, `nfdasd@yandex.com`_
+#### Burner email account.<br />_...example, `nfdasd@yandex.com`_
 
 Using a single purpose email account is important. If for whatever reason that account is compromised, your personal email
 is put at risk. For example, if my personal google account were compromised, I would be in a world of hurt. We don't want
@@ -38,7 +50,17 @@ with a password that is not your login password. The password allows certain act
 activities. With Yandex, you do this in `Settings > Security > App password`. Create a label, copy the generated password.
 Save that for later.
 
-### Google Group to send notifications.<br />_...example, `my-awesome-notifications@googlegroups.com`_
+* Get your email provider's SMTP server information
+
+Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com, for example,
+I found out that...
+
+  - `smtp.yandex.com` is the server -- even though they have a lot of various web targets for their service.
+  - Ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
+  - App password needs to be set up to use it. You can't just use your username and password. You need to set up an "app
+    password" as was described earlier.
+
+#### Google Group to send notifications.<br />_...example, `my-notifications@googlegroups.com`_
 
 Instead of sending alert emails directly to some 1 account, send them to a google group account. It will serve like a
 message bus of events and historical record. Plus multiple accounts can be attached to it if you want to have other people
@@ -46,14 +68,16 @@ watch what is going on with a particular system. Additionally, if you want to be
 that you only receive daily digests, no email at all (web view only), etc.
 
 * Browse to <https://groups.google.com>
-* Create a group. Our example is, `my-awesome-notifications`
+* Create a group. Our example is, `my-notifications`
 * Set permissions so that it is invite only
 * Set a description
 * Add `nfdasd@yandex.com` and interested admin emails to the group.
-* Send a test email to <mailto:my-awesome-notifications@googlegroups.com> from one of those group members.
+* Send a test email to <my-notifications@googlegroups.com> from one of those group members.
 * Everyone should receive that email.
 
-## Configure you Fedora Linux server to send email
+----
+
+## Postfix: Configure you Fedora Linux server to send email with Postfix
 
 Summary of next steps...
 
@@ -61,7 +85,7 @@ Summary of next steps...
 * Configure postfix
 * Send test email
 
-### Install postfix and mailx
+#### Install postfix and mailx
 
 Easy peasy...
 
@@ -69,23 +93,14 @@ Easy peasy...
 sudo dnf install -y postfix mailx
 ```
 
-### Get your email provider's SMTP server information
-
-Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com, for example,
-I found out that...
-
-* `smtp.yandex.com` is the server -- even though they have a lot of various web targets for their service.
-* Ports 587 and 465 are supported. And a lot of the documentation mentions 465. Don't use that. Use 587.
-* App password needs to be set up to use it. You can't just use your username and password. You need to set up an "app
-  password" as was described earlier.
-
-
-### Configure postfix
+#### Configure postfix
 
 Configuring postfix is pretty easy, though not entirely straight forward.
 
+* Backup the original configuration file: `sudo cp -a /etc/postfix/mail.cf /etc/postfix/main.cf-orig`
 * Edit postfix configuration file: `sudo nano /etc/postfix/main.cf`
-* Change these settings, or add if they are missing...
+
+Change these settings, or add if they are missing...
 
 ```
 relayhost = [smtp.yandex.com]:587
@@ -123,7 +138,7 @@ It should produce a file called `/etc/postfix/sasl_passwd.db`
 
 _Note: If you see permission errors, check ownership and permissions in that directory: `ls -l /etc/postfix`_
 
-## Crank up Postfix
+#### Crank up Postfix
 
 If you haven't enabled it upon reboot, do it now...
 
@@ -146,7 +161,7 @@ Monitor it...
 sudo journalctl -u postfix -f -n25
 ```
 
-## Send a test email...
+#### Send a test email...
 
 Send one to someone directly (this is sending an email to me, please use your own email address)...
 
@@ -157,7 +172,7 @@ echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email 
 If that works fine, send one to your google group...
 
 ```
-echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-awesome-notifications@googlegroups.com
+echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-notifications@googlegroups.com
 ```
 
 If you are monitoring the system log with that journalctl command, you should see something like...
@@ -166,9 +181,105 @@ If you are monitoring the system log with that journalctl command, you should se
 Feb 15 17:50:59 mn0 postfix/pickup[20874]: D5100DC63A: uid=1000 from=<nfdasd@yandex.com>
 Feb 15 17:50:59 mn0 postfix/cleanup[21887]: D5100DC63A: message-id=<58a49503.tOGKlZXDLpKqWJQt%nfdasd@yandex.com>
 Feb 15 17:50:59 mn0 postfix/qmgr[19914]: D5100DC63A: from=<nfdasd@yandex.com>, size=469, nrcpt=1 (queue active)
-Feb 15 17:51:04 mn0 postfix/smtp[21889]: D5100DC63A: to=<my-awesome-notifications@googlegroups.com>, relay=smtp.yandex.com[77.88.21.38]:587, delay=4.3, delays=0.03/0.04/2.5/1.7, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued on smtp3j.mail.yandex.net as 1487181064-lyDmMVZ9eP-p2c0s157)
+Feb 15 17:51:04 mn0 postfix/smtp[21889]: D5100DC63A: to=<my-notifications@googlegroups.com>, relay=smtp.yandex.com[77.88.21.38]:587, delay=4.3, delays=0.03/0.04/2.5/1.7, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued on smtp3j.mail.yandex.net as 1487181064-lyDmMVZ9eP-p2c0s157)
 Feb 15 17:51:04 mn0 postfix/qmgr[19914]: D5100DC63A: removed
 ```
+
+----
+
+## sSMTP: Configure you Fedora Linux server to send email with sSMTP
+
+Summary of next steps...
+
+* Install sSMTP and mailx
+* Configure sSMTP
+* Send test email
+
+
+#### Install ssmtp and mailx
+
+Easy peasy...
+
+```
+sudo dnf install -y ssmtp mailx
+```
+
+#### Tell the OS which MTA you are going to be using...
+
+```
+sudo alternatives --config mta
+```
+
+It will look something like this, select ssmtp with the right number and exit...
+
+```
+There are 3 programs which provide 'mta'.
+
+  Selection    Command
+-----------------------------------------------
+   1           /usr/bin/esmtp-wrapper
+*+ 2           /usr/sbin/sendmail.postfix
+   3           /usr/sbin/sendmail.ssmtp
+
+Enter to keep the current selection[+], or type selection number: 3
+```
+
+#### Configure ssmtp
+
+Configuring ssmtp is pretty easy, though not entirely straight forward.
+
+* Backup the original configuration file: `sudo cp -a /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf`
+* Edit ssmtp configuration file: `sudo nano /etc/ssmtp/ssmtp.conf`
+
+Change these settings, or add if they are missing...
+
+```
+Debug=YES                                    # For now, stick that at the very top of the config file
+root=nfdasd@yandex.com                       # Who gets all mail to userid < 1000
+MailHub=smtp.yandex.com:587                  # SMTP server hostname and port
+#MailHub=smtp.yandex.com:465                 # SMTP server hostname and port
+RewriteDomain=yandex.com                     # The host the mail appears to be coming from
+Hostname=localhost                           # The name of this host
+FromLineOverride=YES                         # Allow forcing the From: line at the commandline
+UseSTARTTLS=YES                              # Secure connection (SSL/TLS) - don't use UseTLS
+TLS_CA_File=/etc/pki/tls/certs/ca-bundle.crt # The TLS cert
+AuthUser=nfdasd@yandex.com                   # The mail account
+AuthPass=kjsadkjbfsfasdfqwfq                # The password for the mail account
+```
+
+* Edit ssmtp alias mapping: `sudo nano /etc/ssmtp/revaliases`
+
+The way this works is that for every user on the system, you need to map    
+_username --> email that will work for the --> smtp server_
+
+Example:
+
+```
+root:nfdasd@yandex.com:smtp.yandex.com:587
+bob:nfdasd@yandex.com:smtp.yandex.com:587
+```
+
+Monitor it...
+
+```
+sudo tail -f /var/log/maillog
+```
+
+#### Send a test email...
+
+Send one to someone directly (this is sending an email to me, please use your own email address)...
+
+```
+echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r nfdasd@yandex.com t0dd@protonmail.com 
+```
+
+If that works fine, send one to your google group...
+
+```
+echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-notifications@googlegroups.com
+```
+
+
 
 ## All done!
 
