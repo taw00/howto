@@ -1,4 +1,4 @@
-# HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System using Postfix
+# HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes when something bad happens on a remote
 system that I manage. There are a number of ways you can do this, but I found the easiest is to simply pump automated email
@@ -6,8 +6,8 @@ through a 3rd party email vendor to myself, or a group of people.
 
 I'm going to illustrate how to do this with two different MTAs:
 
-1. Postfix - An all-singing and all-dancing MTA)
-2. sSMTP - An MTA that only performs this use case: Send via 3rd party SMTP server
+1. **Postfix** - An all-singing and all-dancing MTA that is fortunately not Sendmail
+2. **sSMTP** - An MTA that only performs this use case: Send via 3rd party SMTP server
 
 > Note, these instructions have been tested on Fedora Linux 25, but they should be easily adaptable to any unix/linux. Check
 out the references at the end for further discussion on this topic.
