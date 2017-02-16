@@ -60,6 +60,8 @@ with a password that is not your login password. The password allows certain act
 activities. With Yandex, you do this in `Settings > Security > App password`. Create a label, copy the generated password.
 Save that for later.
 
+Yahoo, for example, provides a [similar feature](https://help.yahoo.com/kb/SLN15241.html): Gear icon > Account info > Account Security&mdash;Here you _must_ turn on 2-factor authentication and you will then have access to the "Get app password" button.
+
 * Get your email provider's SMTP server information
 
 Search for your email provider's smtp domain and port and any special requirements to use it. For yandex.com, for example,
@@ -245,11 +247,11 @@ Change these settings, or add if they are missing...
 
 ```
 Debug=YES                                    # For now, stick that at the very top of the config file
-root=nfdasd@yandex.com                       # Who gets all mail to userid < 1000
+#root=nfdasd@yandex.com                       # Who gets all mail to userid < 1000
 MailHub=smtp.yandex.com:587                  # SMTP server hostname and port
 #MailHub=smtp.yandex.com:465                 # SMTP server hostname and port
 RewriteDomain=yandex.com                     # The host the mail appears to be coming from
-Hostname=localhost                           # The name of this host
+#Hostname=localhost                           # The name of this host
 FromLineOverride=YES                         # Allow forcing the From: line at the commandline
 UseSTARTTLS=YES                              # Secure connection (SSL/TLS) - don't use UseTLS
 TLS_CA_File=/etc/pki/tls/certs/ca-bundle.crt # The TLS cert
