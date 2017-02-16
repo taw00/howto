@@ -1,5 +1,13 @@
-> BIG CAVEAT! I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails in a day
-> through their pipeline, they start rejecting them as spam. It is getting harder and harder to use these large 3rd party
+> **BIG CAVEAT!**
+> 
+> I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails in a day
+> through their pipeline, they start rejecting them as spam. Google is a better choice at 500 per day, but that still has
+> it's limitations if something goes wrong with your application. Yahoo seems to allow 100 per hour, but I can't currently
+> confirm that.
+>
+> **Bottom line**
+>
+> It is getting harder and harder to use these large 3rd party
 > email providers, consider purchasing a domain and use a specific email address for these kinds of activities and either
 > set up your own email server or use your domain name providers email services.
 
@@ -279,8 +287,6 @@ If that works fine, send one to your google group...
 echo "This is the body of the email. Test. Test. Test." | mail -s "Group email test 01" -r nfdasd@yandex.com my-notifications@googlegroups.com
 ```
 
-
-
 ## All done!
 
 Now you have a scripting pattern for using with something like a monitoring system or cronjobed scripts, etc.
@@ -292,4 +298,6 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 
 * [Configure Postfix to use Gmail as a Mail Relay](https://www.howtoforge.com/tutorial/configure-postfix-to-use-gmail-as-a-mail-relay/)
 * [Fedora Linux Postfix Documentation](https://docs.fedoraproject.org/en-US/Fedora/25/html/System_Administrators_Guide/s1-email-mta.html) - Educational, if not overly helpful
+* [Yandex email send rate limits](https://yandex.com/support/mail/spam/sending-limits.xml) -- 35 per day
+* [Google email send rate limits](https://support.google.com/mail/answer/22839?hl=en) -- 500 per day
 
