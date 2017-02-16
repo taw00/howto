@@ -7,9 +7,9 @@
 >
 > **Bottom line**
 >
-> It is getting harder and harder to use these large 3rd party
-> email providers, consider purchasing a domain and use a specific email address for these kinds of activities and either
-> set up your own email server or use your domain name providers email services.
+> It is getting harder and harder to use these large 3rd party email providers for this kind of activity. Consider
+> purchasing a domain and use a specific email address for these kinds of activities and either set up your own email
+> server or use your domain name providers email services.
 
 # HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System using Postfix
 
