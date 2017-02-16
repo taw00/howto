@@ -1,16 +1,3 @@
-> **BIG CAVEAT!**
-> 
-> I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails in a day
-> through their pipeline, they start rejecting them as spam. Google is a better choice at 500 per day, but that still has
-> it's limitations if something goes wrong with your application. Yahoo seems to allow 100 per hour, but I can't currently
-> confirm that.
->
-> **Bottom line**
->
-> It is getting harder and harder to use these large 3rd party email providers for this kind of activity. Consider
-> purchasing a domain and use a specific email address for these kinds of activities and either set up your own email
-> server or use your domain name providers email services.
-
 # HowTo Configure "Send-Only" Email via an 3rd Party SMTP Relay on a Fedora Linux 25 System using Postfix
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes when something bad happens on a remote
@@ -24,6 +11,21 @@ I'm going to illustrate how to do this with two different MTAs:
 
 > Note, these instructions have been tested on Fedora Linux 25, but they should be easily adaptable to any unix/linux. Check
 out the references at the end for further discussion on this topic.
+
+----
+
+> **BIG CAVEAT!**
+> 
+> I used yandex.com for this example. Unfortunately, I found out that if you send over 35 emails a day
+> through their pipeline, they start rejecting them as spam. Google is a better choice at 500 per day, but that still has
+> it's limitations if something goes wrong with your application. Yahoo seems to allow 100 per hour, but I can't currently
+> confirm that.
+>
+> **Bottom line**
+>
+> It is getting harder and harder to use these large 3rd party email providers for this kind of activity. Consider
+> purchasing a domain and use a specific email address for these kinds of activities and either set up your own email
+> server or use your domain name providers email services.
 
 ----
 
