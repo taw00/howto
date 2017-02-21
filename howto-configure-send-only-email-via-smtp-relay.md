@@ -230,22 +230,22 @@ Enter to keep the current selection[+], or type selection number: 2
 If you haven't enabled it upon reboot, do it now...
 
 ```
-sudo systemctl enable postfix
+sudo systemctl enable postfix.service
 ```
 
 Start it up...
 
 ```
-sudo systemctl start postfix    # if not previously started
-#sudo systemctl restart postfix # if already started
-#sudo systemctl stop postfix    # if you need to stop it
-#sudo systemctl status postfix  # is it already started?
+sudo systemctl start postfix.service    # if not previously started
+#sudo systemctl restart postfix.service # if already started
+#sudo systemctl stop postfix.service    # if you need to stop it
+#sudo systemctl status postfix.service  # is it already started?
 ```
 
 Monitor it...
 
 ```
-sudo journalctl -u postfix -f -n25
+sudo journalctl -u postfix.service -f -n25
 ```
 
 #### Send a test email...
