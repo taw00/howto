@@ -1,16 +1,54 @@
 # HowTo: Configure a Swap File on a Linux System
 
-Your applications consume memory. What happens when an application maxes the memory pool available? It could destabilize.
+Your applications consume memory. What happens when an application maxes out
+the memory pool available? It could destabilize your application and maybe your
+system.
 
-This situation is resolved by setting aside harddrive space to serve as a "swap disk". This allows the operating system to artificially increase the RAM avialable to that application. Remember though, that swap space is not a replacement for RAM. If the system continually runs out of RAM, you don't have enough RAM (or something else is wrong). Swap is "emergency memory".
+This situation is resolved by setting aside harddrive space to serve as a "swap
+disk". This allows the operating system to artificially increase the RAM
+avialable to that application. Remember though, that swap space is not a
+replacement for RAM. If the system continually runs out of RAM, you don't have
+enough RAM (or something else is wrong). Swap is "emergency memory".
 
 # Swap disk? Swap file? Swap partition?
 
-If you control your own build or installation process for a system, simply ensure you have adequate swap configured as a partition during that process. Almost all linuxes come with slick installation wizards now. And many/most distributions create a swap partition for you. A partition is a dedicated chunk of disk space that does nothing but swap operations. This is the most efficient swap type. 
+If you control your own build or installation process for a system, simply
+ensure you have adequate swap configured as a partition during that process.
+Almost all linuxes come with slick installation wizards now. And many/most
+distributions create a swap partition for you. A partition is a dedicated chunk
+of disk space that does nothing but swap operations. This is the most efficient
+swap type. 
 
-The purpose of this document, though, is to configure swap _after_ a system has been provisioned or to configure swap after it was determined that the swap you do have is not enough. For example, many VPS cloud instances do not deploy instances that have swap already created. It's up to you to configure that or create a swap file after the fact.
+The purpose of this document, though, is to configure swap _after_ a system has
+been provisioned or to configure swap after it was determined that the swap you
+do have is not enough. For example, many VPS cloud instances do not deploy
+instances that have swap already created. It's up to you to configure that or
+create a swap file after the fact.
 
-You can adjust your partitions after the fact using LVM, but it is much simpler to use a swap file instead. What is a swap file? It's a file, on the file system, that acts as a dedicated chunk of storage. In the past, swap files were terribly inefficient, but now... they approach the performance of normal dedicated swap partitions.
+You can adjust your partitions after the fact using LVM, but it is much simpler
+to use a swap file instead. What is a swap file? It's a file, on the file
+system, that acts as a dedicated chunk of storage. In the past, swap files were
+terribly inefficient, but now... they approach the performance of normal
+dedicated swap partitions.
+
+## Hey wait! Maybe I have swap already?
+
+Open up a terminal and type this...
+
+```
+free -h
+```
+
+This is what I see on one of my systems...
+
+```
+              total        used        free      shared  buff/cache   available
+Mem:           2.0G        485M        113M        276K        1.4G        1.3G
+Swap:          3.9G         11M        3.9G
+```
+
+Ah ha! I have swap already, and twice the size of my RAM. I should be good to
+go. But maybe it didn't exist at all or was too small! If so, read on.
 
 ## Decision time. How much space to allocate?
 
@@ -19,8 +57,10 @@ I.e., how big of a swap file to I create?
 Here's the general advice:
 
 * Do you have far too little RPM? Buy more RAM
-* Do you have a relative small amount of RAM? 2x RAM
-* Do you have an overwelming large amount of RAM? 1x RAM is adequate (some do even less, but I don't recommend it)
+* Do you have a relative small amount of RAM? A swap file sized 2x RAM should
+  be sufficient.
+* Do you have an overwelming large amount of RAM? 1x RAM is adequate (some do
+  even less, but I don't recommend it)
 * Are you somewhere in the middle, or aren't sure? 2x RAM
 
 I will show you how to implement a couple options...
