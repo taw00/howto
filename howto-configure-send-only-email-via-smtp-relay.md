@@ -159,7 +159,7 @@ For this example, I am using Yandex, therefore...
 Configuring postfix is pretty easy, though not entirely obvious.
 
 * Backup the original configuration file:    
-  `sudo cp -a /etc/postfix/mail.cf /etc/postfix/main.cf-orig`
+  `sudo cp -a /etc/postfix/main.cf /etc/postfix/main.cf-orig`
 * Edit postfix configuration file:    
   `sudo nano /etc/postfix/main.cf`
 
