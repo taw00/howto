@@ -30,6 +30,28 @@ sudo yum install -y firewalld # Probably already installed
 sudo apt install -y firewalld
 ```
 
+#### Mask `iptables`
+
+`iptables` and `firewalld` don't mix. Make sure they don't, "mask" `iptables`
+(assuming it is installed)...
+
+```
+sudo systemctl disable iptables.service
+sudo systemctl mask iptables.service
+```
+
+Note. If you end up ditching using `firewalld` and want to go back to
+`iptables`...
+
+```
+sudo systemctl disable firewalld.service
+sudo systemctl unmask iptables.service
+sudo systemctl mask firewalld.service
+```
+
+I leave it as an exercise to the reader as to how to enable and work with
+`iptables`.
+
 #### Configure `firewalld`
 
 ```
