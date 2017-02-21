@@ -20,12 +20,14 @@ I'm going to illustrate how to do this with two different MTAs:
 
 ## Prep: Burner Email and Google Group
 
-_Note, these are all made-up examples, of course._
+For this tutorial, create two mail-able indentities.
 
 * A burner email account. Example, nfdasd@yandex.com (or nfdasd@yahoo.com, etc.)
 * A google group to send notifications. Example, my-notifications@googlegroups.com
 
-Let's talk about each of those...
+_Note, these are all made-up examples, of course._
+
+Let's talk about each of these...
 
 #### Burner email account.<br />_...example, `nfdasd@yandex.com`_
 
