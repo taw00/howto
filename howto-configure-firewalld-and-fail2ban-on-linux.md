@@ -12,12 +12,13 @@ We'll examine FirewallD and Fails2ban. FirewallD manages communication coming an
 server. Fails2ban looks for oddities in how folks are attempting to access and adjusts firewall
 rules on the fly to squelch misbehavior.
 
+---
 
 ## FirewallD
 
 _Note: Firewall rules can be a complicated topic. These are bare bones
-git-er-done instructions. You really need to reseach further on your own. But this
-sound get you well on your way._
+git-er-done instructions. You may want to investigate further refinement,
+though this will get you well on your way to a better protected system._
 
 #### Install `firewalld`
 
@@ -32,7 +33,7 @@ sudo apt install -y firewalld
 
 #### Mask `iptables`
 
-`iptables` and `firewalld` don't mix. Make sure they don't, "mask" `iptables`
+`iptables` and `firewalld` don't mix. Make sure they don't &mdash; "mask" `iptables`
 (assuming it is installed)...
 
 ```
@@ -55,7 +56,7 @@ I leave it as an exercise to the reader as to how to enable and work with
 #### Configure `firewalld`
 
 ```
-# Is firewalld running? If not, turn it on...
+# Is firewalld running? If not, turn it on
 sudo firewall-cmd --state
 sudo systemctl start firewalld.service
 ```
@@ -71,15 +72,26 @@ sudo firewall-cmd --get-default-zone
 sudo firewall-cmd --get-active-zone
 ```
 
-Whatever zone, came up, that is the starting conditions for your configuration.
-For this example, I am going to demonstrate how to edit my default configuration
-on my Fedora Linux system: FedoraServer. You _could_ create your own zone
-definition, but for now, we will be editing the configuration that is in place.
+```
+# Take a look at the configuration as it stands now.
+sudo firewall-cmd --list-all
+```
+
+Whatever that default zone is, that is the starting conditions for your
+configuration. For this example, I am going to demonstrate how to edit my
+default configuration on my Fedora Linux system: FedoraServer. You _could_
+create your own zone definition, but for now, we will be editing the
+configuration that is in place.
+
+FedoraServer usually starts with ssh, dhcp6-client, and cockpit opened up by
+default.  I want ssh. But dhcpv6 should probably be unneccessary, and cockpit
+is something only used intermittently. To be explicit, I am going to add ssh
+(though probably already an added service) and removing dhcpv6 and cockpit. 
+
+You can see what other services are available with: `firewall-cmd get-services`
 
 ```
-# FedoraServer usually starts with ssh, dhcp6-client, and cockpit opened up
-# I want ssh. dhcpv6 should probably be unneccessary, but cockpit is something
-# only used used intermittently.
+# Add and remove base services.
 sudo firewall-cmd --permanent --add-service ssh
 sudo firewall-cmd --permanent --remove-service dhcpv6-client
 #sudo firewall-cmd --permanent --add-service cockpit
@@ -105,8 +117,13 @@ sudo firewall-cmd --permanent --add-service t0ddapp
 #sudo firewall-cmd --permanent --add-port=9999/tcp
 ```
 
-SSH is especially prone to DOS attacks. Let's rate limite people attempting to connect.
-And I determine, I can do the same for those other two applications I mentioned.
+Let's rate limit traffic to those ports to reduce abuse. SSH and cockpit, if
+those services were added really need to be rate limited. You would probably
+want to rate limit 80 and 443, for example, if this were a webserver (but using
+more liberal values).
+
+_Note: It does not hurt to leave in the cockpit rate limiting. If you turn on
+cockpit in the future, the rule will be already enabled._
 
 ```
 # Rate limit incoming ssh and cockpit (if configured) traffic to 10 requests per minute
@@ -114,7 +131,13 @@ sudo firewall-cmd --permanent --add-rich-rule='rule service name=ssh limit value
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit value=10/m accept'
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=t0ddapp limit value=5/s accept'
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=9999 limit value=20/s accept'
+```
 
+We're done with the configuration! That --permanent switch in those commands
+saved the changed configuration, but it didn't enable them yet. We need to do a
+reload for that to happen.
+
+```
 # did it take?
 sudo firewall-cmd --reload
 sudo firewall-cmd --state
@@ -132,7 +155,7 @@ That's it! Not too hard, yet very powerful.
 * Interesting discussion on fighting DOS attacks on http: <https://www.certdepot.net/rhel7-mitigate-http-attacks/>
 * Do some web searching for more about firewalld
 
-----
+---
 
 ## Fail2Ban
 
@@ -165,7 +188,8 @@ COPY-AND-PASTE this and save...
 bantime = 3600
 
 # Override /etc/fail2ban/jail.d/00-firewalld.conf:
-banaction = iptables-multiport
+# Only uncomment if you use iptables instead of firewalld
+#banaction = iptables-multiport
 
 [sshd]
 enabled = true
@@ -173,7 +197,8 @@ enabled = true
 
 #### Enable `fail2ban` and reboot...
 
-_Note: If you don't reboot, a socket doesn't get created correctly. I am not sure why._
+_Note: The first time I enabled fail2ban, a socket did not get created
+correctly until I rebooted. I am not sure why._
 
 ```
 sudo systemctl enable fail2ban
@@ -197,7 +222,7 @@ sudo tail -F /var/log/fail2ban.log
 * https://en.wikipedia.org/wiki/Fail2ban
 * http://www.fail2ban.org/
 
-----
+---
 
 ## Done!
 
