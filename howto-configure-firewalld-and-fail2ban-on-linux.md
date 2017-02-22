@@ -164,32 +164,49 @@ It doesn't have a lot of breadth of functionality, but it can be very
 effective, especially against folks poking SSH.
 
 #### Install `fail2ban`...
+
 ```
 # If Fedora...
-sudo dnf install -y fail2ban
+sudo dnf install -y fail2ban fail2ban-systemd
 # If CentOS or RHEL
 sudo yum install epel-release # if not already installed
-sudo yum install -y fail2ban
+sudo yum install -y fail2ban fail2ban-systemd
 # If Debian or Ubuntu
 sudo apt install -y fail2ban
 ```
 
+If you are not using FirewallD, and instead are using IPTables for your
+firewall, uninstall fail2ban-firewalld (for the Red Hat-based systems only).
+
+```
+sudo dnf remove -y fail2ban-firewalld # Fedora
+sudo yum remove -y fail2ban-firewalld # CentOS or RHEL
+```
+
 #### Configure `fail2ban`...
 
-Edit `/etc/fail2ban/jail.local`
+Edit `/etc/fail2ban/jail.d/local.conf` _(Optionally `/etc/fail2ban/jail.local`
+instead)_
+
 ```
-sudo nano /etc/fail2ban/jail.local
+sudo nano /etc/fail2ban/jail.d/local.conf
 ```
 
-COPY-AND-PASTE this and save...
+Copy this, paste, then save...
+
 ```
 [DEFAULT]
 # Ban hosts for one hour:
 bantime = 3600
+# I'm really mad. Ban them for 24 hours (the default):
+#bantime = 86400
 
-# Override /etc/fail2ban/jail.d/00-firewalld.conf:
-# Only uncomment if you use iptables instead of firewalld
+# Flip the comments here if you use iptables instead of firewalld
 #banaction = iptables-multiport
+banaction = firewallcmd-ipset
+
+# Enable logging to the systemd journal
+backend = systemd
 
 [sshd]
 enabled = true
@@ -197,8 +214,9 @@ enabled = true
 
 #### Enable `fail2ban` and reboot...
 
-_Note: The first time I enabled fail2ban, a socket did not get created
-correctly until I rebooted. I am not sure why._
+_Note: The first time I attempted to start fail2ban &mdash; `sudo systemctl
+start fail2ban` &mdash; a socket did not get created correctly until I
+rebooted. I am not sure why._
 
 ```
 sudo systemctl enable fail2ban
@@ -208,19 +226,28 @@ sudo reboot
 #### Monitor / Analyze
 
 Watch the IP addresses slowly pile up by occassionally looking in the SSH jail...
+
 ```
 sudo fail2ban-client status sshd
 ```
 
-...and even...
+Also watch...
+
 ```
-sudo tail -F /var/log/fail2ban.log
+sudo journalctl -u fail2ban.service -f
+```
+
+...and...
+
+```
+sudo tail -F /var/log/fail2ban.log 
 ```
 
 #### Reference:
 
-* https://en.wikipedia.org/wiki/Fail2ban
-* http://www.fail2ban.org/
+* <https://fedoraproject.org/wiki/Fail2ban_with_FirewallD>
+* <https://en.wikipedia.org/wiki/Fail2ban>
+* <http://www.fail2ban.org/>
 
 ---
 
