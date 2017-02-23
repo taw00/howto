@@ -59,8 +59,8 @@ Here's the general advice:
 * Do you have far too little RPM? Buy more RAM
 * Do you have a relative small amount of RAM? A swap file sized 2x RAM should
   be sufficient.
-* Do you have an overwelming large amount of RAM? 1x RAM is adequate (some do
-  even less, but I don't recommend it)
+* Do you have an overwelming large amount of RAM? 1x RAM or even less is
+  adequate. _Note: You need to really test this scenario - YMMV._
 * Are you somewhere in the middle, or aren't sure? 2x RAM
 
 I will show you how to implement a couple options...
@@ -72,9 +72,11 @@ I will show you how to implement a couple options...
 sudo su -
 
 # Size will be TOTAL_MEM * bs
-bs=2048 # Twice the size of RAM (1024 * 2) -- recommended
-#bs=1024 # One times the size of RAM (1024 * 1)
-#bs=1536 # 1.5 times the size of RAM (1024 * 1.5)
+#bs=256  # 1/4 times the size of RAM (1024/4 * 1)
+#bs=512  # 1/2 times the size of RAM (1024/2 * 1)
+#bs=1024 # One times the size of RAM (1024   * 1)
+#bs=1536 # 1.5 times the size of RAM (1024   * 1.5)
+bs=2048 # Twice the size of RAM (1024 * 2) -- recommended if in doubt
 
 # Create a swapfile - it can take a bit to finish - be patient
 TOTAL_MEM=$(free -k|grep Mem|awk '{print $2}')
@@ -99,3 +101,9 @@ cat /etc/fstab # double check your fstab file looks fine
 ## That's it! Good luck.  
 
 Please send comments and feedback to <t0dd@protonmail.com>
+
+---
+
+## Resources...
+
+* A case made for "just enough" swap: <https://www.redhat.com/en/about/blog/do-we-really-need-swap-modern-systems>
