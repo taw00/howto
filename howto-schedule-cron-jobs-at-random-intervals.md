@@ -87,4 +87,36 @@ t0to180secs="RANDOM % 181"
 
 ---
 
-Good luck! I hope this was of help. Comments and feedback to <t0dd@protonmail.com>
+## Good luck!
+
+I hope this was of help. Comments and feedback to <t0dd@protonmail.com>
+
+---
+
+## Bonus -- testing in a cron-like environment
+
+Wondering why your cron job is failing and can't quite figure it out? Set up a
+duplicate environment and test your commandline.
+
+```
+crontab -e
+```
+
+Now add this to your crontab, scheduled for 1 minute after "right now". For
+example, if it is currently, 14 minutes after midnight, I would schedule this
+for 00:15...
+
+```
+15 00 * * * env > ~/cronenv
+```
+
+Save and exit.
+
+Wait until 00:15 for that file to show up. And then...
+
+```
+env - `cat ~/cronenv` /bin/sh
+```
+
+Now test your commandline. Your environment is identical to what cron runs
+within.
