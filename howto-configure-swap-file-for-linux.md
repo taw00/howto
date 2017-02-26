@@ -1,4 +1,4 @@
-# HowTo: Configure a Swap File on a Linux System
+# HowTo: Configure Swap with a Swap File for a Linux System
 
 Your applications consume memory. What happens when an application maxes out
 the memory pool available? It could destabilize your application and maybe your
