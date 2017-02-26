@@ -1,4 +1,4 @@
-# HowTo Run Cronjobs at Random Intervals
+# HowTo Run Cron Jobs at Random Intervals
 
 Let's say I wanted to run a cronjob in a random interval, for example, every 3
 to 5 minutes. Or every 1 to 20 minutes. Or some other random interval. It's not
