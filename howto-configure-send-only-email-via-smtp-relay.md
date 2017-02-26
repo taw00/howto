@@ -124,7 +124,6 @@ over the message you get: All email, daily digest, web-only.
 
 ## Choose your MTA poison: Postfix or sSMTP
 
-----
 
 ### METHOD 1 - Postfix: Configure your Fedora Linux server to send email with Postfix
 
