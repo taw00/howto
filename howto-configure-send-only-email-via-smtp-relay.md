@@ -1,19 +1,22 @@
-# HowTo: Configure "send-only" Email via a 3rd Party SMTP Relay on a Fedora Linux 25 Server
+# HowTo: Configure "send-only" Email via a 3rd Party SMTP Relay for Linux
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes
 when something bad happens on a remote system that I manage. There are a number
 of ways you can do this, but I found the easiest is to simply pump automated
 email through a 3rd party email vendor to myself, or a group of people.
 
-I'm going to illustrate how to do this with two different MTAs:
+You do that by configuring a ["Mail Transfer
+Agent"](https://en.wikipedia.org/wiki/Message_transfer_agent). I'm going to
+illustrate how to do this with two different MTAs:
 
-1. **Postfix** - An all-singing and all-dancing MTA that is fortunately not
-   Sendmail
+1. **Postfix** - An all-singing and all-dancing MTA that is the successor to
+   Sendmail on almost all Linux/Unix systems
 2. **sSMTP** - An MTA that only performs this use case: Send via 3rd party SMTP
    server
 
-> Note, these instructions have been tested on Fedora Linux 25, but they should
-> be easily adaptable to any unix/linux. Check out the references at the end for
+> Note, these instructions have been tested on the Red Hat family of linuxes
+> &mdash;Fedora, CentOS, and Red Hat Enterprise Linux&mdash; but they should be
+> easily adaptable to any unix/linux. Check out the references at the end for
 > further discussion on this topic.
 
 ----
@@ -119,11 +122,11 @@ over the message you get: All email, daily digest, web-only.
 
 ----
 
-# Choose your MTA poison: Postfix or sSMTP
+## Choose your MTA poison: Postfix or sSMTP
 
 ----
 
-## Postfix: Configure your Fedora Linux server to send email with Postfix
+### METHOD 1 - Postfix: Configure your Fedora Linux server to send email with Postfix
 
 Postfix is the swiss-army-knife of
 [MTA](https://en.wikipedia.org/wiki/Message_transfer_agent)s. And, to be
@@ -143,8 +146,36 @@ Summary of next steps...
 
 Easy peasy...
 
+For Fedora Linux...
+
 ```
 sudo dnf install -y postfix mailx
+```
+
+For CentOS or Red Hat Enterprise Linux...
+
+```
+sudo yum install -y postfix mailx
+```
+
+#### Tell the OS which MTA you are going to be using...
+
+```
+sudo alternatives --config mta
+```
+
+It will look something like this, select Postfix with the right number and exit...
+
+```
+There are 3 programs which provide 'mta'.
+
+  Selection    Command
+-----------------------------------------------
+   1           /usr/bin/esmtp-wrapper
+*  2           /usr/sbin/sendmail.postfix
+ + 3           /usr/sbin/sendmail.ssmtp
+
+Enter to keep the current selection[+], or type selection number: 2
 ```
 
 #### Configure Postfix
@@ -167,7 +198,8 @@ Change these settings, or add if they are missing...
 
 ```
 relayhost = [smtp.yandex.com]:587
-#relayhost = [smtp.yandex.com]:465
+#relayhost = [smtp.mail.yahoo.com]:587
+#relayhost = [smtp.gmail.com]:587
 smtp_use_tls = yes
 smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
@@ -191,6 +223,8 @@ mailbox_size_limit = 0
 
 ```
 [smtp.yandex.com]:587 nfdasd@yandex.com:kjsadkjbfsfasdfqwfq
+#[smtp.mail.yahoo.com]:587 nfdasd@yahoo.com:kjsadkjbfsfasdfqwfq
+#[smtp.gmail.com]:587 nfdasd@gmail.com:kjsadkjbfsfasdfqwfq
 ```
 
 That file has your password in it. Lock it down:
@@ -204,26 +238,6 @@ It should produce a file called `/etc/postfix/sasl_passwd.db`
 _Note: If you see permission errors, check ownership and permissions in that
 directory: `ls -l /etc/postfix`_
 
-
-#### Tell the OS which MTA you are going to be using...
-
-```
-sudo alternatives --config mta
-```
-
-It will look something like this, select Postfix with the right number and exit...
-
-```
-There are 3 programs which provide 'mta'.
-
-  Selection    Command
------------------------------------------------
-   1           /usr/bin/esmtp-wrapper
-*  2           /usr/sbin/sendmail.postfix
- + 3           /usr/sbin/sendmail.ssmtp
-
-Enter to keep the current selection[+], or type selection number: 2
-```
 
 #### Start and enable the Postfix systemd service
 
@@ -284,7 +298,7 @@ Feb 15 17:51:04 mn0 postfix/qmgr[19914]: D5100DC63A: removed
 ----
 
 
-## sSMTP: Configure your Fedora Linux server to send email with sSMTP
+### METHOD 2 - sSMTP: Configure your Fedora Linux server to send email with sSMTP
 
 sSMTP is a much simpler service than Postfix. Its singular purpose is to send
 email through an smtp relay. It is much lighter weight than Postfix, but
@@ -306,9 +320,18 @@ Summary of next steps...
 
 Easy peasy...
 
+For Fedora Linux...
+
 ```
 sudo dnf install -y ssmtp mailx
 ```
+
+For CentOS or Red Hat Enterprise Linux...
+
+```
+sudo yum install -y ssmtp mailx
+```
+
 
 #### Tell the OS which MTA you are going to be using...
 
@@ -352,7 +375,8 @@ Change these settings, or add if they are missing...
 Debug=YES                                    # For now, stick that at the very top of the config file
 #root=nfdasd@yandex.com                      # Who gets all mail to userid < 1000
 MailHub=smtp.yandex.com:587                  # SMTP server hostname and port
-#MailHub=smtp.yandex.com:465                 # SMTP server hostname and port
+#MailHub=smtp.mail.yahoo.com:587             # SMTP server hostname and port
+#MailHub=smtp.gmail.com:587                  # SMTP server hostname and port
 RewriteDomain=yandex.com                     # The host the mail appears to be coming from
 #Hostname=localhost                          # The name of this host
 FromLineOverride=YES                         # Allow forcing the From: line at the commandline
@@ -372,6 +396,8 @@ Example:
 ```
 root:nfdasd@yandex.com:smtp.yandex.com:587
 bob:nfdasd@yandex.com:smtp.yandex.com:587
+#root:nfdasd@yahoo.com.com:smtp.mail.yahoo.com:587
+#root:nfdasd@gmail.com.com:smtp.gmail.com:587
 ```
 
 Monitor it...
@@ -409,7 +435,7 @@ echo "This is the body of the email. Test. Test. Test." | mail -s "Group email t
 
 Now you have a scripting pattern for using with something like a monitoring system or cronjobed scripts, etc.
 
-Good luck. Comments or feedback: <t0dd@protonmail.com>
+Good luck. Send comments or feedback: <t0dd@protonmail.com>
 
 ----
 
@@ -425,11 +451,12 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 
 > **A big caveat about 3rd party email providers!**
 > 
-> I used yandex.com for this example (I have included yahoo information as
-> well). I recently discovered that Yandex has among the most limiting send
-> rates (how many emails you are allowed to send per X time-period) of all the
-> large email providers. If you send over 35 emails per day via Yandex, they
-> begin rejecting them as spam (then you wait 24 hours for a reset).
+> I used yandex.com for this example (I have since included yahoo and gmail
+> information as well). I recently discovered that Yandex has among the most
+> limiting send rates (how many emails you are allowed to send per X
+> time-period) of all the large email providers. If you send over 35 emails per
+> day via Yandex, they begin rejecting them as spam (then you wait 24 hours for
+> a reset).
 >
 > Google is a better choice at 500 per day, and Yahoo seems to allow 100 per
 > hour (I believe). But those services still have their limitations if
@@ -443,5 +470,4 @@ Good luck. Comments or feedback: <t0dd@protonmail.com>
 > look at SMS messaging (maybe a later howto?), a dedicated email server that
 > you manage yourself, or use some other alerting service. For the rest of us,
 > the Google, Yahoo, and maybe even Yandex solution works well enough.
-
 
