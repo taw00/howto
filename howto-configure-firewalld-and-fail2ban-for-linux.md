@@ -1,4 +1,4 @@
-# Configure FirewallD and Fail2Ban for Linux
+# HowTo: Configure FirewallD and Fail2Ban for Linux
 
 Whenever you expose a server to the wilds of the internet, it becomes vulnerable to attack.
 If this is a webserver, ports 443 and 80 are open to attack. SSH? Of course you ssh in, that
