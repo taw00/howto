@@ -10,6 +10,7 @@ my digital life.
 * [HowTo Configure Swap with a Swap File for Linux](https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md)
 * [HowTo Improve SSD Write and Delete Performance for Linux](https://github.com/taw00/howto/blob/master/howto-enable-ssd-trim-for-linux.md)
 * [HowTo Schedule Cron Jobs to Run at Random Intervals](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
+* [HowTo Introspect Port Usage](https://github.com/taw00/howto/blob/master/howto-port-introspection.md)
 
 ---
 
