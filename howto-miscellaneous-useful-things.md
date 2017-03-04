@@ -22,6 +22,16 @@ people use.
 
 ```
 curl https://icanhazip.com/
+# or curl -4 https://icanhazip.com/
+
+```
+
+This webservice provides a lot more functionality than appears on the surface. Check it out: <https://major.io/icanhazip-com-faq/>
+
+For example, "I want my IPv6 IP address..."
+
+```
+curl -6 https://icanhazip.com/
 ```
 
 ### SSH into a box and "look back at yourself"
