@@ -23,10 +23,10 @@ people use.
 ```
 curl https://icanhazip.com/
 # or curl -4 https://icanhazip.com/
-
 ```
 
-This webservice provides a lot more functionality than appears on the surface. Check it out: <https://major.io/icanhazip-com-faq/>
+This webservice provides a lot more functionality than appears on the surface.
+Check it out: <https://major.io/icanhazip-com-faq/>
 
 For example, "I want my IPv6 IP address..."
 
@@ -43,6 +43,42 @@ ssh <some user>:<some machine>
 ```
 # On most systems you can use $SSH_CLIENT as well
 echo $SSH_CONNECTION | cut -d' ' -f1
+```
+
+### ifconfig and 'ip addr show'
+
+You can look at what you system thinks its IP address is. But this is not
+reliable because it may have an internal IP and an external IP. That being
+said, for many setups, if your system's internal and external IP are one and
+the same, this quick and dirty...
+
+```
+ifconfig | grep -w inet | grep -v 127.0.0.1 | awk '{print $2}'
+ifconfig | grep -w inet6 | grep -v ::1 | awk '{print $2}'
+```
+
+```
+ip addr show | grep -w inet | grep -v 127.0.0.1 | awk '{print $2}' | cut -d"/" -f1
+ip addr show | grep -w inet6 | grep -v ::1 | awk '{print $2}' | cut -d"/" -f1
+```
+
+---
+
+
+## What's my MAC address?
+
+```
+ifconfig | grep -w ether | awk '{print $2}'
+ip addr show | grep -w ether | awk '{print $2}'
+```
+
+---
+
+
+## What's my network device name?
+
+```
+ip addr show | grep -w inet | grep -v 127.0.0.1 | awk '{print $NF}'
 ```
 
 
