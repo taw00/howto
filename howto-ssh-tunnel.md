@@ -29,25 +29,25 @@ I picked port 9091 because I don't want it to conflict with my local machine's
 instance of Cockpit.
 
 
-0. Set up effortless SSH
+* Set up effortless SSH
 
 HowTo for SSH key generation is not yet written. In the meantime,
 [these are pretty good instructions](https://www.vultr.com/docs/how-do-i-generate-ssh-keys).
 
-1. SSH into the remote system...
+* SSH into the remote system...
 
 ```
 ssh username@<remote-ip-address>
 ```
 
-2. Turn off the firewall rule granting access to the outside world
+* Turn off the firewall rule granting access to the outside world
 
 ```
 sudo firewall-cmd --permanent --remove-service cockpit
 sudo firewall-cmd --reload
 ```
 
-3. Make sure Cockpit is running
+* Make sure Cockpit is running
 
 ```
 sudo systemctl status cockpit.service
@@ -56,7 +56,7 @@ sudo systemctl start cockpit.service
 sudo systemctl enable cockpit.service
 ```
 
-4. Instead set things up so that you funnel cockpit's port, 9090.
+* Instead set things up so that you funnel cockpit's port, 9090.
 
 This is called
 ["remote SSH port forwarding"](https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding).
@@ -70,18 +70,18 @@ ssh -L 9091:127.0.0.1:9090 <username>@<remote-ip-address> -N
 
 What this says is...
 
-* Create an SSH tunnel to a remote system: `<username@remote-ip-address>`
-* Then pipe the results of its own `9090` content (cockpit) as if you were
-  local `127.0.0.1`
-* And plumb that system and port to our local `-L` port `9091`
-* That `-N` just terminates the SSH call and disallows any commands to be
-  executed.
+  - Create an SSH tunnel to a remote system: `<username@remote-ip-address>`
+  - Then pipe the results of its own `9090` content (cockpit) as if you were
+    local `127.0.0.1`
+  - And plumb that system and port to our local `-L` port `9091`
+  - That `-N` just terminates the SSH call and disallows any commands to be
+    executed.
+  - Note, if you run into trouble you can append `-v` 's to the command (up to
+    three) to see verbose debugging information.
 
 Now just browse to `https://127.0.0.1:9091` ... You will be viewing the remote
-systems's Cockpit dashboard as if you were local to that machine.
+systems's Cockpit dashboard as if you were local to that machine. MAGIC!
 
-* Note, if you run into trouble you can append `-v` 's to the command (up to
-  three) to see verbose debugging information.
 
 
 ## Other fun things...
