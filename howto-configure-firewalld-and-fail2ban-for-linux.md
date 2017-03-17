@@ -108,27 +108,34 @@ just copy a similar service from `/usr/lib/firewalld/services/` to `/etc/firewal
 rename it, and edit it there.Then you can add it to a firewalld zone definition
 at will.
 
+For example...
+
 ```
 # My own service, which is defined in /etc/firewalld/t0ddapp.xml It uses ports 9997!
 sudo firewall-cmd --permanent --add-service t0ddapp
 
 # I also have a random other application that needs to have port 9999 open, but only for
 # TCP traffic.
-#sudo firewall-cmd --permanent --add-port=9999/tcp
+sudo firewall-cmd --permanent --add-port=9999/tcp
 ```
 
-Let's rate limit traffic to those ports to reduce abuse. SSH and cockpit, if
-those services were added really need to be rate limited. You would probably
-want to rate limit 80 and 443, for example, if this were a webserver (but using
-more liberal values).
+For this next example, let's rate limit traffic to those ports mentioned above
+to reduce the effects of any abuse. We'll also rate limit access to SSH and
+cockpit. And it's not part of this example, but if this were a webserver, you
+might want to rate limit ports 80 and 443 as well, but much more liberally.
 
-_Note: It does not hurt to leave in the cockpit rate limiting. If you turn on
-cockpit in the future, the rule will be already enabled._
+
+> **Note:** `--add-service`, `--add-rich-rule`, `--add-port` &mdash; all of
+> these open up ports to the world (unless explicitely IP limiting). I
+> emphasize this point because I don't want people to think that
+> `--add-rich-rule` alone will not open up a port. It will.
+
 
 ```
 # Rate limit incoming ssh and cockpit (if configured) traffic to 10 requests per minute
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=ssh limit value=10/m accept'
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit value=10/m accept'
+# Rate limit the ports associated to our example applications from the first example
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=t0ddapp limit value=5/s accept'
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=9999 limit value=20/s accept'
 ```
