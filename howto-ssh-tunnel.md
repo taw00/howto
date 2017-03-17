@@ -1,70 +1,109 @@
 # HowTo do fun things with SSH tunnels
 
-SSH tunneling allows you to do a number of things you would not normally be
-able to do remotely. I.e., You can allow SSH to have access to a remote server
-(secure by definition) and serve things "locally" or via "localhost" to that
-machine, but then piped through the tunnel to a remote system. I think this
-will be more apparent with examples.
+SSH is short for "secure shell". SSH is used to "log in" to a remote system
+through a secure communication channel. So, for example, if you have a remote
+system, "x.y.z", and you are user, "todd" on that system, you can log into (ssh
+into) that machine with a simple command: `ssh todd@x.y.z`. 
 
-## Display Cockpit Data through an SSH Tunnel
+This establishes a secure communication channel between your local system and
+that remote system. SSH can be leveraged to "tunnel" other data through that
+secure communication channel. In fact, you can tell SSH to take the data coming
+from a port on the remote machine through the tunnel to the local machine and
+have it expressed through a local port of your choosing. This is called "port
+forwarding" through an "ssh tunnel".
 
-I.e., Let's "port forward" Cockpit's webapp interface through SSH so we can
-firewall off that port from the outside world.
+For example, if I had an application on the remote system that uses port 9997
+to communicate. I can map a port on my local machine to that remote port 9997.
 
-If you have cockpit available to the outside world via [firewall
-settings](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md),
-you can turn off outside access to that port if you are going to use an SSH
-tunnel instead.
+Why would I want to do this? Here are a few use cases...
 
-In this example, instead of having to browse to the remote server...
+* Maybe your corporate network administrators disallow connecting to the
+  outside world except through SSH (fairly common actually)
+* Maybe you don't want that remote machine exposing its port to the outside
+  world.
+* Securing a normally insecure REST API by controlling access via SSH.
+
+
+So, how do we do this? Well, first, you really need to create an SSH keypair
+so that you are not always typing a password every time you log into a remote
+machine. 
+
+But before we begin, you really need to create SSH keys to access a remote
+system. I have not written a how to yet on this subject, but loads of people
+have. Check out [Vultr's excellent HowTo](https://www.vultr.com/docs/how-do-i-generate-ssh-keys).
+
+On to some examples...
+
+
+## Access Cockpit through an SSH Tunnel
+
+Cockpit is an excellent web application that enables some basic administration
+and introspection of your linux systems. Learn more here:
+<http://cockpit-project.org/> and <http://www.tecmint.com/cockpit-monitor-multiple-linux-servers-via-web-browser/>
+
+Cockpit is a great tool, but it is a web-application which means you have to
+open up a port (9090 by default) in order to access it directly.
+
+Instead, let's "port forward" Cockpit's webapp interface through SSH so we can
+firewall off that port from the outside world. How do I "firewall off that
+port"? You can read about that here:
+[HowTo Configure FirewallD](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md),
+
+Normally, you would access your server's Cockpit dashboard by browsing to the
+remote server...
 
 `https://<remote-server-ip-address>:9090`
 
-...to view it's Cockpit dashboard, I want to have it funneled locally, for
-example...
+For this example, I want to look at that remote server... locally. I
+want to view it from this local browser link: 
 
 `https://127.0.0.1:9091`
 
-I picked port 9091 because I don't want it to conflict with my local machine's
-instance of Cockpit.
+I picked the local port 9091 because I don't want it to conflict with my local
+machine's instance of Cockpit which is already using port 9090.
 
 
-* Set up effortless SSH
+* Turn off any firewall rules granting access from the outside world
 
-HowTo for SSH key generation is not yet written. In the meantime,
-[these are pretty good instructions](https://www.vultr.com/docs/how-do-i-generate-ssh-keys).
-
-* SSH into the remote system...
+SSH into the remote system...
 
 ```
 ssh username@<remote-ip-address>
 ```
 
-* Turn off the firewall rule granting access to the outside world
-
 ```
 sudo firewall-cmd --permanent --remove-service cockpit
 sudo firewall-cmd --reload
+sudo firewall-cmd --list-all
+# Also remove any rich rules you may have configured for cockpit
 ```
 
 * Make sure Cockpit is running
 
 ```
-sudo systemctl status cockpit.service
+sudo systemctl status cockpit.socket
 # If "inactive"...
-sudo systemctl start cockpit.service
-sudo systemctl enable cockpit.service
+sudo systemctl start cockpit.socket
+sudo systemctl enable cockpit.socket
 ```
 
-* Instead set things up so that you funnel cockpit's port, 9090.
+And then logout...
+
+```
+logout
+```
+
+
+* Set things up so that you "forward" cockpit's port, 9090.
 
 This is called
 ["remote SSH port forwarding"](https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding).
 
+You create a remote SSH port forward from the machine local to you (my laptop
+for example).
+
 ```
-# If you are still SSHed into the remote system, exit now. You do this on your
-# local machine. Or just open a new local terminal window. Then...
-# Create a tunnel from your 9091 port to the remote machine's 9090 port
+# Create a tunnel from your local 9091 port to the remote machine's 9090 port
 ssh -L 9091:127.0.0.1:9090 <username>@<remote-ip-address> -N
 ```
 
@@ -73,13 +112,13 @@ What this says is...
   - Create an SSH tunnel to a remote system: `<username@remote-ip-address>`
   - Then pipe the results of its own `9090` content (cockpit) as if you were
     local `127.0.0.1`
-  - And plumb that system and port to our local `-L` port `9091`
+  - And bind that system and port to our local `-L` port `9091`
   - That `-N` just terminates the SSH call and disallows any commands to be
-    executed.
+    executed through SSH.
   - Note, if you run into trouble you can append `-v` 's to the command (up to
     three) to see verbose debugging information.
 
-Now just browse to `https://127.0.0.1:9091` ... You will be viewing the remote
+Now just browse to <https://127.0.0.1:9091> ... You will be viewing the remote
 systems's Cockpit dashboard as if you were local to that machine. MAGIC!
 
 
