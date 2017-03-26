@@ -6,8 +6,8 @@ application simply runs long enough.
 
 **Solution:** Log rotation helps mitigate this problem. Based on rules (size,
 time, and number of archived backups) you can have the system keep a fixed set
-of log files archived by copying the current log file, optionally compressing
-it, and then truncating (starting over) the original log file.
+of log files archived. This is done by copying the current log file, optionally
+compressing it, and then truncating the original log file.
 
 For example, I can have a log file...
 
@@ -23,7 +23,7 @@ It starts off at 0 bytes big, but what if it explodes in size?
 
 Holy cow! That file is now almost 500MB in size!
 
-If I set my rules to log-rotate and compress that log file at 500MB, this will
+If I set my rules to rotate and compress that log file at 500MB, this will
 happen when the logrotate service next runs...
 
 ```
@@ -48,7 +48,7 @@ want to keep 5 iterations (rotate 5) and use an integer file extension
 (nodateext) instead of a date-formatted file extension. Finally, the log file
 lives in `/home/todd/.myapplication/application.log`.
 
-*Create log rotation configation file*
+*Create log rotation configuration file*
 
 Use `sudo` or do this as the root user...
 
