@@ -12,6 +12,7 @@ my digital life.
 * [HowTo Schedule Cron Jobs to Run at Random Intervals](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
 * [HowTo Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md)
 * [HowTo Port Forward via an SSH Tunnel](https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md)
+* [HowTo Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
 <br />
 * [HowTo - Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
