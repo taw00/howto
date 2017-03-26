@@ -28,7 +28,7 @@ files within that mirror. Pretty brilliant actually.
 What you are going to do is mount your USB drive normally and then "bind-mount"
 it to another directory, setting different permissions in the process.
 
-**First install `bindfs`**
+**First, install `bindfs`**
 
 ```
 # On Fedora
@@ -91,7 +91,7 @@ sudo bindfs -M todd -p0700,u+X /run/media/todd/toddsusb myusb
 ll myusb
 ```
 
-You should see, in `myusb`...
+*You should see, in `myusb`...*
 
 ```
 drwx--x---. 9 todd todd     4096 Mar 15 08:43 backup
@@ -99,20 +99,20 @@ drwx--x---. 9 todd todd     4096 Mar 15 08:43 backup
 -rwx------. 1 todd todd 12197864 Mar 22 20:30 some-data.dat
 ```
 
-`myapplication` is not executable. Run it with...
+*`myapplication` is now executable. Run it with...*
 
 ```
 myusb/myapplication
 ```
 
 Remember. This is a mirror. Whatever happens in this directory will be
-reflected in the originating directory.
+reflected in the originating directory. The permissions will remain unchanged.
 
 
 **Un-mounting**
 
-You can't just umount or hit "eject" in a file-menu. You have to umount the
-mirror first, then umount the originating directory.
+You can't just "un-mount" or "eject" the USB drive. You have to un-mount the
+mirror first, then un-mount the originating directory.
 
 ```
 cd -
