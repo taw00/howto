@@ -15,7 +15,13 @@ the outside in.
 dig +short myip.opendns.com @resolver1.opendns.com
 ```
 
+### DuckDuckGo
+
+<https://duckduckgo.com/?q=what+is+my+ip&ia=answer>
+
 ### icanhazip.com
+
+<https://icanhazip.com>
 
 An acquaintence of mine (Major Hayden) runs this simple website that so many
 people use.
@@ -37,13 +43,10 @@ curl -6 https://icanhazip.com/
 ### SSH into a box and "look back at yourself"
 
 ```
-ssh <some user>:<some machine>
+# On most systems you can use $SSH_CLIENT as well
+ssh <some user>:<some machine> 'echo $SSH_CONNECTION | cut -d" " -f1'
 ```
 
-```
-# On most systems you can use $SSH_CLIENT as well
-echo $SSH_CONNECTION | cut -d' ' -f1
-```
 
 ### ifconfig and 'ip addr show'
 
