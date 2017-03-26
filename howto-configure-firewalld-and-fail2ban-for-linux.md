@@ -205,7 +205,7 @@ Copy this, paste, then save...
 [DEFAULT]
 # Ban hosts for one hour:
 bantime = 3600
-# I'm really mad. Ban them for 24 hours (the default):
+# I'm really mad. Ban them for 24 hours:
 #bantime = 86400
 
 # Flip the comments here if you use iptables instead of firewalld
@@ -215,9 +215,20 @@ banaction = firewallcmd-ipset
 # Enable logging to the systemd journal
 backend = systemd
 
+# Email settings - Optional - Configure this only after send-only email is
+# enabled and functional at the system-level.
+#destemail = youremail+fail2ban@example.com
+#sender = burner_email_address@yahoo.com
+#action = %(action_mwl)s
+
+
 [sshd]
 enabled = true
 ```
+
+> _For more about setting up "send-only email", read
+[this](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md)._
+
 
 #### Enable `fail2ban` and reboot...
 
