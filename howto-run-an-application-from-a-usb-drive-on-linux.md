@@ -2,10 +2,10 @@
 
 Because of the nature of USB drives, you can't, by default, run an application
 _from_ the USB drive. USB drives are typically formatted as FAT32 filesystems
-(legacy microsoft cruft) and FAT32 doesn't really understand "permissions" per
-ce. And since most USB drives are used for "data" and not "application"
+(legacy Microsoft cruft) and FAT32 doesn't really understand "permissions" per
+ce. And since most USB drives are used for "data" and not "applications",
 permissions are usually fixed at 644 for files and 755 for directories. And
-they can't be changed with `chmod` like a normal linux file system.
+they can't be changed with `chmod` like with normal Linux file system.
 
 ## Assumptions
 
@@ -15,20 +15,22 @@ On a Ubuntu system, I believe USB drives automount at
 On a Fedora or Red Hat system, it will be mounted at
 `/run/media/<username>/<some-drive-label>`
 
-For this exercise, we'll just assume Fedora's rules (more standard anyway) and
-you can adjust if you are using something else.
+For this exercise, we'll just assume Fedora's rules (they are more standard
+anyway) and you can adjust if you are using something else.
 
 ## So, what to do?
 
 This is where the fuse filesystem once again proves itself to be the
-swiss-army-knife of filesystems. Someone made it is possible to mirror a
-directory, into a fuse-mount, and allow you to change the permissions of the
-files within that mirror. Pretty brilliant actually.
+swiss-army-knife of filesystems. Someone made it possible to mirror a directory
+onto a fuse-mount, and then allow you to change the permissions of the files
+within that mirror. Pretty brilliant actually.
 
 What you are going to do is mount your USB drive normally and then "bind-mount"
 it to another directory, setting different permissions in the process.
 
 ## First, install `bindfs`
+
+This enables a fuse filesystem with the "binding" capabilities we need.
 
 ```
 # On Fedora
@@ -45,7 +47,7 @@ sudo yum install -y bindfs
 sudo apt install bindfs
 ```
 
-## Insert USB stick and note the mountpoint
+## Insert USB stick and note the automount mountpoint
 
 For this example, the username will be `todd`
 
