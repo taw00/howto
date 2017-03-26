@@ -20,6 +20,10 @@ anyway) and you can adjust if you are using something else.
 
 ## So, what to do?
 
+There are a number of ways to allow executing scripts and applications from a
+USB drive formatted as a FAT32 filesystem. But we'll examine one method that is
+rather simple and doesn't ask the user to be a system administrator.
+
 This is where the fuse filesystem once again proves itself to be the
 swiss-army-knife of filesystems. Someone made it possible to mirror a directory
 onto a fuse-mount, and then allow you to change the permissions of the files
