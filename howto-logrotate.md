@@ -4,10 +4,10 @@
 can get out of hand (large) if something generates an event, or if the
 application simply runs long enough.
 
-**Solution:** Log rotation solves this problem. Based on rules (size or time
-and number of backups) you can have the system keep a fixed set of log files
-archived by copying the current log file, optionally compressing it, and then
-truncating (starting over) the original log file.
+**Solution:** Log rotation helps mitigate this problem. Based on rules (size,
+time, and number of archived backups) you can have the system keep a fixed set
+of log files archived by copying the current log file, optionally compressing
+it, and then truncating (starting over) the original log file.
 
 For example, I can have a log file...
 
@@ -42,16 +42,17 @@ have a datestamp instead of that .1, .2.
 
 ## Setting up the typical scenario
 
-**Assumptions for the example:** I am user "todd", I want my log file rotated
-at 500KB (never allow that logfile to get bigger than that). And I want to keep
-5 iterations but don't use a date extension. The log file lives in
-`/home/todd/.myapplication/application.log`.
+**Assumptions for this next example:** I am user "todd", I want my log file
+rotated at 500KB (take action if the log file grows bigger than that). And I
+want to keep 5 iterations (rotate 5) and use an integer file extension
+(nodateext) instead of a date-formatted file extension. Finally, the log file
+lives in `/home/todd/.myapplication/application.log`.
 
 *Create log rotation configation file*
 
 Use `sudo` or do this as the root user...
 
-* Edit the file: `/etc/logrotate.d/toddsapplication`
+Edit the file: `/etc/logrotate.d/toddsapplication`
 
 ```
 /home/todd/.myapplication/application.log {
@@ -61,6 +62,10 @@ Use `sudo` or do this as the root user...
     notifempty
     compress
     maxsize 500k
+    #maxsize 1M
+    #maxsize 10M
+    #maxsize 50M
+    #maxsize 500M
     copytruncate
     nodateext
 }
@@ -68,10 +73,17 @@ Use `sudo` or do this as the root user...
 
 Save, and you are done!
 
-That says, create new files as user `todd`, save only 5 of them, don't gripe if
-the file does not exist, compress it, rotate at 500KB, and copy-then truncate.
-We copy-then-truncate so that any running program actively writing to the file
-does not hiccup.
+This configuration says: Create new files as user `todd`; save only 5 of them;
+don't gripe if the file does not exist; compress it; rotate at 500KB; and
+copy-then truncate.  We copy-then-truncate so that any running program actively
+writing to the file does not hiccup.
+
+> _IMPORTANT NOTE: That 500KB value is purely arbitrary. You may want to wait
+> and see what the size of a log file is for a typical day of operations before
+> you configure rotating them. And then multiply that by 5 or 10. For example,
+> if my application generates 5MB of log data everyday, maybe I will set
+> `maxsize 50M`. Or just pick a setting and adjust it over time through
+> experience. It's something to think about._
 
 ...
 
@@ -87,7 +99,7 @@ that logrotate configuration file, or combine them like this...
     compress
     maxsize 500k
     copytruncate
-    dateext
+    nodateext
 }
 ```
 
@@ -96,7 +108,9 @@ that logrotate configuration file, or combine them like this...
 *Changes demonstrated with example are:* We rotate the file daily, but not if
 it is an empty log, and we create the archives with permissions 600 for `todd`
 user and `todd` group. Note, permissions remain the same as the original log
-file unless you specifically change it with the create parameter.
+file unless you specifically change it with the create parameter. Oh, and even
+if the logrotate checks more than once a day, if that logfile gets bigger than
+500KB, rotate it anyway.
 
 ```
 /home/todd/.myapplication/application.log /home/todd/.myapplication/debug.log {
@@ -109,22 +123,28 @@ file unless you specifically change it with the create parameter.
     compress
     maxsize 500k
     copytruncate
-    nodateext
+    dateext
 }
 ```
 
+And of course, if you only need to rotate the logs `weekly` or `monthly`, then
+just adjust the settings appropriately.
+
 ## The limitations of logrotate
 
-The logrotate function on your typical linux system only runs once per day at some
-odd hour. So, that 500MB maximum will only be checked once per day. If you have a
-very active system that can have wild swings in logging, you may want to set up a
-cron-job to run every hour, or every 30 minutes to check those logs...
+The logrotate function on your typical linux system only runs once per day at
+some odd hour (like 3am or some such). So, that 500KB maximum in the first
+example would only be checked once per day. If you have a very active system
+that can have wild swings in logging, you may want to set up a cron-job to run
+every hour, or every 30 minutes to check those logs...
 
 ```
 sudo crontab -e
+# ...or if you don't like the defaul editor, use this...
+sudo EDITOR="nano" crontab -e
 ```
 
-And then add this line, save, and exit...
+And then add this line; save; and exit...
 
 ```
 # Run logrotate every 30 minutes
