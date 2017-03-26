@@ -7,7 +7,7 @@ ce. And since most USB drives are used for "data" and not "application"
 permissions are usually fixed at 644 for files and 755 for directories. And
 they can't be changed with `chmod` like a normal linux file system.
 
-**Assumptions**
+## Assumptions
 
 On a Ubuntu system, I believe USB drives automount at
 `/media/<username>/<some-drive-label>`
@@ -18,7 +18,7 @@ On a Fedora or Red Hat system, it will be mounted at
 For this exercise, we'll just assume Fedora's rules (more standard anyway) and
 you can adjust if you are using something else.
 
-**So, what to do?**
+## So, what to do?
 
 This is where the fuse filesystem once again proves itself to be the
 swiss-army-knife of filesystems. Someone made it is possible to mirror a
@@ -28,7 +28,7 @@ files within that mirror. Pretty brilliant actually.
 What you are going to do is mount your USB drive normally and then "bind-mount"
 it to another directory, setting different permissions in the process.
 
-**First, install `bindfs`**
+## First, install `bindfs`
 
 ```
 # On Fedora
@@ -45,7 +45,7 @@ sudo yum install -y bindfs
 sudo apt install bindfs
 ```
 
-**Insert USB stick and note the mountpoint**
+## Insert USB stick and note the mountpoint
 
 For this example, the username will be `todd`
 
@@ -74,7 +74,7 @@ drwxr-xr-x. 9 todd todd     4096 Mar 15 08:43 backup
 That `myapplication` can't be run from the USB. And you can't `chmod +x
 myapplication` either.
 
-**Use `bindfs` to mirror and re-permission**
+## Use `bindfs` to mirror and re-permission
 
 *Create a directory to bind-mount to...*
 
@@ -109,7 +109,7 @@ Remember. This is a mirror. Whatever happens in this directory will be
 reflected in the originating directory. The permissions will remain unchanged.
 
 
-**Un-mounting**
+## Un-mounting
 
 You can't just "un-mount" or "eject" the USB drive. You have to un-mount the
 mirror first, then un-mount the originating directory.
