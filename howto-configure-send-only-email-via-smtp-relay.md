@@ -402,7 +402,9 @@ bob:nfdasd@yandex.com:smtp.yandex.com:587
 Monitor it...
 
 ```
+# Either one of these methods should work for you
 sudo tail -f /var/log/maillog
+#sudo journalctl -f | grep -i ssmtp
 ```
 
 #### Send a test email...
