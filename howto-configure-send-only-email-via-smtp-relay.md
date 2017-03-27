@@ -364,7 +364,7 @@ therefore...
 Configuring sSMTP is pretty easy, and only a bit more obvious than Postfix.
 
 * Backup the original configuration file:    
-  `sudo cp -a /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf`
+  `sudo cp -a /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf-orig`
 * Edit ssmtp configuration file:    
   `sudo nano /etc/ssmtp/ssmtp.conf`
 
