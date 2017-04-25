@@ -23,7 +23,7 @@ example.
 Log into your local machine and create a 2048-bit or 4096-bit rsa key-pair...
 
 ```
-ssh-key -t rsa -b 4096 -f -C "This is a test key"
+ssh-keygen -t rsa -b 4096 -C "This is a test key"
 ```
 
 By default, this will create two keys in `/home/USERNAME/.ssh/`: `id_rsa` and
