@@ -40,6 +40,7 @@ add this text to it and then save...
 
 ```
 [my-rpms]
+# No spaces allowed in that [repo-name] or you get a "bad id for repo" error
 name=My RPMs $releasever - $basearch
 baseurl=/home/<USERNAME>/repo
 enabled=1
