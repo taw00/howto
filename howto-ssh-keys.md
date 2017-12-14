@@ -87,7 +87,7 @@ cat ~/.ssh/xyzkey.pub | ssh todd@x.y.z 'cat - >> ~/.ssh/authorized_keys'
 * Log out of the remote machine and test your SSH key...
 
 ```
-ssh todd@x.y.z -i ~/.ssh/xyzkey
+ssh -i ~/.ssh/xyzkey todd@x.y.z
 ```
 
 * More permanently, you really need to add a config file to .ssh (on the local machine)...
@@ -122,6 +122,7 @@ host xyz
 ssh xyz
 
 # This will log in as root@x.y.z
+# Note: You will have to configure root's authorized_keys as well for this.
 ssh root@xyz
 
 # This will copy a file testfile.txt to x.y.z
