@@ -50,6 +50,8 @@ gpgcheck=0
 #gpgkey=https://<URL to GPG key>/key.asc
 ```
 
+Save that.
+
 Notes:
 
 * Replace "<USERNAME>" with your username -- if using the `/var` directory, that
@@ -57,7 +59,16 @@ doesn't apply, of course.
 * If you didn't sign your packages, make sure the "gpgcheck" flag is off.
 Signing packages is beyond the scope of this document.
 
-6. Install your RPM...
+6. Check that it yum/dnf knows about your repository...
+
+```
+sudo dnf repolist
+```
+
+Your repository should show on in the list.
+
+
+7. Install your RPM...
 
 Note: For the first run, you will likely have to use the `--refresh` flag and
 any time you add more RPMs and refresh that repository.
@@ -66,7 +77,7 @@ any time you add more RPMs and refresh that repository.
 sudo dnf install the-rpm-i-want-to-install
 ```
 
-7. Adding RPMs to that repository...
+8. Adding RPMs to that repository...
 
 Just go through the same process, but from step 3 ownwards. To install anything
 though you will definitely have to add `--refresh` to the `dnf install`
