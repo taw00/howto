@@ -40,17 +40,22 @@ add this text to it and then save...
 
 ```
 [my-rpms]
-gpgcheck=1
 name=My RPMs $releasever - $basearch
 baseurl=/home/<USERNAME>/repo
+enabled=1
+metadata_expire=1d
+gpgcheck=0
+#gpgcheck=1
+#gpgkey=file:///<path to GPG key>/key.asc
+#gpgkey=https://<URL to GPG key>/key.asc
 ```
 
 Notes:
 
 * Replace "<USERNAME>" with your username -- if using the `/var` directory, that
 doesn't apply, of course.
-* If you didn't sign your packages, turn off that "gpgcheck" flag. Signing
-packages is beyond the scope of this document.
+* If you didn't sign your packages, make sure the "gpgcheck" flag is off.
+Signing packages is beyond the scope of this document.
 
 6. Install your RPM...
 
