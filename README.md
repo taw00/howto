@@ -15,6 +15,7 @@ focused, HowTos.
 * [HowTo Port Forward via an SSH Tunnel](https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md)
 * [HowTo Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
 * [HowTo Rotate Log Files on Linux](https://github.com/taw00/howto/blob/master/howto-logrotate.md)
+* [HowTo Set up a local yum/dnf RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
 
 * [HowTo - Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
