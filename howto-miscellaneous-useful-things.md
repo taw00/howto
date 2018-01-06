@@ -119,3 +119,24 @@ Note, that is particularly useful for just about any port number. Remove the "wa
 netstat -ntu | grep :443 | grep -v LISTEN | awk '{print $5}' | cut -d: -f1 | grep -v 127.0.0.1 | wc -l
 ```
 
+## Checking a GnuPG public key file for it's signature
+
+If you are delivered a public key and someone says _"It's signature should be `F4ED 2CDD 2BB3 A9DD BEAA DE73 4D01 7B90 4F38 BDE2`"_ you want to be able to check. Ideally before importing it.
+
+Easy, download the public key file (pubkey.gpg in our example), and run the gpg command against it...
+
+```
+gpg --with-fingerprint --with-colons /path/to/pubkey.gpg
+```
+
+It should look something like this<br />_Note: this is an actual public key used to sign my Riot Chat packages..._
+
+```
+$ wget https://URL/path/to/pubkey.gpg
+$ gpg --with-fingerprint --with-colons ~/pubkey.gpg 
+pub:-:2048:1:4D017B904F38BDE2:2017-01-01:2021-12-31::-:taw_Riot (None) <taw#Riot@copr.fedorahosted.org>:
+fpr:::::::::F4ED2CDD2BB3A9DDBEAADE734D017B904F38BDE2:
+```
+
+Note: It is common to truncate that fingerprint to the last 8 characters. Ie. in that example, maybe the deliverer of that key will exclaim, "It's signature should be 0x4F38BDE2".
+
