@@ -232,13 +232,9 @@ enabled = true
 
 #### Enable `fail2ban` and reboot...
 
-_Note: The first time I attempted to start fail2ban &mdash; `sudo systemctl
-start fail2ban` &mdash; a socket did not get created correctly until I
-rebooted. I am not sure why._
-
 ```
 sudo systemctl enable fail2ban
-sudo reboot
+sudo systemctl restart fail2ban
 ```
 
 #### Monitor / Analyze
