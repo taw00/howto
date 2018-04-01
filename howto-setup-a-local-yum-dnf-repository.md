@@ -1,6 +1,6 @@
 # HowTo: Setup a Local YUM/DNF RPM Repository
 
-_Note: This document is a work in progress and simply scratch notes for the moment._
+_Note: This document is mere scratch notes at the moment. I.e. a work in progress._
 
 1. Create a directory for the repository: Example, ~/repo
 
@@ -80,7 +80,7 @@ sudo dnf install the-rpm-i-want-to-install
 
 8. Adding RPMs to that repository...
 
-Just go through the same process, but from step 3 ownwards. To install anything
+Just go through the same process starting at step 3. To install anything
 though you will definitely have to add `--refresh` to the `dnf install`
 commandline unless you wait the time needed for the metadata to expire.
 
@@ -91,10 +91,9 @@ createrepo_c .
 sudo dnf install the-rpm-i-want-to-install --refresh
 ```
 
-That is all there really is to it. You can also make RPMs from a `/var/repo`
-repo available via HTTP. To do that, reference
+Really, that is all there is to it. You can also make RPMs from a `/var/repo`
+repo available via HTTP. To do that, this reference may help you out:
 <http://www.remotecto.net/2009/10/20/creating-a-local-and-http-redhat-yum-repository/>
-will help you out.
 
 Good luck!
 
