@@ -137,7 +137,12 @@ sudo firewall-cmd --permanent --add-rich-rule='rule service name=ssh limit value
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit value=10/m accept'
 # Rate limit the ports associated to our example applications from the first example
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=t0ddapp limit value=5/s accept'
-sudo firewall-cmd --permanent --add-rich-rule='rule service name=9999 limit value=20/s accept'
+sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 port port=9999 protocol=tcp limit value=20/s accept'
+```
+
+Note, if you need to limit a range of ports, you can list them as such _(8232-8233 are just examples)_:
+```
+sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 port port=8232-8233 protocol=tcp limit value=20/s accept'
 ```
 
 We're done with the configuration! That --permanent switch in those commands
