@@ -1,4 +1,4 @@
-# Miscellaneous Useful Things!
+# HowTo Do Miscellaneous Useful Things!
 
 Here's my grab-bag of random useful things that don't yet warrant their own
 howtos.

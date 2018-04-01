@@ -1,4 +1,4 @@
-# HowTo do fun things with SSH tunnels
+# HowTo Do Fun Things with SSH Tunnels
 
 SSH is short for "secure shell". SSH is used to "log in" to a remote system
 through a secure communication channel. So, for example, if you have a remote

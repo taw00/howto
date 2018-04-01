@@ -1,4 +1,4 @@
-# HowTo: Setup a Local YUM/DNF RPM Repository
+# HowTo Setup a Local YUM/DNF RPM Repository
 
 _Note: This document is mere scratch notes at the moment. I.e. a work in progress._
 

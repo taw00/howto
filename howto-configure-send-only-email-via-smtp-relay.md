@@ -1,4 +1,4 @@
-# HowTo: Configure "send-only" Email via a 3rd Party SMTP Relay for Linux
+# HowTo Configure "send-only" Email via a 3rd Party SMTP Relay for Linux
 
 I want to be able to send automated alerts and whatnot so that my phone buzzes
 when something bad happens on a remote system that I manage. There are a number

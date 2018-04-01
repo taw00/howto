@@ -1,4 +1,4 @@
-# HowTo: Improve SSD Write & Delete Performance for Linux Systems by Enabling ATA TRIM
+# HowTo Improve SSD Write & Delete Performance for Linux Systems by Enabling ATA TRIM
 
 ***I.e. Enabling ATA TRIM discards for SSD (solid state drive) drive mounts***
 
