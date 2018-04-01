@@ -1,6 +1,6 @@
-== HowTo: Set up a local yum/dnf RPM repository
+# HowTo: Setup a Local YUM/DNF RPM Repository
 
-_Note: This document is a work in progress and simply notes for the moment._
+_Note: This document is a work in progress and simply scratch notes for the moment._
 
 1. Create a directory for the repository: Example, ~/repo
 
