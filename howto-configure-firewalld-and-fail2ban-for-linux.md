@@ -111,12 +111,13 @@ at will.
 For example...
 
 ```
-# My own service, which is defined in /etc/firewalld/t0ddapp.xml It uses ports 9997!
+# My own service, which is defined in /etc/firewalld/t0ddapp.xml It uses port 9997!
 sudo firewall-cmd --permanent --add-service t0ddapp
 
-# I also have a random other application that needs to have port 9999 open, but only for
-# TCP traffic.
+# I also have a random application that needs to have port 9999 open, and
+# another that requires ports 8232 and 8233 (but only for TCP traffic).
 sudo firewall-cmd --permanent --add-port=9999/tcp
+sudo firewall-cmd --permanent --add-port=8232-8233/tcp
 ```
 
 For this next example, let's rate limit traffic to those ports mentioned above
@@ -138,10 +139,6 @@ sudo firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit v
 # Rate limit the ports associated to our example applications from the first example
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=t0ddapp limit value=5/s accept'
 sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 port port=9999 protocol=tcp limit value=20/s accept'
-```
-
-Note, if you need to limit a range of ports, you can list them as such _(8232-8233 are just examples)_:
-```
 sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 port port=8232-8233 protocol=tcp limit value=20/s accept'
 ```
 
@@ -201,6 +198,7 @@ Edit `/etc/fail2ban/jail.d/local.conf` _(Optionally `/etc/fail2ban/jail.local`
 instead)_
 
 ```
+# You may have to edit this as user root, not just via sudo...
 sudo nano /etc/fail2ban/jail.d/local.conf
 ```
 
@@ -225,7 +223,6 @@ backend = systemd
 #destemail = youremail+fail2ban@example.com
 #sender = burner_email_address@yahoo.com
 #action = %(action_mwl)s
-
 
 [sshd]
 enabled = true
