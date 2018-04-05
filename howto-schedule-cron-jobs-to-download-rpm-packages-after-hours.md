@@ -1,12 +1,15 @@
 # HowTo Schedule a Nightly YUM or DNF Downloud of RPM Packages After Hours
 
-**Scenario:** Fedora Linux machine that has a daily influx of RPM packages
+**Scenario:**  
+Fedora Linux machine that has a daily influx of RPM packages
 (patches).
 
-**Problem:** I have bandwidth constraints from 8am to 10pm every day in my
+**Problem:**  
+I have bandwidth constraints from 8am to 10pm every day in my
 region.
 
-**Solution:** Set up a cronjob (a job scheduler) to download all those RPMs
+**Solution:**  
+Set up a cronjob (a job scheduler) to download all those RPMs
 after hours.
 
 RPM based linux machines are patched with RPM packages downloaded from the
@@ -19,7 +22,7 @@ that can also install these RPMs. It is essentially a wrapper around DNF.
 
 Let's solve our problem. You can do it one of two ways...
 
-_**Assumptions:**_
+**Assumptions:**
 
 * You have to perform these actions as the root user directly or indirectly via
   `sudo`. My examples use `sudo`.
@@ -28,7 +31,7 @@ _**Assumptions:**_
   _Edit crontab &xrarr; Save &xrarr; Exit &xrarr; Changes applied_
 * Read more about crontab here: https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md
 
-_**CentOS 7 or RHEL 7 Linux - Extra step**_
+**CentOS 7 or RHEL 7 Linux - _Extra step_**
 
 Install the yum downloader plugin:
 
@@ -37,7 +40,7 @@ sudo yum install yum-plugin-downloadonly
 ```
 
 
-**Method1:** Download the RPM packages after hours. Install them later.
+### Method1: Download the RPM packages after hours. Install them later.
 
 * Edit crontab:
 
@@ -90,13 +93,13 @@ sudo yum install yum-plugin-downloadonly
   #sudo yum list
   ```
 
-**Method2:** Download and install the RPM packages after hours.
+### Method2: Download and install the RPM packages after hours.
 
 Just do the same thing, but remove the `--downloadonly` option from the
 commandline.
 
 
-**Troubleshooting:**
+### Troubleshooting
 
 You can see your cron activity in the logs via...
 
