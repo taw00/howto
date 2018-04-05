@@ -28,13 +28,16 @@ _**Assumptions:**_
   _Edit crontab &xrarr; Save &xrarr; Exit &xrarr; Changes applied_
 * Read more about crontab here: https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md
 
-**Method1:** Download the RPM packages after hours. Install them later.
+_**CentOS 7 or RHEL 7 Linux - Extra step**_
 
-CentOS 7 or RHEL 7? You need to install an extra package to enable `yum` to be able to download only:
+Install the yum downloader plugin:
+
 ```
 sudo yum install yum-plugin-downloadonly
 ```
 
+
+**Method1:** Download the RPM packages after hours. Install them later.
 
 * Edit crontab:
 
