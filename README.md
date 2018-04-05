@@ -6,18 +6,21 @@ focused, HowTos.
 
 ---
 
-* [HowTo Configure FirewallD and Fail2Ban for Linux](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md)
-* [HowTo Configure "send-only" Email via SMTP Relay](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md)
-* [HowTo Configure Swap with a Swap File for Linux](https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md)
-* [HowTo Improve SSD Write and Delete Performance for Linux](https://github.com/taw00/howto/blob/master/howto-enable-ssd-trim-for-linux.md)
-* [HowTo Schedule Cron Jobs to Run at Random Intervals](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
-* [HowTo Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md)
-* [HowTo Port Forward via an SSH Tunnel](https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md)
-* [HowTo Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
-* [HowTo Rotate Log Files on Linux](https://github.com/taw00/howto/blob/master/howto-logrotate.md)
-* [HowTo Set up a local yum/dnf RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
+How to...
 
-* [HowTo - Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
+* [Configure FirewallD and Fail2Ban for Linux](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md)
+* [Configure "send-only" Email via SMTP Relay](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md)
+* [Configure Swap with a Swap File for Linux](https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md)
+* [Improve SSD Write and Delete Performance for Linux](https://github.com/taw00/howto/blob/master/howto-enable-ssd-trim-for-linux.md)
+* [Schedule Cron Jobs to Run at Random Intervals](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
+* [Schedule a Nightly YUM or DNF Downloud of RPM Packages After Hours](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
+* [Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md)
+* [Port Forward via an SSH Tunnel](https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md)
+* [Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
+* [Rotate Log Files on Linux](https://github.com/taw00/howto/blob/master/howto-logrotate.md)
+* [Set up a local YUM or DNF RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
+
+* [...Do Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
 ---
 
