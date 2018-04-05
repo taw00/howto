@@ -118,7 +118,7 @@ Hello there!
 Feb 26 15:52:35 UTC -- Job completed -- pid: 17144
 ```
 
-### Looking at the journal logs:**
+### Looking at the journal logs:
 
 If you want to watch cronjobs kicking off in the journal logs, do this...
 ```
