@@ -118,6 +118,18 @@ Hello there!
 Feb 26 15:52:35 UTC -- Job completed -- pid: 17144
 ```
 
+### Looking at the journal logs:**
+
+If you want to watch cronjobs kicking off in the journal logs, do this...
+```
+journalctl /usr/sbin/crond |tail -n100
+# ...or...
+journalctl /usr/sbin/crond -f
+```
+
+Do that as root or using `sudo`. I leave it to you, dear reader, to learn how
+to work with journalctl with a bit more sophistication.
+
 ---
 
 ### This completes our little demonstration.
@@ -162,14 +174,4 @@ env - `cat ~/cronenv` /bin/sh
 
 Now test your commandline. Your environment is now identical to cron's.
 
-**Final note - Looking at the journal logs:**
 
-If you want to watch cronjobs kicking off in the journal logs, do this...
-```
-journalctl /usr/sbin/crond |tail -n100
-# ...or...
-journalctl /usr/sbin/crond -f
-```
-
-Do that as root or using `sudo`. I leave it to you, dear reader, to learn how
-to work with journalctl with a bit more sophistication.
