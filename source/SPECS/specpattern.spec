@@ -326,6 +326,7 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 #rm -rf ../.npm/_cacache
 #rm -f %{srccodetree}/package-lock.json
 
+cd %{srccodetree}
 # <insert program building instructions here>
 
 
@@ -338,8 +339,6 @@ install -d -m755 -p %{buildroot}%{_bindir}
 install -d %{buildroot}%{installtree}
 install -d %{buildroot}%{_datadir}/applications
 install -d %{buildroot}%{_sysconfdir}/ld.so.conf.d
-
-#cp -a %%{srccodetree}/%%{linuxunpacked}/* %%{buildroot}%%{installtree}
 
 # a little ugly - symbolic link creation
 #ln -s %%{installtree}/%%{name} %%{buildroot}%%{_bindir}/%%{name}
