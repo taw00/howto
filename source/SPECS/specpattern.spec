@@ -95,7 +95,7 @@
 #     I.e., release value of 7.1, 7.2, 7.3, etc... are all pre-production
 #     release nomenclatures for an eventual release numbered at 8. When we go
 #     into production, we "round up" and drop the decimal and probably all the
-#     snapinfo as well.  specpattern-1.0.1-7.3.beta2 --> specpattern-1.0.10-8
+#     snapinfo as well.  specpattern-1.0.1-7.3.beta2 --> specpattern-1.0.1-8
 #
 # Source tarballs that I am using to create this...
 # - specpattern-1.0.1.tar.gz
@@ -150,7 +150,7 @@ BuildRequires: tree desktop-file-utils
 #Suggests:
 %endif
 
-# obsolete fictious previous version of package after a rename
+# obsolete fictitious previous version of package after a rename
 Provides: spec-pattern = 0.9
 Obsoletes: spec-pattern < 0.9
 
@@ -272,7 +272,7 @@ Release: %{_release}
 
 # Extracted source tree structure (extracted in .../BUILD)
 #   srcroot               specpattern-1.0
-#      \_srccodetree        \_specpattern-1.0.10
+#      \_srccodetree        \_specpattern-1.0.1
 #      \_srccontribtree     \_specpattern-1.0-contrib
 %define srcroot %{name}-%{vermajor}
 %define srccodetree %{name}-%{version}
@@ -301,7 +301,7 @@ can start stop and restart.
 # I create a root dir and place the source and contribution trees under it.
 # Extracted source tree structure (extracted in .../BUILD)
 #   srcroot               specpattern-1.0
-#      \_srccodetree        \_specpattern-1.0.10
+#      \_srccodetree        \_specpattern-1.0.1
 #      \_srccontribtree     \_specpattern-1.0-contrib
 
 mkdir %{srcroot}
@@ -405,4 +405,4 @@ umask 007
 
 %changelog
 * Sat Apr 14 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.1.testing.taw0
-- Initial build.
+- Initial test build.
