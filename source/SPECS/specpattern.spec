@@ -129,7 +129,7 @@ Summary: Example application RPM package
 # 0.1.testing.20180414
 %define snapinfo2 20180414
 # 0.1.testing.20180414.rp -- rp = repackaged (pre-built)
-%define snapshot_rp rp
+%define snapinfo_rp rp
 # 0.1.testing.20180414.rp.[DIST].taw0
 %define minorbump taw0
 
@@ -220,9 +220,9 @@ Version: %{vermajor}.%{verminor}
 %undefine _relbuilder_pt2
 %if %{sourceIsPrebuilt}
   %if 0%{?_snapinfo:1}
-    %define _relbuilder_pt2 %{_snapinfo}.%{snapshot_rp}
+    %define _relbuilder_pt2 %{_snapinfo}.%{snapinfo_rp}
   %else
-    %define _relbuilder_pt2 %{snapshot_rp}
+    %define _relbuilder_pt2 %{snapinfo_rp}
   %endif
 %else
   %if 0%{?_snapinfo:1}
