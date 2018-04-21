@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- specpattern.xml
+     Location if installed by an rpm: /usr/lib/firewalld/
+     Location if installed by a human: /etc/firewalld/services/ -->
+<service>
+  <short>specpattern example service</short>
+  <description>specpattern is an example desktop application and
+systemd-enabled service. Or just a daemon. It doesn't currently
+require or even use the port listed below, but this serves as an
+example that if your program did use that port, you can have a nice
+tidy firewalld definition file in order to make managing it much
+easier. The port was picked at random.</description>
+  <port protocol="tcp" port="8436"/>
+</service>

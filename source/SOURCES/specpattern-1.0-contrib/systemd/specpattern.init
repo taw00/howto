@@ -1,0 +1,110 @@
+#!/bin/sh
+#
+# specpattern - a example program that can run as a service.
+#
+# chkconfig:   2345 79 21
+# description: specpattern is a neat little example service.
+#              I really hope you like it.
+#              The init here is not as fully featured as the systemd service.
+
+
+### BEGIN INIT INFO
+# Provides: specpatternd
+# Required-Start: $local_fs $network $remote_fs $time
+# Required-Stop: $local_fs $network $remote_fs $time
+# Should-Start:
+# Should-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description: Example application
+# Description: specpattern is a neat little example service.
+#              I really hope you like it.
+#              The init here is not as fully featured as the systemd service.
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+exec="/usr/sbin/specpatternd"
+prog="specpatternd"
+config="/etc/specpattern/specpattern.conf"
+
+[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
+
+lockfile=/var/lock/subsys/$prog
+
+start() {
+	[ -x $exec ] || exit 5
+	echo -n $"Starting specpatternd Daemon $prog: "
+	daemon --user spuser $exec -daemon -conf=$CONFIG_FILE -datadir=$DATA_DIR -pid=$PID_FILE $OPTIONS &>/dev/null
+	retval=$?
+	/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh start $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS &>/dev/null
+	echo
+	[ $retval -eq 0 ] && touch $lockfile
+	return $retval
+}
+
+stop() {
+	echo -n $"Stopping specpatternd Daemon $prog: "
+	killproc ${prog}
+	retval=$?
+	/usr/bin/sleep $STOP_SLEEP_TIME
+	/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh stop $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS &>/dev/null
+	echo
+	[ $retval -eq 0 ] && rm -f $lockfile
+	return $retval
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	restart
+}
+
+force_reload() {
+	restart
+}
+
+rh_status() {
+	status ${prog}
+}
+
+rh_status_q() {
+	rh_status >/dev/null 2>&1
+}
+
+
+case "$1" in
+	start)
+		rh_status_q && exit 0
+		$1
+		;;
+	stop)
+		rh_status_q || exit 0
+		$1
+		;;
+	restart)
+		$1
+		;;
+	reload)
+		rh_status_q || exit 7
+		$1
+		;;
+	force-reload)
+		force_reload
+		;;
+	status)
+		rh_status
+		;;
+	condrestart|try-restart)
+		rh_status_q || exit 0
+		restart
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+		exit 2
+esac
+exit $?

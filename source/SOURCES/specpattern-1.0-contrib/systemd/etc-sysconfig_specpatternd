@@ -1,0 +1,51 @@
+# Configuration settings leveraged by the systemd-managed specpatternd.service
+
+# EMAIL_FROM, EMAIL_TO, SPECPATTERN_ALIAS
+# Send email upon start, stop, and restart of the specpatternd.service
+#
+# If these values are set, emails will be sent "from" EMAIL_FROM, "to" EMAIL_TO,
+# and with SPECPATTERN_ALIAS as a subject line differentiator.
+# Therefore, edit these settings as appropriate for your circumstance.
+#
+# NOTE:
+# To function without error, your system MUST be configured to be able to send
+# email successfully using these settings. Configuring your system to be able
+# to email is left as an exercise to the reader of this comment. You can test
+# if your system is appropriately configured with a simple...
+#
+# echo "body" | mail -s "test subject" -r your_from@example.com your_to@example.com
+#
+# You may have to issue an systemctl daemon-reload for these changes to take
+# effect.
+
+EMAIL_FROM=""
+EMAIL_TO=""
+SPECPATTERN_ALIAS="SPECPATTERN"
+
+
+# ---- settings below this line are rarely manually edited ----------
+
+# System service defaults.
+# Don't change these unless you know what you're doing.
+CONFIG_FILE="/etc/specpattern/specpattern.conf"
+DATA_DIR="/var/lib/specpattern"
+
+# How long to sleep in seconds after a start / stop, regardless of pid status
+START_SLEEP_TIME=0
+STOP_SLEEP_TIME=5
+
+
+# ---- Variables rarely used
+# OPTIONS will override specpattern.conf settings
+# 9 times out of 10, edit your specpattern.conf instead of this.
+OPTIONS=""
+#OPTIONS="-reindex"
+
+# ---- Variables no longer used or deprecated ---------------------------------
+# PID_FILE configuration not used anymore because you can't set PIDFile in the
+# specpatternd.service with an environment variable. So, if you configured multiple
+# systemd managed services, you need to copy specpatternd.service and edit the pid
+# file setting.
+#PID_FILE="/run/specpatternd/specpatternd.pid"
+
+

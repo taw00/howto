@@ -1,0 +1,11 @@
+/var/log/specpattern/debug.log {
+    su spuser spgroup
+    rotate 5
+    missingok
+    notifempty
+    compress
+    maxsize 50M
+    copytruncate
+    nodateext
+}
+
