@@ -9,5 +9,5 @@ Type=Application
 Categories=Network;Chat;
 MimeType=text/plain;
 StartupNotify=true
-Icon=riot
+Icon=specpattern
 Name[en_US]=specpattern.desktop
