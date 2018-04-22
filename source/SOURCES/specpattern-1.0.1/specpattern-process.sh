@@ -1,11 +1,13 @@
 #!/usr/bin/bash
 
+SECONDS=10
+
 # I can write this loop two ways...
 # example 1
 #while
 #  _date=$(date +%F\ %R:%S)
-#  printf "$_date Hello. I am the specpattern process example. I repeat this statement every 10s.\n"
-#  sleep 10s
+#  printf "$_date - Hi! I am the specpattern process. I repeat this statement every ${SECONDS}s.\n"
+#  sleep ${SECONDS}s
 #do
 # :;
 #done
@@ -14,9 +16,7 @@
 while [ anything ]
 do
   _date=$(date +%F\ %R:%S)
-  printf "${_date}\n"
-  printf "    Hi! I'm the specpattern process example!\n"
-  printf "    I repeat this statement every 10s.\n"
-  sleep 10s
+  printf "${_date} - Hi! I'm the specpattern process! I repeat this statement every ${SECONDS}s.\n"
+  sleep ${SECONDS}s
 done
 

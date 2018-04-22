@@ -20,7 +20,9 @@ EnvironmentFile=/etc/sysconfig/specpatternd
 
 # Example of pre-flight check
 # Check for config file and toss sensible message in the logs (journalctl -xe)
+ExecStartPre=-/usr/bin/echo "Starting."
 ExecStartPre=/etc/sysconfig/specpatternd-scripts/specpatternd.config-file-check.sh
+ExecStartPre=-/etc/sysconfig/specpatternd-scripts/specpatternd.write-to-journal.sh start $JOURNAL_IDENTIFIER "Service is starting."
 
 #PIDFile=/run/specpatternd/specpatternd.pid # PIDFile= is unneccessary (systemd figures it out) and throws false errors in the journal
 # This examle of an ExecStart shows how another example program passes values.
@@ -37,7 +39,8 @@ TimeoutStartSec=10m
 # Really should execute a proper RPC or some such to cleaning shut the program down.
 #ExecStop=/usr/bin/kill /run/specpatternd/specpatternd.pid
 # Need to allow specpatternd to shutdown properly before taking additional actions.
-ExecStopPost=-/usr/bin/echo "Sleeping during shutdown for ${STOP_SLEEP_TIME} seconds"
+ExecStopPost=-/usr/bin/echo "Shutting down. Sleeping for ${STOP_SLEEP_TIME} seconds"
+ExecStopPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.write-to-journal.sh stop $JOURNAL_IDENTIFIER "Service is shutting down. Sleeping for ${STOP_SLEEP_TIME} seconds"
 ExecStopPost=-/usr/bin/sleep $STOP_SLEEP_TIME
 # Send email at stop
 ExecStopPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh stop $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS

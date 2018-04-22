@@ -285,6 +285,11 @@ can start stop and restart.
 
 
 %prep
+# CREATING RPM:
+# - prep step (comes before build)
+# - This step extracts all code archives and takes any preparatory steps
+#   necessary prior to the build.
+#
 # Prep section starts us in directory .../BUILD (_builddir)
 #
 # References (the docs for this universally suck):
@@ -306,11 +311,25 @@ mkdir %{srcroot}
 # Libraries ldconfig file - we create it, because lib or lib64
 echo "%{_libdir}/%{name}" > %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf
 
+# README message about the /var/lib/specpattern directory
+echo "\
+This directory only exists as an example data directory
+
+The spuser home dir is here: /var/lib/%{name}
+The systemd managed %{name} datadir is also here: /var/lib/%{name}
+The %{name} config file is housed here: /etc/%{name}/%{name}.conf
+" > %{srccontribtree}/systemd/var-lib-%{name}_README
+
 # For debugging purposes...
 cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 
 %build
+# CREATING RPM:
+# - build step (comes before install step)
+# - This step performs any action that takes the code and turns it into a
+#   runnable form. Usually by compiling.
+#
 # This section starts us in directory .../<_builddir>/<srcroot>
 
 # I do this for all npm processed applications...
@@ -327,6 +346,12 @@ cd %{srccodetree}
 
 
 %install
+# CREATING RPM:
+# - install step (comes before files step)
+# - This step moves anything needing to be part of the package into the
+#   {buildroot}, therefore mirroring the final directory and file structure of
+#   an installed RPM.
+#
 # This section starts us in directory .../<_builddir>/<srcroot>
 
 # Cheatsheet for built-in RPM macros:
@@ -412,18 +437,13 @@ install -D -m640 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{buildroot}
 install -D -m644 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{srccontribtree}/%{name}.conf.example
 
 # README message about the /var/lib/specpattern directory
-echo "\
-This directory only exists as an example data directory
-
-The spuser home dir is here: /var/lib/%{name}
-The systemd managed %{name} datadir is also here: /var/lib/%{name}
-The %{name} config file is housed here: /etc/%{name}/%{name}.conf
-" > %{buildroot}%{_sharedstatedir}/%{name}/README
+install -D -m644 %{srccontribtree}/systemd/var-lib-%{name}_README %{buildroot}%{_sharedstatedir}/%{name}/README
 
 # System services
 install -D -m600 -p %{srccontribtree}/systemd/etc-sysconfig_%{name}d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d
 install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.send-email.sh
 install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.config-file-check.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.config-file-check.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.write-to-journal.sh
 install -D -m644 -p %{srccontribtree}/systemd/usr-lib-systemd-system_%{name}d.service %{buildroot}%{_unitdir}/%{name}d.service
 install -D -m644 -p %{srccontribtree}/systemd/usr-lib-tmpfiles.d_%{name}d.conf %{buildroot}%{_tmpfilesdir}/%{name}d.conf
 
@@ -438,6 +458,13 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %files
+# CREATING RPM:
+# - files step (final step)
+# - This step makes a declaration of ownership of any listed directories
+#   or files
+# - The install step should have set permissions and ownership correctly,
+#   but of final tweaking is often done in this section
+#
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 
@@ -485,6 +512,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name}d
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.send-email.sh
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.config-file-check.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.write-to-journal.sh
 
 # application configuration when run as systemd service
 %config(noreplace) %attr(640,%{systemuser},%{systemgroup}) %{_sysconfdir}/%{name}/%{name}.conf
@@ -512,7 +540,11 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %pre
-# This section starts us in directory .../BUILD/specpattern-1.0 (srcroot)
+# INSTALLING THE RPM:
+# - pre section (runs before the install process)
+# - system users are added if needed. Any other roadbuilding.
+#
+# This section starts us in directory .../BUILD/<srcroot>
 # Note that _sharedstatedir is /var/lib and /var/lib/specpattern will be the homedir
 # for spuser
 #
@@ -522,6 +554,11 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 
 %post
+# INSTALLING THE RPM:
+# - post section (runs after the install process is complete)
+# - refresh the lib config (ldconfig)
+# - restart firewalls
+#
 umask 007
 /sbin/ldconfig > /dev/null 2>&1
 # test for config and then do post install stuff to the service
@@ -531,6 +568,12 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %postun
+# UNINSTALLING THE RPM:
+# - postun section (runs after an RPM has been removed)
+# - refresh the lib config (ldconfig)
+# - restart firewalls (maybe)
+# - any other post uninstallation cleanup
+#
 umask 007
 /sbin/ldconfig > /dev/null 2>&1
 
@@ -548,6 +591,7 @@ umask 007
 - Added a simple little specpattern loop program that runs in a terminal or  
   is daemonized.
 - Added systemd and firewalld service definitions. Added logrotation rules.
+- Logs nicely to the journal.
 
 * Sat Apr 14 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.1.testing.taw0
 - Initial test build.

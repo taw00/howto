@@ -21,6 +21,7 @@
 EMAIL_FROM=""
 EMAIL_TO=""
 SPECPATTERN_ALIAS="SPECPATTERN"
+JOURNAL_IDENTIFIER="specpatternd"
 
 
 # ---- settings below this line are rarely manually edited ----------
@@ -39,7 +40,6 @@ STOP_SLEEP_TIME=5
 # OPTIONS will override specpattern.conf settings
 # 9 times out of 10, edit your specpattern.conf instead of this.
 OPTIONS=""
-#OPTIONS="-reindex"
 
 # ---- Variables no longer used or deprecated ---------------------------------
 # PID_FILE configuration not used anymore because you can't set PIDFile in the
