@@ -19,6 +19,7 @@ How to...
 * [Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
 * [Rotate Log Files on Linux](https://github.com/taw00/howto/blob/master/howto-logrotate.md)
 * [Set up a local YUM or DNF RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
+* [Package an Application as an RPM and Build It Using Mock](https://github.com/taw00/howto/blob/master/howto-package-an-app-as-an-rpm-and-build-it-using-mock.md)
 
 * [...Do Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
