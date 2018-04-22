@@ -20,13 +20,14 @@ EnvironmentFile=/etc/sysconfig/specpatternd
 
 # Example of pre-flight check
 # Check for config file and toss sensible message in the logs (journalctl -xe)
-ExecStartPre=/etc/sysconfig/specpatternd-scripts/specpatternd.conf-file-check.sh
+ExecStartPre=/etc/sysconfig/specpatternd-scripts/specpatternd.config-file-check.sh
 
 #PIDFile=/run/specpatternd/specpatternd.pid # PIDFile= is unneccessary (systemd figures it out) and throws false errors in the journal
-ExecStart=/usr/sbin/specpatternd -daemon -conf=${CONFIG_FILE} -datadir=${DATA_DIR} -pid=/run/specpatternd/specpatternd.pid $OPTIONS
+# This examle of an ExecStart shows how another example program passes values.
+#ExecStart=/usr/sbin/specpatternd -daemon -conf=${CONFIG_FILE} -datadir=${DATA_DIR} -pid=/run/specpatternd/specpatternd.pid $OPTIONS
+ExecStart=/usr/sbin/specpatternd | systemd-cat -t specpatternd
 # Experimental: sleep then mnsync reset
 #ExecStartPost=/usr/bin/sleep $START_SLEEP_TIME
-#ExecStartPost=/usr/bin/specpattern-cli -conf=${CONFIG_FILE} -datadir=${DATA_DIR} mnsync reset
 # Send email after start
 ExecStartPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh start $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS
 # Time that systemd gives a process to start before shooting it in the head

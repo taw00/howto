@@ -4,7 +4,7 @@
 # example 1
 #while
 #  _date=$(date +%F\ %R:%S)
-#  echo "$_date Hello. I am the specpattern process example. I repeat this statement every 10s."
+#  printf "$_date Hello. I am the specpattern process example. I repeat this statement every 10s.\n"
 #  sleep 10s
 #do
 # :;
@@ -14,9 +14,9 @@
 while [ anything ]
 do
   _date=$(date +%F\ %R:%S)
-  echo "$_date"
-  echo "    Hi! I'm the specpattern process example!"
-  echo "    I repeat this statement every 10s."
+  printf "${_date}\n"
+  printf "    Hi! I'm the specpattern process example!\n"
+  printf "    I repeat this statement every 10s.\n"
   sleep 10s
 done
 
