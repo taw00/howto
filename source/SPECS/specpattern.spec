@@ -32,7 +32,7 @@
 #
 # ---
 #
-# Included will be (eventually)...
+# Included will be...
 # * a functional minimal application that can be installed on Fedora Linux,
 #   CentOS, or RHEL.
 # * package release flags
@@ -46,9 +46,9 @@
 #   - configuration
 #   - email upon start, stop, systemd-level configuration
 # * documentation
-#   - docs
+#   - docs (eventually)
 #   - license file
-#   - man page (1 and 5)
+#   - man page (1 and 5) (eventually)
 # * a filewalld configuration example
 # * logrotation
 # * application as desktop, to include menu icons and such (hicolor and
@@ -107,38 +107,103 @@ Summary: Example application RPM package
 #BuildArch: noarch
 
 %define targetIsProduction 0
-%define productionIncludesSnapinfo 0
-%define preproductionIncludesSnapinfo 1
+%define includeSnapinfo 1
 %define includeMinorbump 1
 %define sourceIsPrebuilt 0
+
 
 # VERSION
 # 1.0
 %define vermajor 1.0
 # 1.0.1
 %define verminor 1
+Version: %{vermajor}.%{verminor}
 
-# RELEASE (production - "targetIsProduction 1")
-# 1
-%define pkgrel 1
-# 1.rp -- rp = repackaged (if pre-built source)
+
+# RELEASE
+# if production - "targetIsProduction 1"
+%define pkgrel_prod 1
+
+# if pre-production - "targetIsProduction 0"
+# eg. 0.3.testing
+%define pkgrel_preprod 0
+%define extraver_preprod 4
+%define snapinfo testing
+#%%define snapinfo testing.20180424
+#%%define snapinfo beta2.41d5c63.gh
+
+# if sourceIsPrebuilt (rp=repackaged)
+# eg. 1.rp (prod) or 0.3.testing.rp (pre-prod)
 %define snapinfo_rp rp
-# 1.[DIST].taw0 or 1.rp.[DIST].taw0
+
+# if includeMinorbump
 %define minorbump taw0
 
-# RELEASE (pre-production specific - "targetIsProduction 0")
-# 0 (pre-production)
-%define pkgrel_preprod 0
-# 0.2
-%define extraver_preprod 2
-# 0.2.testing
-%define snapinfo testing
-# and with repackaging info and minorbump info, the release may look like...
-# 0.2.testing.20180414.[DIST].taw0 or 0.2.testing.20180414.rp.[DIST].taw0
+# Building the release string (don't edit this)...
 
-# Extra examples
-# 0.2.testing.20180414 - extended snapinfo example
-#%%define snapinfo testing.20180414
+%if %{targetIsProduction}
+  %if %{includeSnapinfo}
+    %{warn:"Warning: target is production and yet you want snapinfo included. This is not typical."}
+  %endif
+%else
+  %if ! %{includeSnapinfo}
+    %{warn:"Warning: target is pre-production and yet you elected not to incude snapinfo (testing, beta, ...). This is not typical."}
+  %endif
+%endif
+
+# release numbers
+%undefine _relbuilder_pt1
+%if %{targetIsProduction}
+  %define _pkgrel %{pkgrel_prod}
+  %define _relbuilder_pt1 %{pkgrel_prod}
+%else
+  %define _pkgrel %{pkgrel_preprod}
+  %define _extraver %{extraver_preprod}
+  %define _relbuilder_pt1 %{_pkgrel}.%{_extraver}
+%endif
+
+# snapinfo and repackage (pre-built) indicator
+%undefine _relbuilder_pt2
+%if ! %{includeSnapinfo}
+  %undefine snapinfo
+%endif
+%if ! %{sourceIsPrebuilt}
+  %undefine snapinfo_rp
+%endif
+%if 0%{?snapinfo_rp:1}
+  %if 0%{?snapinfo:1}
+    %define _relbuilder_pt2 %{snapinfo}.%{snapinfo_rp}
+  %else
+    %define _relbuilder_pt2 %{snapinfo_rp}
+  %endif
+%else
+  %if 0%{?snapinfo:1}
+    %define _relbuilder_pt2 %{snapinfo}
+  %endif
+%endif
+
+# put it all together
+# pt1 will always be defined. pt2 and minorbump may not be
+%define _release %{_relbuilder_pt1}
+%if ! %{includeMinorbump}
+  %undefine minorbump
+%endif
+%if 0%{?_relbuilder_pt2:1}
+  %if 0%{?minorbump:1}
+    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}.%{minorbump}
+  %else
+    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}
+  %endif
+%else
+  %if 0%{?minorbump:1}
+    %define _release %{_relbuilder_pt1}%{?dist}.%{minorbump}
+  %else
+    %define _release %{_relbuilder_pt1}%{?dist}
+  %endif
+%endif
+
+Release: %{_release}
+# ----------- end of release building section
 
 # You can/should use URLs for sources as well. That is beyond the scope of
 # this example.
@@ -167,82 +232,16 @@ Provides: spec-pattern = 0.9
 Obsoletes: spec-pattern < 0.9
 
 License: MIT
-Group: Applications/Internet
 URL: https://github.com/taw00/howto
+# Group is deprecated. Don't use it. Left here as a reminder...
+# https://fedoraproject.org/wiki/RPMGroups 
+#Group: Unspecified
 
-#
-# Build the version string
-# Don't edit this
-#
-Version: %{vermajor}.%{verminor}
-
-#
-# Build the release string
-# Don't edit this large section
-#
-
-# release numbers
-%undefine _relbuilder_pt1
-%if %{targetIsProduction}
-  %define _pkgrel %{pkgrel}
-  %define _relbuilder_pt1 %{pkgrel}
-%else
-  %define _pkgrel %{pkgrel_preprod}
-  %define _extraver %{extraver_preprod}
-  %define _relbuilder_pt1 %{_pkgrel}.%{_extraver}
-%endif
-
-# snapinfo pt1
-%undefine _snapinfo
-%if %{targetIsProduction}
-  %if %{productionIncludesSnapinfo}
-    %define _snapinfo %{snapinfo}
-  %endif
-%else
-  %if %{preproductionIncludesSnapinfo}
-    %define _snapinfo %{snapinfo}
-  %endif
-%endif
-
-# snapinfo pt2 - finalized, to include repackage (pre-built) indicator
-%undefine _relbuilder_pt2
-%if %{sourceIsPrebuilt}
-  %if 0%{?_snapinfo:1}
-    %define _relbuilder_pt2 %{_snapinfo}.%{snapinfo_rp}
-  %else
-    %define _relbuilder_pt2 %{snapinfo_rp}
-  %endif
-%else
-  %if 0%{?_snapinfo:1}
-    %define _relbuilder_pt2 %{_snapinfo}
-  %endif
-%endif
-
-# put it all together
-# pt1 will always be defined. pt2 and minorbump may not be
-%if ! %{includeMinorbump}
-  %undefine minorbump
-%endif
-%define _release %{_relbuilder_pt1}
-%if 0%{?_relbuilder_pt2:1}
-  %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}.%{minorbump}
-  %else
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}
-  %endif
-%else
-  %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}%{?dist}.%{minorbump}
-  %else
-    %define _release %{_relbuilder_pt1}%{?dist}
-  %endif
-%endif
-
-Release: %{_release}
-# ----------- end of release building section
-
-# If you change these, you have to dig into configuration files to change
-# things there as well. Same with "name" as well.
+# CHANGE or DELETE this for your package
+# System user for the systemd specpatternd.service.
+# If you want to retain the systemd service configuration and you therefore
+# change this, you will have to dig into the various -contrib configuration
+# files to change things there as well. 
 %define systemuser spuser
 %define systemgroup spgroup
 
@@ -264,9 +263,9 @@ Release: %{_release}
 %define _hardened_build 1
 
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               specpattern-1.0
-#      \_srccodetree        \_specpattern-1.0.1
-#      \_srccontribtree     \_specpattern-1.0-contrib
+#   srcroot               {name}-1.0
+#      \_srccodetree        \_{name}-1.0.1
+#      \_srccontribtree     \_{name}-1.0-contrib
 %define srcroot %{name}-%{vermajor}
 %define srccodetree %{name}-%{version}
 %define srccontribtree %{name}-%{vermajor}-contrib
@@ -298,9 +297,9 @@ can start stop and restart.
 # * autosetup -q and setup -q leave out the root directory.
 # I create a root dir and place the source and contribution trees under it.
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               specpattern-1.0
-#      \_srccodetree        \_specpattern-1.0.1
-#      \_srccontribtree     \_specpattern-1.0-contrib
+#   srcroot               {name}-<vermajor>
+#      \_srccodetree        \_{name}-<version>
+#      \_srccontribtree     \_{name}-<vermajor>-contrib
 
 mkdir %{srcroot}
 # sourcecode
@@ -330,7 +329,7 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 # - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
 #
-# This section starts us in directory .../<_builddir>/<srcroot>
+# This section starts us in directory <_builddir>/<srcroot>
 
 # I do this for all npm processed applications...
 # Clearing npm's cache will hopefully elminate SHA1 integrity issues.
@@ -352,7 +351,7 @@ cd %{srccodetree}
 #   {buildroot}, therefore mirroring the final directory and file structure of
 #   an installed RPM.
 #
-# This section starts us in directory .../<_builddir>/<srcroot>
+# This section starts us in directory <_builddir>/<srcroot>
 
 # Cheatsheet for built-in RPM macros:
 #   _bindir = /usr/bin
@@ -429,8 +428,8 @@ install -D -m644 -p %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf %{buildroot}
 #install -D -m644 %%{srccodetree}/share/man/man1/* %%{buildroot}%%{_mandir}/man1/
 
 ## Bash completion
-#install -D -m644 %%{srccontribtree}/bash/specpattern.bash-completion  %%{buildroot}%%{_datadir}/bash-completion/completions/specpattern
-#install -D -m644 %%{srccontribtree}/bash/specpatternd.bash-completion %%{buildroot}%%{_datadir}/bash-completion/completions/specpatternd
+#install -D -m644 %%{srccontribtree}/bash/%%{name}.bash-completion  %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}
+#install -D -m644 %%{srccontribtree}/bash/%%{name}d.bash-completion %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}d
 
 # Config
 install -D -m640 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
@@ -556,26 +555,25 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 %post
 # INSTALLING THE RPM:
 # - post section (runs after the install process is complete)
-# - refresh the lib config (ldconfig)
-# - restart firewalls
 #
 umask 007
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
-# test for config and then do post install stuff to the service
+# refresh systemd context
 test -e %{_sysconfdir}/%{name}/%{name}.conf && %systemd_post %{name}d.service
-# firewalld only partially picks up changes to its services files without this
+# refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %postun
 # UNINSTALLING THE RPM:
 # - postun section (runs after an RPM has been removed)
-# - refresh the lib config (ldconfig)
-# - restart firewalls (maybe)
-# - any other post uninstallation cleanup
 #
 umask 007
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
+# refresh firewalld context
+test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 #%clean
@@ -585,6 +583,13 @@ umask 007
 
 
 %changelog
+* Thu Apr 26 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.4.testing.taw0
+- cleanup - version and release build should all be together.
+
+* Tue Apr 24 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.3.testing.taw0
+- Further simplified the snapinfo, minorbump, and repackage logic.
+- Issue warnings if your production and snapinfo settings are atypical.
+
 * Sun Apr 22 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.2.testing.taw0
 - Simplified the snapinfo logic.
 - Updated the desktop icons.
