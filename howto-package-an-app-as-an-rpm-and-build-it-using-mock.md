@@ -96,8 +96,8 @@ Let's use this 'specpattern' RPM as an example (that's what it is here for).
 1. Clone this github repo and cd into it...
 
 ```sh
-clone https://github.com/taw00/howto.git
-cd howto.git/source/
+git clone https://github.com/taw00/howto.git
+cd howto/source/
 ```
 
 2. Assemble a source RPM for Fedora 27
