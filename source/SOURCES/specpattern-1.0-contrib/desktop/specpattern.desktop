@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=Spec Pattern
-Comment=Spec Pattern is a package that templates a typical RPM packaging pattern for Todd Warner
-GenericName=Todd's RPM Spec template and example fake app
+Comment=This Spec Pattern RPM serves as a packaging example/template (a pattern). This desktop application exists only to serve this purpose.
+GenericName=Todd's RPM Spec template and example app configuration
 Exec=/usr/bin/specpattern
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Categories=Network;Chat;
+Categories=Development;
 MimeType=text/plain;
 StartupNotify=true
 Icon=specpattern

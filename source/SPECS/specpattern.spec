@@ -59,6 +59,8 @@
 # Further reading:
 # * https://docs.fedoraproject.org/quick-docs/en-US/creating-rpm-packages.html
 # * https://fedoraproject.org/wiki/Packaging:Guidelines?rd=Packaging/Guidelines
+# * https://fedoraproject.org/wiki/Packaging:Guidelines?rd=PackagingGuidelines#Desktop_files
+# * https://fedoraproject.org/wiki/Packaging:AppData
 # * https://fedoraproject.org/wiki/packaging:versioning
 # * https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
 # * https://developer.fedoraproject.org/deployment/rpm/about.html
@@ -68,12 +70,10 @@
 # * http://rpm5.org/docs/api/macros.html
 # * https://fedoraproject.org/wiki/Licensing:Main
 # * https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing
+# * https://fedoraproject.org/wiki/Packaging:RPMMacros
 #
-# A note about specfile comments:
-# The percent sign + {variable} is a semantic for macro expansion. They are
-# expanded even in comments. To escape them you double up the sign. Therefore
-# all macro values will have their percent signs doubled in comments, example
-# %%{variable}, but in practice they will only be used singularly.
+# A note about specfile comments: commented out macros have to have their %'s
+# doubled up in comments in order to have them properly escaped.
 #
 # ---
 #
@@ -103,7 +103,7 @@
 #
 
 Name: specpattern
-Summary: Example application RPM package
+Summary: A packaging example/template (a pattern)
 #BuildArch: noarch
 
 %define targetIsProduction 0
@@ -113,9 +113,8 @@ Summary: Example application RPM package
 
 
 # VERSION
-# 1.0
+# eg. 1.0.1
 %define vermajor 1.0
-# 1.0.1
 %define verminor 1
 Version: %{vermajor}.%{verminor}
 
@@ -125,15 +124,15 @@ Version: %{vermajor}.%{verminor}
 %define pkgrel_prod 1
 
 # if pre-production - "targetIsProduction 0"
-# eg. 0.3.testing
+# eg. 0.5.testing -- pkgrel_preprod should always = pkgrel_prod-1
 %define pkgrel_preprod 0
-%define extraver_preprod 4
+%define extraver_preprod 5
 %define snapinfo testing
 #%%define snapinfo testing.20180424
 #%%define snapinfo beta2.41d5c63.gh
 
 # if sourceIsPrebuilt (rp=repackaged)
-# eg. 1.rp (prod) or 0.3.testing.rp (pre-prod)
+# eg. 1.rp (prod) or 0.5.testing.rp (pre-prod)
 %define snapinfo_rp rp
 
 # if includeMinorbump
@@ -167,7 +166,11 @@ Version: %{vermajor}.%{verminor}
 %if ! %{includeSnapinfo}
   %undefine snapinfo
 %endif
-%if ! %{sourceIsPrebuilt}
+%if 0%{?sourceIsPrebuilt:1}
+  %if ! %{sourceIsPrebuilt}
+    %undefine snapinfo_rp
+  %endif
+%else
   %undefine snapinfo_rp
 %endif
 %if 0%{?snapinfo_rp:1}
@@ -216,11 +219,11 @@ Source1: %{name}-%{vermajor}-contrib.tar.gz
 Requires: gnome-terminal
 
 # BuildRequires indicates everything you need to build the RPM
-# For desktop environments, you want to test the {name}.desktop file
-# For mock environments I add vim-enhanced and less so I can introspect by hand
-#BuildRequires: tree
-BuildRequires: tree desktop-file-utils
-#BuildRequires: tree desktop-file-utils vim-enhanced less
+BuildRequires: tree
+# So I can introspect the mock build environment...
+#BuildRequires: tree vim-enhanced less
+# Required for desktop applications (validation of .desktop and .xml files)
+BuildRequires: desktop-file-utils libappstream-glib
 
 # CentOS/RHEL/EPEL can't do "Suggests:"
 %if 0%{?fedora:1}
@@ -278,18 +281,17 @@ URL: https://github.com/taw00/howto
 
 
 %description
-Example Application is just an example application. You can find it in your
-desktop menus and there is even a systemd service called exampleappd that you
-can start stop and restart. 
+This Spec Pattern RPM serves as a packaging example/template (a pattern). It
+includes a simple application that serves to demonstrate how to configure
+and deploy a graphical desktop application, systemd service, and more.
 
 
 %prep
+# Prep section starts us in directory .../BUILD -or- {_builddir}
 # CREATING RPM:
 # - prep step (comes before build)
 # - This step extracts all code archives and takes any preparatory steps
 #   necessary prior to the build.
-#
-# Prep section starts us in directory .../BUILD (_builddir)
 #
 # References (the docs for this universally suck):
 # * http://ftp.rpm.org/max-rpm/s1-rpm-inside-macros.html
@@ -297,9 +299,9 @@ can start stop and restart.
 # * autosetup -q and setup -q leave out the root directory.
 # I create a root dir and place the source and contribution trees under it.
 # Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               {name}-<vermajor>
-#      \_srccodetree        \_{name}-<version>
-#      \_srccontribtree     \_{name}-<vermajor>-contrib
+#   srcroot               {name}-{vermajor}
+#      \_srccodetree        \_{name}-{version}
+#      \_srccontribtree     \_{name}-{vermajor}-contrib
 
 mkdir %{srcroot}
 # sourcecode
@@ -314,7 +316,7 @@ echo "%{_libdir}/%{name}" > %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf
 echo "\
 This directory only exists as an example data directory
 
-The spuser home dir is here: /var/lib/%{name}
+The %{systemuser} home dir is here: /var/lib/%{name}
 The systemd managed %{name} datadir is also here: /var/lib/%{name}
 The %{name} config file is housed here: /etc/%{name}/%{name}.conf
 " > %{srccontribtree}/systemd/var-lib-%{name}_README
@@ -324,12 +326,11 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 
 %build
+# This section starts us in directory {_builddir}/{srcroot}
 # CREATING RPM:
 # - build step (comes before install step)
 # - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
-#
-# This section starts us in directory <_builddir>/<srcroot>
 
 # I do this for all npm processed applications...
 # Clearing npm's cache will hopefully elminate SHA1 integrity issues.
@@ -345,13 +346,12 @@ cd %{srccodetree}
 
 
 %install
+# This section starts us in directory {_builddir}/{srcroot}
 # CREATING RPM:
 # - install step (comes before files step)
 # - This step moves anything needing to be part of the package into the
 #   {buildroot}, therefore mirroring the final directory and file structure of
 #   an installed RPM.
-#
-# This section starts us in directory <_builddir>/<srcroot>
 
 # Cheatsheet for built-in RPM macros:
 #   _bindir = /usr/bin
@@ -364,28 +364,37 @@ cd %{srccodetree}
 #   _prefix = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
 #   https://fedoraproject.org/wiki/Packaging:RPMMacros
-# These two are defined in RPM versions in newer versions of Fedora (not el7)
+# These three are defined in newer versions of RPM (Fedora not el7)
 %define _tmpfilesdir /usr/lib/tmpfiles.d
 %define _unitdir /usr/lib/systemd/system
+%define _metainfodir %{_datadir}/metainfo
 
 # Create directories
+# /usr/[lib,lib64]/specpattern/
 install -d %{buildroot}%{_libdir}/%{name}
+# /usr/bin/ and /usr/sbin/
 install -d -m755 -p %{buildroot}%{_bindir}
 install -d -m755 -p %{buildroot}%{_sbindir}
+# /usr/share/applications/
 install -d %{buildroot}%{_datadir}/applications
+# /etc/ld.so.conf.d/
 install -d %{buildroot}%{_sysconfdir}/ld.so.conf.d
-install -d %{buildroot}%{_tmpfilesdir}
-install -d %{buildroot}%{_unitdir}
 # /etc/specpattern/
 install -d %{buildroot}%{_sysconfdir}/%{name}
 # /var/lib/specpattern/...
 install -d %{buildroot}%{_sharedstatedir}/%{name}
 # /var/log/specpattern/
 install -d -m750 %{buildroot}%{_localstatedir}/log/%{name}
-# /etc/sysconfig/specpatternd-scripts/
-install -d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts
 # /usr/share/specpattern/
 install -d %{buildroot}%{installtree}
+
+# Create directories (systemd stuff)
+# /usr/lib/systemd/system/
+install -d %{buildroot}%{_unitdir}
+# /etc/sysconfig/specpatternd-scripts/
+install -d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts
+# /usr/lib/tmpfiles.d/
+install -d %{buildroot}%{_tmpfilesdir}
 
 # Binaries - a little ugly - symbolic link creation
 ln -s %{installtree}/%{name}-gnome-terminal.sh %{buildroot}%{_bindir}/%{name}
@@ -415,8 +424,16 @@ install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.256x256.png %
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.512x512.png %{buildroot}%{_datadir}/icons/HighContrast/512x512/apps/%{name}.png
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.svg         %{buildroot}%{_datadir}/icons/HighContrast/scalable/apps/%{name}.svg
 
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.desktop %{buildroot}%{_datadir}/applications/%{name}.desktop
+# specpattern.desktop
+# https://fedoraproject.org/wiki/Packaging:Guidelines?rd=PackagingGuidelines#Desktop_files
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications/ %{srccontribtree}/desktop/%{name}.desktop
+#install -D -m644 -p %%{srccontribtree}/desktop/%%{name}.desktop %%{buildroot}%%{_datadir}/applications/%%{name}.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
+
+# specpattern.appdata.xml
+# https://fedoraproject.org/wiki/Packaging:AppData
+install -D -m644 -p %{srccontribtree}/desktop/%{name}.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 
 # Libraries
 #install -D -m755 -p %%{buildroot}%%{installtree}/libffmpeg.so %%{buildroot}%%{_libdir}/%%{name}/libffmpeg.so
@@ -457,6 +474,8 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %files
+# This section starts us in directory {_buildrootdir}
+# (note, macros like %%docs, etc may locate in {_builddir}
 # CREATING RPM:
 # - files step (final step)
 # - This step makes a declaration of ownership of any listed directories
@@ -468,21 +487,23 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %license %{srccodetree}/LICENSE
 
 # The directories...
-%defattr(-,%{systemuser},%{systemgroup},-)
 # /etc/specpattern/
 %dir %attr(750,%{systemuser},%{systemgroup}) %{_sysconfdir}/%{name}
-# /var/lib/specpattern/...
+# /var/lib/specpattern/
 %dir %attr(750,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name}
-%{_sharedstatedir}/%{name}/*
-# /var/log/specpattern/...
+# /var/log/specpattern/
 %dir %attr(750,%{systemuser},%{systemgroup}) %{_localstatedir}/log/%{name}
 # /etc/sysconfig/specpatternd-scripts/
 %dir %attr(755,%{systemuser},%{systemgroup}) %{_sysconfdir}/sysconfig/%{name}d-scripts
 # /usr/share/specpattern/
 %dir %attr(755,%{systemuser},%{systemgroup}) %{_datadir}/%{name}
-%defattr(-,root,root,-)
 # /usr/[lib,lib64]/specpattern/
 %dir %attr(755,root,root) %{_libdir}/%{name}
+
+%defattr(-,%{systemuser},%{systemgroup},-)
+# /var/lib/specpattern/*
+%attr(-,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name}/*
+%defattr(-,root,root,-)
 
 # Documentation
 # no manpage examples yet
@@ -490,7 +511,6 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 #%%{_docsdir}/*
 # config example
 %doc %{srccontribtree}/%{name}.conf.example
-
 
 # Binaries
 %{_bindir}/%{name}
@@ -525,6 +545,8 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 # Desktop
 %{_datadir}/icons/*
 %{_datadir}/applications/%{name}.desktop
+%{_metainfodir}/%{name}.appdata.xml
+#%%{_metainfodir}/%%{name}.metainfo.xml
 
 # Libraries
 %{_sysconfdir}/ld.so.conf.d/%{name}.conf
@@ -539,11 +561,11 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %pre
+# This section starts us in directory {_builddir}/{srcroot}
 # INSTALLING THE RPM:
 # - pre section (runs before the install process)
 # - system users are added if needed. Any other roadbuilding.
 #
-# This section starts us in directory .../BUILD/<srcroot>
 # Note that _sharedstatedir is /var/lib and /var/lib/specpattern will be the homedir
 # for spuser
 #
@@ -553,6 +575,7 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 
 %post
+# This section starts us in directory {_builddir}/{srcroot}
 # INSTALLING THE RPM:
 # - post section (runs after the install process is complete)
 #
@@ -566,6 +589,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %postun
+# This section starts us in directory {_builddir}/{srcroot}
 # UNINSTALLING THE RPM:
 # - postun section (runs after an RPM has been removed)
 #
@@ -583,14 +607,17 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
-* Thu Apr 26 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.4.testing.taw0
+* Sat Apr 28 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.5.testing.taw[n]
+- Deployed .desktop file correctly and include an .appdata.xml file.
+
+* Thu Apr 26 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.4.testing.taw[n]
 - cleanup - version and release build should all be together.
 
-* Tue Apr 24 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.3.testing.taw0
+* Tue Apr 24 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.3.testing.taw[n]
 - Further simplified the snapinfo, minorbump, and repackage logic.
 - Issue warnings if your production and snapinfo settings are atypical.
 
-* Sun Apr 22 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.2.testing.taw0
+* Sun Apr 22 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.2.testing.taw[n]
 - Simplified the snapinfo logic.
 - Updated the desktop icons.
 - Added a simple little specpattern loop program that runs in a terminal or  
@@ -598,5 +625,5 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 - Added systemd and firewalld service definitions. Added logrotation rules.
 - Logs nicely to the journal.
 
-* Sat Apr 14 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.1.testing.taw0
+* Sat Apr 14 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.1.testing.taw[n]
 - Initial test build.

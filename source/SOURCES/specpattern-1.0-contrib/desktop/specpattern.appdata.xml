@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This metadata copyright 2018 Todd Warner <t0dd at protonmail.com> -->
+<!-- https://fedoraproject.org/wiki/Packaging:AppData -->
+<component type="desktop-application">
+  <id>specpattern</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Spec Pattern</name>
+  <summary>Example application RPM package</summary>
+
+  <description>
+    <p>This Spec Pattern RPM serves as a packaging example/template (a
+    pattern). It includes a simple application that serves to
+    demonstrate how to configure and deploy a graphical desktop
+    application, systemd service, and more.</p>
+  </description>
+
+  <launchable type="desktop-id">specpattern.desktop</launchable>
+
+<!--
+  <screenshots>
+    <screenshot type="default">
+      <caption>Dashboard</caption>
+      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-main-window.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Configuration</caption>
+      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-config-dlg-misc.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Funds Transfer</caption>
+      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-transfer-funds.png</image>
+    </screenshot>
+  </screenshots>
+-->
+  <url type="homepage">https://github.com/taw00/howto</url>
+  <project_group>Todd's HowTo Emporium</project_group>
+
+  <provides>
+    <binary>specpattern</binary>
+  </provides>
+
+  <releases>
+    <release version="1.0.1" date="2018-04-28">
+      <description>
+        <p>Summary changelog ...coming?</p>
+      </description>
+    </release>
+  </releases>
+</component>
