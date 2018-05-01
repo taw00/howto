@@ -21,35 +21,37 @@ EnvironmentFile=/etc/sysconfig/specpatternd
 # Example of pre-flight check
 # Check for config file and toss sensible message in the logs (journalctl -xe)
 ExecStartPre=-/usr/bin/echo "Starting."
-ExecStartPre=/etc/sysconfig/specpatternd-scripts/specpatternd.config-file-check.sh
-ExecStartPre=-/etc/sysconfig/specpatternd-scripts/specpatternd.write-to-journal.sh start $JOURNAL_IDENTIFIER "Service is starting."
+ExecStartPre=/etc/sysconfig/specpatternd-scripts/config-file-check.sh
+ExecStartPre=-/etc/sysconfig/specpatternd-scripts/write-to-journal.sh start $JOURNAL_IDENTIFIER "Service is starting."
 
-#PIDFile=/run/specpatternd/specpatternd.pid # PIDFile= is unneccessary (systemd figures it out) and throws false errors in the journal
-# This examle of an ExecStart shows how another example program passes values.
-#ExecStart=/usr/sbin/specpatternd -daemon -conf=${CONFIG_FILE} -datadir=${DATA_DIR} -pid=/run/specpatternd/specpatternd.pid $OPTIONS
-ExecStart=/usr/sbin/specpatternd | systemd-cat -t specpatternd
-# Experimental: sleep then mnsync reset
+# PID_FILE= is unneccessary (systemd figures it out) and throws false errors #
+# in the journal
+#PID_FILE=/run/specpatternd/specpatternd.pid
+# This example of an ExecStart shows how another example program passes values.
+#ExecStart=/usr/sbin/somedaemond -pid=/run/specpatternd/specpatternd.pid $OPTIONS
+ExecStart=/usr/sbin/specpatternd | systemd-cat -t $JOURNAL_IDENTIFIER
+# Experimental: start then pause
 #ExecStartPost=/usr/bin/sleep $START_SLEEP_TIME
 # Send email after start
-ExecStartPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh start $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS
+ExecStartPost=-/etc/sysconfig/specpatternd-scripts/send-email.sh start $EMAIL_FROM $EMAIL_TO $SPECPATTERN_ALIAS
 # Time that systemd gives a process to start before shooting it in the head
-TimeoutStartSec=10m
+TimeoutStartSec=1m
 
 # If ExecStop is not set, systemd sends a SIGTERM, which is "okay", just not ideal
 # Really should execute a proper RPC or some such to cleaning shut the program down.
 #ExecStop=/usr/bin/kill /run/specpatternd/specpatternd.pid
 # Need to allow specpatternd to shutdown properly before taking additional actions.
 ExecStopPost=-/usr/bin/echo "Shutting down. Sleeping for ${STOP_SLEEP_TIME} seconds"
-ExecStopPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.write-to-journal.sh stop $JOURNAL_IDENTIFIER "Service is shutting down. Sleeping for ${STOP_SLEEP_TIME} seconds"
+ExecStopPost=-/etc/sysconfig/specpatternd-scripts/write-to-journal.sh stop $JOURNAL_IDENTIFIER "Service is shutting down. Sleeping for ${STOP_SLEEP_TIME} seconds"
 ExecStopPost=-/usr/bin/sleep $STOP_SLEEP_TIME
 # Send email at stop
-ExecStopPost=-/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh stop $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS
+ExecStopPost=-/etc/sysconfig/specpatternd-scripts/send-email.sh stop $EMAIL_FROM $EMAIL_TO $SPECPATTERN_ALIAS
 # Time that systemd gives a process to stop before shooting it in the head
 TimeoutStopSec=30
 
 Restart=on-failure
-# If something triggers an auto-restart, let's wait a bit before taking further action
-# Note: This value is in addition to the stop sleep time
+# If something triggers an auto-restart, let's wait a bit before taking further
+# action. Note that this value is in addition to the stop sleep time
 RestartSec=10
 
 # In this interval span of time, we allow systemd to start specpatternd "burst" number

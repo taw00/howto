@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# specpattern - a example program that can run as a service.
+# specpatternd - a example program that can run as a service.
 #
 # chkconfig:   2345 79 21
 # description: specpattern is a neat little example service.
@@ -36,9 +36,9 @@ lockfile=/var/lock/subsys/$prog
 start() {
 	[ -x $exec ] || exit 5
 	echo -n $"Starting specpatternd Daemon $prog: "
-	daemon --user spuser $exec -daemon -conf=$CONFIG_FILE -datadir=$DATA_DIR -pid=$PID_FILE $OPTIONS &>/dev/null
+	daemon --user spuser $exec &>/dev/null
 	retval=$?
-	/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh start $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS &>/dev/null
+	/etc/sysconfig/specpatternd-scripts/send-email.sh start $EMAIL_FROM $EMAIL_TO $SPECPATTERN_ALIAS &>/dev/null
 	echo
 	[ $retval -eq 0 ] && touch $lockfile
 	return $retval
@@ -49,7 +49,7 @@ stop() {
 	killproc ${prog}
 	retval=$?
 	/usr/bin/sleep $STOP_SLEEP_TIME
-	/etc/sysconfig/specpatternd-scripts/specpatternd.send-email.sh stop $EMAIL_FROM $EMAIL_TO $ZCASHNODE_ALIAS &>/dev/null
+	/etc/sysconfig/specpatternd-scripts/send-email.sh stop $EMAIL_FROM $EMAIL_TO $SPECPATTERN_ALIAS &>/dev/null
 	echo
 	[ $retval -eq 0 ] && rm -f $lockfile
 	return $retval

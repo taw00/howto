@@ -124,15 +124,15 @@ Version: %{vermajor}.%{verminor}
 %define pkgrel_prod 1
 
 # if pre-production - "targetIsProduction 0"
-# eg. 0.5.testing -- pkgrel_preprod should always = pkgrel_prod-1
+# eg. 0.6.testing -- pkgrel_preprod should always = pkgrel_prod-1
 %define pkgrel_preprod 0
-%define extraver_preprod 5
+%define extraver_preprod 6
 %define snapinfo testing
 #%%define snapinfo testing.20180424
 #%%define snapinfo beta2.41d5c63.gh
 
 # if sourceIsPrebuilt (rp=repackaged)
-# eg. 1.rp (prod) or 0.5.testing.rp (pre-prod)
+# eg. 1.rp (prod) or 0.6.testing.rp (pre-prod)
 %define snapinfo_rp rp
 
 # if includeMinorbump
@@ -457,9 +457,9 @@ install -D -m644 %{srccontribtree}/systemd/var-lib-%{name}_README %{buildroot}%{
 
 # System services
 install -D -m600 -p %{srccontribtree}/systemd/etc-sysconfig_%{name}d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.send-email.sh
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.config-file-check.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.config-file-check.sh
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_%{name}d.write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.write-to-journal.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/send-email.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_config-file-check.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/config-file-check.sh
+install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/write-to-journal.sh
 install -D -m644 -p %{srccontribtree}/systemd/usr-lib-systemd-system_%{name}d.service %{buildroot}%{_unitdir}/%{name}d.service
 install -D -m644 -p %{srccontribtree}/systemd/usr-lib-tmpfiles.d_%{name}d.conf %{buildroot}%{_tmpfilesdir}/%{name}d.conf
 
@@ -471,6 +471,11 @@ touch %{buildroot}%{_localstatedir}/log/%{name}/debug.log
 
 # Service definition files for firewalld for full nodes
 install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name}.xml
+
+# Note that we do not do this... cuz, init.d is dead. I leave it for pedantic completness
+# /etc/init.d/
+#install -d %{buildroot}%{_sysconfdir}/init.d
+#install -D -m755 %{srccontribtree}/systemd/etc-init.d_specpatternd.init %{buildroot}%{_sysconfdir}/init.d/specpatternd.init
 
 
 %files
@@ -529,9 +534,9 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 # systemd service config and scripts
 %config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name}d
-%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.send-email.sh
-%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.config-file-check.sh
-%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/%{name}d.write-to-journal.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/send-email.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/config-file-check.sh
+%attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/write-to-journal.sh
 
 # application configuration when run as systemd service
 %config(noreplace) %attr(640,%{systemuser},%{systemgroup}) %{_sysconfdir}/%{name}/%{name}.conf
@@ -607,6 +612,11 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Mon Apr 30 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.6.testing.taw[n]
+- Fixed some errors in the systemd scripts.
+- Improved some comments.
+- Simplified some scripting.
+
 * Sat Apr 28 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.5.testing.taw[n]
 - Deployed .desktop file correctly and include an .appdata.xml file.
 

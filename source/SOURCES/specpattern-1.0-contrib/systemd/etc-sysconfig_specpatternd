@@ -31,10 +31,10 @@ JOURNAL_IDENTIFIER="specpatternd"
 CONFIG_FILE="/etc/specpattern/specpattern.conf"
 DATA_DIR="/var/lib/specpattern"
 
-# How long to sleep in seconds after a start / stop, regardless of pid status
+# All time is in seconds unless otherwise qualified
+# How long to sleep after a start / stop, regardless of pid status
 START_SLEEP_TIME=0
 STOP_SLEEP_TIME=5
-
 
 # ---- Variables rarely used
 # OPTIONS will override specpattern.conf settings
@@ -42,10 +42,9 @@ STOP_SLEEP_TIME=5
 OPTIONS=""
 
 # ---- Variables no longer used or deprecated ---------------------------------
-# PID_FILE configuration not used anymore because you can't set PIDFile in the
-# specpatternd.service with an environment variable. So, if you configured multiple
-# systemd managed services, you need to copy specpatternd.service and edit the pid
-# file setting.
-#PID_FILE="/run/specpatternd/specpatternd.pid"
+# PID_FILE configuration only used by .init
+# If you configured multiple systemd managed services, you need to copy
+# specpatternd.service and edit the pid file setting there.
+PID_FILE="/run/specpatternd/specpatternd.pid"
 
 
