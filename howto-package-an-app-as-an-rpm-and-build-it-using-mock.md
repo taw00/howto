@@ -113,7 +113,7 @@ mock -r fedora-27-x86_64 --buildsrpm --spec SPECS/specpattern.spec --sources SOU
 ```sh
 # This filename is an example. Look in that 'tmp' directory for whatever
 # .src.rpm you just assempted.
-mock -r fedora-27-x86_64 ./tmp/specpattern-1.0.1-0.5.testing.fc27.taw0.src.rpm --sources SOURCES/ --resultdir tmp/
+mock -r fedora-27-x86_64 ./tmp/specpattern-1.0.1-0.6.testing.fc27.taw0.src.rpm --sources SOURCES/ --resultdir tmp/
 ```
 
 4. Examine the RPM you just built
@@ -121,7 +121,7 @@ mock -r fedora-27-x86_64 ./tmp/specpattern-1.0.1-0.5.testing.fc27.taw0.src.rpm -
 ```sh
 # This filename is an example. Look in that 'tmp' directory for whatever
 # binary rpm you just built.
-rpm -qlp ./tmp/specpattern-1.0.1-0.5.testing.fc27.taw0.x86_64.rpm
+rpm -qlp ./tmp/specpattern-1.0.1-0.6.testing.fc27.taw0.x86_64.rpm
 ```
 
 5. Install it!
@@ -132,7 +132,7 @@ running.
 ```sh
 # This filename is an example. Look in that 'tmp' directory for whatever
 # binary rpm you just built.
-sudo dnf install  ./tmp/specpattern-1.0.1-0.5.testing.fc27.taw0.x86_64.rpm
+sudo dnf install  ./tmp/specpattern-1.0.1-0.6.testing.fc27.taw0.x86_64.rpm
 ```
 
 6. All done with building stuff? Purge the mock environment and return
