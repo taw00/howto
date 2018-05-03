@@ -120,7 +120,7 @@ sudo firewall-cmd --zone=todds-laptop --permanent --add-service=ssh
 #sudo firewall-cmd --zone=todds-laptop --permanent --add-service=cockpit
 ```
 
-DDOS sucks. Throttle bad actors. You can leave these uncommented. They simply are no-ops until the service is added.
+DDOS attacks suck. Throttle bad actors. You can leave these uncommented. They simply are no-ops until the service is added.
 
 ```shell
 # Limit a service in order to manage DDOS...
@@ -151,12 +151,16 @@ sudo firewall-cmd --get-active-zones
 **Associated these rules to our interface**
 * `wlp1s0` is what my computer reported
 * to have it apply, we have to bounce the network service
+* if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?) and maybe this is not a laptop? Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
 
 ```shell
+#
+# Do this to switch an interface to the new zone
+# (only if you have an interface listed)
+#
+# change the interface association
 sudo firewall-cmd --zone=todds-laptop --change-interface=wlp1s0
-```
 
-```shell
 # still associated to FedoraWorkstation
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=wlp1s0
@@ -169,16 +173,20 @@ sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=wlp1s0
 ```
 
-Test test test... if you like this, make it your default zone!
+Make 'todds-laptop' your default zone!
 
 ```shell
 sudo firewall-cmd --set-default-zone=todds-laptop
-
-# Note: that if there are any other interfaces associated to the previously
-# default zone, they will move over to the new default zone (may have to do
-# another network bounce to make that happen, I am not sure, I haven't tested
-# this)
+sudo systemctl restart firewalld
+# if fail2ban complains, you may have to stop that service first, then restart
+# firewalld, then start fail2ban again
 ```
+
+> Note that if there are any other interfaces associated to the previously
+  default zone, they will move over to the new default zone (may have to do
+  another network bounce to make that happen, I am not sure, I haven't tested
+  this)
+
 
 
 ## Server example -- configure rules and apply to interface
@@ -200,7 +208,7 @@ sudo firewall-cmd --zone=todds-server --permanent --add-port=5001-5002/tcp
 #sudo firewall-cmd --zone=todds-server --permanent --add-service=cockpit
 ```
 
-DDOS sucks. Throttle bad actors. You can leave these uncommented. They simply are no-ops until the service is added. Note that you can add a rich rule even if the named service doesn't exist yet.
+DDOS attacks suck. Throttle bad actors. You can leave these uncommented. They simply are no-ops until the service is added. Note that you can add a rich rule even if the named service doesn't exist yet.
 
 ```shell
 # Limit a service in order to manage DDOS...
@@ -234,34 +242,41 @@ sudo firewall-cmd --get-active-zones
 **Associated these rules to our interface**
 * `eth0` is what my computer reported
 * to have it apply, we have to bounce the network service
+* if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?). Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
 
 ```shell
+#
+# Do this to switch an interface to the new zone
+# (only if you have an interface listed)
+#
+# change the interface association
 sudo firewall-cmd --zone=todds-server --change-interface=eth0
-```
 
-```shell
-# still associated to FedoraWorkstation
+# still associated to FedoraWorkstation (or probably FedoraServer or whatever)
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=eth0
 
 # bounce!
 sudo systemctl restart network
 
-# now associated to todds-laptop
+# now associated to todds-server
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=eth0
 ```
 
-Test test test... if you like this, make it your default zone!
+Make 'todds-server' your default zone!
 
 ```shell
 sudo firewall-cmd --set-default-zone=todds-server
-
-# Note: that if there are any other interfaces associated to the previously
-# default zone, they will move over to the new default zone (may have to do
-# another network bounce to make that happen, I am not sure, I haven't tested
-# this)
+sudo systemctl restart firewalld
+# if fail2ban complains, you may have to stop that service first, then restart
+# firewalld, then start fail2ban again
 ```
+
+> Note that if there are any other interfaces associated to the previously
+  default zone, they will move over to the new default zone (may have to do
+  another network bounce to make that happen, I am not sure, I haven't tested
+  this)
 
 ## SSH Tunneling to use cockpit from my laptop...
 
@@ -327,13 +342,12 @@ sudo systemctl start firewalld.service
 ```
 
 ```shell
+# -- CREATE NEW ZONE
 # Show the zones currently applying rules to active network interfaces
 sudo firewall-cmd --get-active-zones
-
 # create a new zone...
 sudo firewall-cmd --permanent --new-zone=todds-laptop
-
-# Include it into the active roster...
+# include it into the active roster...
 sudo firewall-cmd --reload
 
 # --RULES: only ssh is allowed and it is rate limited. Everything else is DROPped
@@ -349,21 +363,23 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --zone=todds-laptop --list-all
 
 # --INTERFACE --> RULES
+# (only if an interface is listed with '--get-active-zones')
 # but since we haven't re-aligned the interface, we aren't using the zone yet...
 sudo firewall-cmd --get-active-zones
-
 # associate...
 sudo firewall-cmd --zone=todds-laptop --change-interface=wlp1s0
-
 # bounce the network
 sudo systemctl restart network
-
 # check that the interface is now associated to todds-laptop
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=wlp1s0
 
+# --SET NEW DEFAULT
 # set todds-laptop as the new default zone
 sudo firewall-cmd --set-default-zone=todds-laptop
+#sudo systemctl stop fail2ban # --uncomment if installed and using
+sudo systemctl restart firewalld
+#sudo systemctl start fail2ban # --uncomment if installed and using
 ```
 
 <div style="text-align: center; color: lightgrey;font-size: 200%;">&#11835;&#11835;&#11835;</div>
@@ -381,13 +397,12 @@ sudo systemctl start firewalld.service
 ```
 
 ```shell
+# -- CREATE NEW ZONE
 # Show the zones currently applying rules to active network interfaces
 sudo firewall-cmd --get-active-zones
-
 # create a new zone...
 sudo firewall-cmd --permanent --new-zone=todds-server
-
-# Include it into the active roster...
+# include it into the active roster...
 sudo firewall-cmd --reload
 
 # --RULES: various services and rate limited. Everything else is REJECTed
@@ -412,20 +427,21 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --zone=todds-server --list-all
 
 # --INTERFACE --> RULES
+# (only if an interface is listed with '--get-active-zones')
 # but since we haven't re-aligned the interface, we aren't using the zone yet...
 sudo firewall-cmd --get-active-zones
-
 # associate...
 sudo firewall-cmd --zone=todds-server --change-interface=eth0
-
 # bounce the network
 sudo systemctl restart network
-
 # check that the interface is now associated to todds-server
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=eth0
 
+# --SET NEW DEFAULT ZONE
 # set todds-server as the new default zone
 sudo firewall-cmd --set-default-zone=todds-server
+#sudo systemctl stop fail2ban # --uncomment if installed and using
+sudo systemctl restart firewalld
+#sudo systemctl start fail2ban # --uncomment if installed and using
 ```
-
