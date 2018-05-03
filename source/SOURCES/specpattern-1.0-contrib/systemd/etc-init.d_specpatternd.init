@@ -5,7 +5,7 @@
 # chkconfig:   2345 79 21
 # description: specpattern is a neat little example service.
 #              I really hope you like it.
-#              The init here is not as fully featured as the systemd service.
+#              The init here is not as fully featured as the systemd service.
 
 
 ### BEGIN INIT INFO
@@ -19,7 +19,7 @@
 # Short-Description: Example application
 # Description: specpattern is a neat little example service.
 #              I really hope you like it.
-#              The init here is not as fully featured as the systemd service.
+#              The init here is not as fully featured as the systemd service.
 ### END INIT INFO
 
 # Source function library.

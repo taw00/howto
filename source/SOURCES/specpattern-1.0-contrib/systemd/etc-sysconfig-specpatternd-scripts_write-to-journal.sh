@@ -11,7 +11,7 @@
 # /etc/sysconfig/specpatternd and /usr/lib/systemd/specpatternd.service
 #
 
-# STAGE and DATE_LOG aren't really used currently.
+# STAGE and DATE_LOG aren't really used currently.
 STAGE=$1
 DATE_LOG=$(/usr/bin/date --utc +"%b %d %T UTC")
 
