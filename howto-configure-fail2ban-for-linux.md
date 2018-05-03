@@ -1,34 +1,22 @@
 # HowTo Configure Fail2Ban for Linux
 
-Whenever you expose a server to the wilds of the internet, it becomes vulnerable to attack.
-If this is a webserver, ports 443 and 80 are open to attack. SSH? Of course you ssh in, that
-is open to attack.
-
-This document will get you started on configuring some basic firewall rules to help mitigate
-against some of the more obvious problems, like brute-force DOS and trimming down the attack
-surface by only having the minimal ports open.
-
-We'll examine FirewallD and Fails2ban. FirewallD manages communication coming and going from
-server. Fails2ban looks for oddities in how folks are attempting to access and adjusts firewall
-rules on the fly to squelch misbehavior.
-
----
-
-## FirewallD
-
-firewalld instructions have been expanded, clarified, and placed in their own HowTo. Please visit: <https://github.com/taw00/howto/blob/master/howto-configure-firewalld-for-linux-examples-laptop-and-server.md>
-
----
+Firewalls and tools such as Fail2Ban help mitigate network attacks on your
+system. For firewall specific instructions, please visit [this
+link](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-for-linux-examples-laptop-and-server.md).
+Fail2Ban examines log activity looking for abusive actors and then takes action
+on them by adjusting firewall rules on-the-fly as needed. Both services are
+highly recommended for improving the security of a system. This document
+focuses on Fail2Ban.
 
 ## Fail2Ban
 
 Fail2ban analyzes log files for folks trying to do bad things on your system.
 It doesn't have a lot of breadth of functionality, but it can be very
-effective, especially against folks poking SSH.
+effective, especially against folks poking at SSH.
 
 #### Install `fail2ban`...
 
-```
+```shell
 # If Fedora...
 sudo dnf install -y fail2ban fail2ban-systemd
 # If CentOS or RHEL
@@ -38,10 +26,12 @@ sudo yum install -y fail2ban fail2ban-systemd
 sudo apt install -y fail2ban
 ```
 
-If you are not using FirewallD, and instead are using IPTables for your
-firewall, uninstall fail2ban-firewalld (for the Red Hat-based systems only).
+If you are not using FirewallD, and instead are using IPTables (not recommended
+in 2018) for your firewall, uninstall fail2ban-firewalld (for the Red Hat-based
+systems only).
 
-```
+```shell
+# For iptable users only -- not recommended for most people
 sudo dnf remove -y fail2ban-firewalld # Fedora
 sudo yum remove -y fail2ban-firewalld # CentOS or RHEL
 ```
@@ -86,7 +76,7 @@ enabled = true
 [this](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md)._
 
 
-#### Enable `fail2ban` and reboot...
+#### Enable `fail2ban` and restart...
 
 ```
 sudo systemctl enable fail2ban
@@ -121,6 +111,6 @@ sudo tail -F /var/log/fail2ban.log
 
 ---
 
-## Done!
+## Good luck!
 
-Good luck! Comments and feedback to <t0dd@protonmail.com>
+Comments and feedback to <t0dd@protonmail.com>
