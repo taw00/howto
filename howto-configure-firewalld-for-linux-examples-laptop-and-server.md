@@ -2,7 +2,9 @@
 
 > **TL;DR versions are towards the end of this document**
 
-Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). It's a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces and not to your computer in general. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
+Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). An interface is something like `eth0`, `eth1`, `wlp1s0`.
+
+FirewallD is a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces and not to your computer in general. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
 
 Zones are created and managed for `firewalld` (the systemd service) using `firewall-config` (a graphical application) or with the commandline (`firewall-cmd`). We will focus on the commandline here since I think it makes it easier to understand for instructional purposes. I encourage the reader to first apply a set of rules using the commandline and then browse the graphical application and see how the rules are laid own conceptually.
 
@@ -71,7 +73,7 @@ sudo systemctl start firewalld.service
 
 # Enable firewalld to start upon boot
 sudo systemctl enable firewalld.service
-``
+```
 
 ## Preparation: Set up a custom zone
 
@@ -132,7 +134,7 @@ sudo firewall-cmd --zone=todds-laptop --permanent --add-rich-rule='rule service 
 sudo firewall-cmd --zone=todds-laptop --permanent --add-rich-rule='rule service name=cockpit accept limit value=10/m'
 ```
 
-> About DROP versus REJECT targets.<br />Firewalld will REJECT packets by default (--set-target=default or --set-target=REJECT). This means a packet is given the boot, but the system responds with a nice rejection notification. DROPped packets are simply dropped on the floor with no response back to the calling system. The connection will hang for them until they hit some timeout. For port-scanners walking all over your system, DROP is no better than REJECT. For some casual hacker though, it may slow them down. REJECT is a nicer cleaner response. _For your servers you want to use REJECT -- for your laptop, DROP is an option_ and brings me more satisfaction.
+> **About DROP versus REJECT targets.**<br />Firewalld will REJECT packets by default (--set-target=default or --set-target=REJECT). This means a packet is given the boot, but the system responds with a nice rejection notification. DROPped packets are simply dropped on the floor with no response back to the calling system. The connection will hang for them until they hit some timeout. For port-scanners walking all over your system, DROP is no better than REJECT. For some casual hacker though, it may slow them down. REJECT is a nicer cleaner response. _For your servers you want to use REJECT -- for your laptop, DROP is an option_ and brings me more satisfaction.
 
 For my laptop, DROP!
 
@@ -150,8 +152,8 @@ sudo firewall-cmd --zone=todds-laptop --list-all
 sudo firewall-cmd --get-active-zones
 ```
 
-**Associated these rules to our interface**
-* `wlp1s0` is what my computer reported
+**Associate these rules to our interface**
+* `wlp1s0` is what my computer reported (yours may vary)
 * to have it apply, we have to bounce the network service
 * if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?) and maybe this is not a laptop? Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
 
@@ -241,8 +243,8 @@ sudo firewall-cmd --zone=todds-server --list-all
 sudo firewall-cmd --get-active-zones
 ```
 
-**Associated these rules to our interface**
-* `eth0` is what my computer reported
+**Associate these rules to our interface**
+* `eth0` is what my computer reported (yours may vary)
 * to have it apply, we have to bounce the network service
 * if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?). Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
 
@@ -297,7 +299,7 @@ Note that the port used by cockpit is 9090. Make sure it is not allowed via fire
 sudo firewall-cmd --zone=todds-server --remove-service=cockpit
 ```
 
-You should not be about to browse to that IP address from your laptop to that service: https://<server-ip>:9090
+You should not be about to browse to that IP address from your laptop to that service: <https://[your-server-ip]:9090>
 
 **Let's ssh tunnel to it instead!**
 
@@ -353,7 +355,8 @@ sudo firewall-cmd --permanent --new-zone=todds-laptop
 # include it into the active roster...
 sudo firewall-cmd --reload
 
-# --RULES: only ssh is allowed and it is rate limited. Everything else is DROPped
+# --RULES
+#   only ssh and it is rate limited. Everything else is DROPped
 sudo firewall-cmd --zone=todds-laptop --permanent --add-service=dhcpv6-client
 sudo firewall-cmd --zone=todds-laptop --permanent --add-service=ssh
 sudo firewall-cmd --zone=todds-laptop --permanent --add-rich-rule='rule service name=ssh accept limit value=10/m'
@@ -366,8 +369,10 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --zone=todds-laptop --list-all
 
 # --INTERFACE --> RULES
-# (only if an interface is listed with '--get-active-zones')
-# but since we haven't re-aligned the interface, we aren't using the zone yet...
+# (only do this if an interface is listed with '--get-active-zones')
+
+# since we haven't re-aligned the interface, we aren't using the
+# zone yet...
 sudo firewall-cmd --get-active-zones
 # associate...
 sudo firewall-cmd --zone=todds-laptop --change-interface=wlp1s0
@@ -401,14 +406,16 @@ sudo systemctl start firewalld.service
 
 ```shell
 # -- CREATE NEW ZONE
-# Show the zones currently applying rules to active network interfaces
+# Show the zones currently applying rules to active network
+# interfaces
 sudo firewall-cmd --get-active-zones
 # create a new zone...
 sudo firewall-cmd --permanent --new-zone=todds-server
 # include it into the active roster...
 sudo firewall-cmd --reload
 
-# --RULES: various services and rate limited. Everything else is REJECTed
+# --RULES
+#   various services and rate limited. Everything else is REJECTed
 sudo firewall-cmd --zone=todds-server --permanent --add-service=dhcpv6-client
 sudo firewall-cmd --zone=todds-server --permanent --add-service=ssh
 sudo firewall-cmd --zone=todds-server --permanent --add-service=http
@@ -430,8 +437,10 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --zone=todds-server --list-all
 
 # --INTERFACE --> RULES
-# (only if an interface is listed with '--get-active-zones')
-# but since we haven't re-aligned the interface, we aren't using the zone yet...
+# (only do this if an interface is listed with '--get-active-zones')
+
+# since we haven't re-aligned the interface, we aren't using the
+# zone yet...
 sudo firewall-cmd --get-active-zones
 # associate...
 sudo firewall-cmd --zone=todds-server --change-interface=eth0
