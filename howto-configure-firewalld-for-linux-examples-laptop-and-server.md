@@ -6,7 +6,7 @@ Firewalld is a mechanism to define firewall "zones" of rules that you then apply
 
 Zones are created and managed for `firewalld` (the systemd service) using `firewall-config` (a graphical application) or with the commandline (`firewall-cmd`). We will focus on the commandline here since I think it makes it easier to understand for instructional purposes. I encourage the reader to first apply a set of rules using the commandline and then browse the graphical application and see how the rules are laid own conceptually.
 
-For my laptop, I want to `ssh` access enabled but throttled, but otherwise, packets to be dropped. For my servers, I want `ssh` access, but also other services depending on the purpose of the server: `https` and `http` for a webserver, maybe enable `cockpit`, and maybe some set of ports opened up to enable some other service over the network. Some of that we may prefer to use ssh tunnels instead (example cockpit). We'll discuss that later in this document.
+For my laptop, I want to `ssh` access enabled but throttled, but otherwise, packets to be dropped. For my servers, I want `ssh` access, but also other services depending on the purpose of the server: `https` and `http` for a webserver, maybe enable `cockpit`, and maybe some set of ports opened up to enable some other service over the network. For some services (for cockpit for example) we may prefer to use ssh tunnels instead. We'll discuss that later in this document.
 
 Finally, service `fail2ban` nicely compliments your firewall configuration. Read more about that here: <https://github.com/taw00/howto/blob/master/howto-configure-fail2ban-for-linux.md>
 
@@ -327,6 +327,7 @@ Feedback and comments: <t0dd@protonmail.com>
 * And more: <https://itnotesandscribblings.blogspot.com/2014/08/firewalld-adding-services-and-direct.html>
 * Interesting discussion on fighting DOS attacks on http: <https://www.certdepot.net/rhel7-mitigate-http-attacks/>
 * SSH Tunneling: <https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md>
+* Fail2Ban: <https://github.com/taw00/howto/blob/master/howto-configure-fail2ban-for-linux.md>
 * Lots of HowTos: <https://github.com/taw00/howto>
 
 ---
