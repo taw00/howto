@@ -2,7 +2,7 @@
 
 > **TL;DR versions are towards the end of this document**
 
-Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). It's a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
+Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). It's a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces and not to your computer in general. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
 
 Zones are created and managed for `firewalld` (the systemd service) using `firewall-config` (a graphical application) or with the commandline (`firewall-cmd`). We will focus on the commandline here since I think it makes it easier to understand for instruction purposes, but I encourage the reader to first apply a set of rules and then browse the graphical application and see how the rules are laid own conceptually.
 
