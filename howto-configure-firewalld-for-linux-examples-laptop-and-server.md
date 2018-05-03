@@ -1,12 +1,14 @@
-# HowTo Configure FirewallD for Linux - examples, a laptop and a server
+# HowTo Configure FirewallD for Linux<br />_(examples, a laptop and a server)_
+
+> **TL;DR versions are towards the end of this document**
 
 Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). It's a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
 
 Zones are created and managed for `firewalld` (the systemd service) using `firewall-config` (a graphical application) or with the commandline (`firewall-cmd`). We will focus on the commandline here since I think it makes it easier to understand for instruction purposes, but I encourage the reader to first apply a set of rules and then browse the graphical application and see how the rules are laid own conceptually.
 
-For my laptop, I want to `ssh` access enabled but throttled, but otherwise, packets to be dropped. For my servers, I want `ssh` access, but also other services depending on the purpose of the server: `https` and `http` for a webserver, maybe enable `cockpit`, and maybe some set of ports opened up to enable some other service over the network. Some of that we may prefer to use ssh tunnels instead (example cockpit). We'll discuss that in a minute.
+For my laptop, I want to `ssh` access enabled but throttled, but otherwise, packets to be dropped. For my servers, I want `ssh` access, but also other services depending on the purpose of the server: `https` and `http` for a webserver, maybe enable `cockpit`, and maybe some set of ports opened up to enable some other service over the network. Some of that we may prefer to use ssh tunnels instead (example cockpit). We'll discuss that later in this document.
 
-> **TL;DR versions are towards the end of this document**
+Finally, service `fail2ban` nicely compliments your firewall configuration. Read more about that here: <https://github.com/taw00/howto/blob/master/howto-configure-fail2ban-for-linux.md>
 
 ## Preparation: Install `firewalld`
 
