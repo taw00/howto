@@ -469,7 +469,7 @@ install -D -m644 -p %{srccontribtree}/logrotate/etc-logrotate.d_%{name} %{buildr
 # ...ghosted log files - need to exist in the installed buildroot
 touch %{buildroot}%{_localstatedir}/log/%{name}/debug.log
 
-# Service definition files for firewalld for full nodes
+# Service definition files for firewalld
 install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name}.xml
 
 # Note that we do not do this... cuz, init.d is dead. I leave it for pedantic completness
