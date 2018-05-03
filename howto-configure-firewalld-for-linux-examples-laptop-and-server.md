@@ -112,6 +112,8 @@ sudo firewall-cmd --get-zones
 
 ## Laptop example -- configure rules and apply to interface
 
+Note that we already created the zone in the "Preparation" section above.
+
 For my laptop, most everything is commented out since it does not serve as a server to outside clients... except for ssh. Always have to have ssh. If you uncomment things like http/https or cockpit, that assumes you installed some httpd service (apache? nginx?) or cockpit. If not, leave those lines commented.
 
 ```shell
