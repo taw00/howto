@@ -112,18 +112,19 @@ Summary: A packaging example/template (a pattern)
 %define sourceIsPrebuilt 0
 
 
-# VERSION
+# VERSION
 # eg. 1.0.1
 %define vermajor 1.0
 %define verminor 1
 Version: %{vermajor}.%{verminor}
 
 
-# RELEASE
-# if production - "targetIsProduction 1"
+# RELEASE
+# If production - "targetIsProduction 1"
+# eg. 1 (and no other qualifiers)
 %define pkgrel_prod 1
 
-# if pre-production - "targetIsProduction 0"
+# If pre-production - "targetIsProduction 0"
 # eg. 0.6.testing -- pkgrel_preprod should always = pkgrel_prod-1
 %define pkgrel_preprod 0
 %define extraver_preprod 6
@@ -142,11 +143,11 @@ Version: %{vermajor}.%{verminor}
 
 %if %{targetIsProduction}
   %if %{includeSnapinfo}
-    %{warn:"Warning: target is production and yet you want snapinfo included. This is not typical."}
+    %{warn:"Warning: target is production and yet you want snapinfo included. This is not typical."}
   %endif
 %else
   %if ! %{includeSnapinfo}
-    %{warn:"Warning: target is pre-production and yet you elected not to incude snapinfo (testing, beta, ...). This is not typical."}
+    %{warn:"Warning: target is pre-production and yet you elected not to incude snapinfo (testing, beta, ...). This is not typical."}
   %endif
 %endif
 
@@ -236,15 +237,15 @@ Obsoletes: spec-pattern < 0.9
 
 License: MIT
 URL: https://github.com/taw00/howto
-# Group is deprecated. Don't use it. Left here as a reminder...
+# Group is deprecated. Don't use it. Left here as a reminder...
 # https://fedoraproject.org/wiki/RPMGroups 
 #Group: Unspecified
 
-# CHANGE or DELETE this for your package
+# CHANGE or DELETE this for your package
 # System user for the systemd specpatternd.service.
-# If you want to retain the systemd service configuration and you therefore
+# If you want to retain the systemd service configuration and you therefore
 # change this, you will have to dig into the various -contrib configuration
-# files to change things there as well. 
+# files to change things there as well.
 %define systemuser spuser
 %define systemgroup spgroup
 
@@ -288,9 +289,9 @@ and deploy a graphical desktop application, systemd service, and more.
 
 %prep
 # Prep section starts us in directory .../BUILD -or- {_builddir}
-# CREATING RPM:
-# - prep step (comes before build)
-# - This step extracts all code archives and takes any preparatory steps
+# CREATING RPM:
+# - prep step (comes before build)
+# - This step extracts all code archives and takes any preparatory steps
 #   necessary prior to the build.
 #
 # References (the docs for this universally suck):
@@ -312,7 +313,7 @@ mkdir %{srcroot}
 # Libraries ldconfig file - we create it, because lib or lib64
 echo "%{_libdir}/%{name}" > %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf
 
-# README message about the /var/lib/specpattern directory
+# README message about the /var/lib/specpattern directory
 echo "\
 This directory only exists as an example data directory
 
@@ -327,9 +328,9 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 %build
 # This section starts us in directory {_builddir}/{srcroot}
-# CREATING RPM:
-# - build step (comes before install step)
-# - This step performs any action that takes the code and turns it into a
+# CREATING RPM:
+# - build step (comes before install step)
+# - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
 
 # I do this for all npm processed applications...
@@ -347,9 +348,9 @@ cd %{srccodetree}
 
 %install
 # This section starts us in directory {_builddir}/{srcroot}
-# CREATING RPM:
-# - install step (comes before files step)
-# - This step moves anything needing to be part of the package into the
+# CREATING RPM:
+# - install step (comes before files step)
+# - This step moves anything needing to be part of the package into the
 #   {buildroot}, therefore mirroring the final directory and file structure of
 #   an installed RPM.
 
@@ -364,7 +365,7 @@ cd %{srccodetree}
 #   _prefix = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
 #   https://fedoraproject.org/wiki/Packaging:RPMMacros
-# These three are defined in newer versions of RPM (Fedora not el7)
+# These three are defined in newer versions of RPM (Fedora not el7)
 %define _tmpfilesdir /usr/lib/tmpfiles.d
 %define _unitdir /usr/lib/systemd/system
 %define _metainfodir %{_datadir}/metainfo
@@ -403,7 +404,7 @@ install -D -p %{srccodetree}/%{name}-gnome-terminal.sh %{buildroot}%{installtree
 install -D -p %{srccodetree}/%{name}-daemon.sh %{buildroot}%{installtree}/%{name}-daemon.sh
 install -D -p %{srccodetree}/%{name}-process.sh %{buildroot}%{installtree}/%{name}-process.sh
 
-# Desktop
+# Desktop
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.16x16.png   %{buildroot}%{_datadir}/icons/hicolor/16x16/apps/%{name}.png
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.22x22.png   %{buildroot}%{_datadir}/icons/hicolor/22x22/apps/%{name}.png
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.24x24.png   %{buildroot}%{_datadir}/icons/hicolor/24x24/apps/%{name}.png
@@ -435,7 +436,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 
-# Libraries
+# Libraries
 #install -D -m755 -p %%{buildroot}%%{installtree}/libffmpeg.so %%{buildroot}%%{_libdir}/%%{name}/libffmpeg.so
 #install -D -m755 -p %%{buildroot}%%{installtree}/libnode.so %%{buildroot}%%{_libdir}/%%{name}/libnode.so
 install -D -m644 -p %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf
@@ -452,7 +453,7 @@ install -D -m644 -p %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf %{buildroot}
 install -D -m640 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -D -m644 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{srccontribtree}/%{name}.conf.example
 
-# README message about the /var/lib/specpattern directory
+# README message about the /var/lib/specpattern directory
 install -D -m644 %{srccontribtree}/systemd/var-lib-%{name}_README %{buildroot}%{_sharedstatedir}/%{name}/README
 
 # System services
@@ -481,9 +482,9 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %files
 # This section starts us in directory {_buildrootdir}
 # (note, macros like %%docs, etc may locate in {_builddir}
-# CREATING RPM:
-# - files step (final step)
-# - This step makes a declaration of ownership of any listed directories
+# CREATING RPM:
+# - files step (final step)
+# - This step makes a declaration of ownership of any listed directories
 #   or files
 # - The install step should have set permissions and ownership correctly,
 #   but of final tweaking is often done in this section
@@ -491,7 +492,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %defattr(-,root,root,-)
 %license %{srccodetree}/LICENSE
 
-# The directories...
+# The directories...
 # /etc/specpattern/
 %dir %attr(750,%{systemuser},%{systemgroup}) %{_sysconfdir}/%{name}
 # /var/lib/specpattern/
@@ -502,7 +503,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %dir %attr(755,%{systemuser},%{systemgroup}) %{_sysconfdir}/sysconfig/%{name}d-scripts
 # /usr/share/specpattern/
 %dir %attr(755,%{systemuser},%{systemgroup}) %{_datadir}/%{name}
-# /usr/[lib,lib64]/specpattern/
+# /usr/[lib,lib64]/specpattern/
 %dir %attr(755,root,root) %{_libdir}/%{name}
 
 %defattr(-,%{systemuser},%{systemgroup},-)
@@ -510,14 +511,14 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %attr(-,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name}/*
 %defattr(-,root,root,-)
 
-# Documentation
-# no manpage examples yet
+# Documentation
+# no manpage examples yet
 #%%{_mandir}/man1/*.1.gz
 #%%{_docsdir}/*
-# config example
+# config example
 %doc %{srccontribtree}/%{name}.conf.example
 
-# Binaries
+# Binaries
 %{_bindir}/%{name}
 %{_sbindir}/%{name}d
 %defattr(-,%{systemuser},%{systemgroup},-)
@@ -526,13 +527,13 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %{_datadir}/%{name}/%{name}-gnome-terminal.sh
 %defattr(-,root,root,-)
 
-# systemd service definition
+# systemd service definition
 %{_unitdir}/%{name}d.service
 
-# systemd service tmp file
+# systemd service tmp file
 %{_tmpfilesdir}/%{name}d.conf
 
-# systemd service config and scripts
+# systemd service config and scripts
 %config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/%{name}d
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/send-email.sh
 %attr(755,root,root) %{_sysconfdir}/sysconfig/%{name}d-scripts/config-file-check.sh
@@ -541,24 +542,24 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 # application configuration when run as systemd service
 %config(noreplace) %attr(640,%{systemuser},%{systemgroup}) %{_sysconfdir}/%{name}/%{name}.conf
 
-# /var/lib/specpattern/README
+# /var/lib/specpattern/README
 %attr(640,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name}/README
 
-# firewalld service definition
+# firewalld service definition
 %{_prefix}/lib/firewalld/services/%{name}.xml
 
-# Desktop
+# Desktop
 %{_datadir}/icons/*
 %{_datadir}/applications/%{name}.desktop
 %{_metainfodir}/%{name}.appdata.xml
 #%%{_metainfodir}/%%{name}.metainfo.xml
 
-# Libraries
+# Libraries
 %{_sysconfdir}/ld.so.conf.d/%{name}.conf
 #%%{_libdir}/%%{name}/libffmpeg.so
 #%%{_libdir}/%%{name}/libnode.so
 
-# Logs
+# Logs
 # log file - doesn't initially exist, but we still own it
 %ghost %{_localstatedir}/log/%{name}/debug.log
 %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
@@ -567,9 +568,9 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 %pre
 # This section starts us in directory {_builddir}/{srcroot}
-# INSTALLING THE RPM:
-# - pre section (runs before the install process)
-# - system users are added if needed. Any other roadbuilding.
+# INSTALLING THE RPM:
+# - pre section (runs before the install process)
+# - system users are added if needed. Any other roadbuilding.
 #
 # Note that _sharedstatedir is /var/lib and /var/lib/specpattern will be the homedir
 # for spuser
@@ -581,13 +582,13 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 %post
 # This section starts us in directory {_builddir}/{srcroot}
-# INSTALLING THE RPM:
-# - post section (runs after the install process is complete)
+# INSTALLING THE RPM:
+# - post section (runs after the install process is complete)
 #
 umask 007
-# refresh library context
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
-# refresh systemd context
+# refresh systemd context
 test -e %{_sysconfdir}/%{name}/%{name}.conf && %systemd_post %{name}d.service
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
@@ -595,11 +596,11 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 %postun
 # This section starts us in directory {_builddir}/{srcroot}
-# UNINSTALLING THE RPM:
-# - postun section (runs after an RPM has been removed)
+# UNINSTALLING THE RPM:
+# - postun section (runs after an RPM has been removed)
 #
 umask 007
-# refresh library context
+# refresh library context
 /sbin/ldconfig > /dev/null 2>&1
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
