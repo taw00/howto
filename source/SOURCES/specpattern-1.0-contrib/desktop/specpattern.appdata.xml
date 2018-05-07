@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This metadata copyright 2018 Todd Warner <t0dd at protonmail.com> -->
+<!-- This metadata copyright 2018 Todd Warner <t0dd_at_protonmail.com> -->
 <!-- https://fedoraproject.org/wiki/Packaging:AppData -->
+<!-- https://www.freedesktop.org/software/appstream/docs/chap-Metadata.htmla -->
 <component type="desktop-application">
-  <id>specpattern</id>
+  <id>specpattern.desktop</id>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
   <name>Spec Pattern</name>
@@ -15,26 +16,24 @@
     application, systemd service, and more.</p>
   </description>
 
-  <launchable type="desktop-id">specpattern.desktop</launchable>
+  <!-- <launchable type="desktop-id">specpattern.desktop</launchable> not used for this type -->
 
 <!--
   <screenshots>
     <screenshot type="default">
       <caption>Dashboard</caption>
-      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-main-window.png</image>
+      <image>https://example.com/example/example1.png</image>
     </screenshot>
     <screenshot>
       <caption>Configuration</caption>
-      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-config-dlg-misc.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>Funds Transfer</caption>
-      <image>https://raw.githubusercontent.com/Bertrand256/dash-masternode-tool/master/doc/img/dmt-transfer-funds.png</image>
+      <image>https://example.com/example/example2.png</image>
     </screenshot>
   </screenshots>
 -->
   <url type="homepage">https://github.com/taw00/howto</url>
-  <project_group>Todd's HowTo Emporium</project_group>
+  <!-- <project_group>taw00</project_group> CentOS/RHEL doesn't support this -->
+  <developer_name>Todd Warner</developer_name>
+  <update_contact>t0dd_at_protonmail.com</update_contact>
 
   <provides>
     <binary>specpattern</binary>

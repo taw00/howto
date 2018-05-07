@@ -2,7 +2,7 @@
 
 > **TL;DR versions are towards the end of this document**
 
-Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). An interface is something like `eth0`, `eth1`, `wlp1s0`.
+Firewalld is a mechanism to define firewall "zones" of rules that you then apply to network interfaces (rules that you assign to interfaces). An interface is something like `eth0`, `eth1`, `wlp1s0`, `ens3`.
 
 FirewallD is a far FAR more user-friendly improvement over IPTables. It's important to understand that you create these zones (sets of rules) to be applied to network interfaces and not to your computer in general. You can create an infinite number of zones, but they are just that &mdash;rules&mdash; that have no purpose until an interface is assigned to them.
 
@@ -20,7 +20,7 @@ sudo systemctl enable firewalld.service
 sudo systemctl start firewalld.service
 ```
 
-If that worked, you don't have to do the rest of this section.
+_**If that worked, you don't have to do the rest of this section.**_
 
 My examples were all done on Fedora, but they should work on any system that offers firewalld (most modern linuxes).
 
@@ -55,7 +55,7 @@ sudo systemctl disable iptables.service
 sudo systemctl mask iptables.service
 ```
 
-Note. If you end up ditching using firewalld and want to go back to iptables...
+Note. If you end up ditching using firewalld and want to go back to iptables (if installed)...
 ```shell
 # Don't do this if you want to use firewalld
 sudo systemctl disable firewalld.service
@@ -83,6 +83,23 @@ List the active zones. I.e., the ones with a network interface associated to the
 # Show the zones currently applying rules to active network interfaces
 sudo firewall-cmd --get-active-zones
 ```
+
+> **Confusion point: what if `--get-active-zones` returns nothing?**  
+>
+> I have seen behavior where no active zone is returned even though
+> `firewall-cmd --list-all` returns information about a zone (i.e. the default,
+> and presumably active zone. I'm not sure what is going on, but this may or
+> may not be a bug.
+>
+> In this case, at the `--change-interface` step below, you will have to
+> explicitely set the the interface that you see as the result of any network
+> query program, like `ifconfig`. In my case, command `ifconfig` shows an
+> interface of `ens3`.
+>
+> I think there is a bug here. Or at least some improvement needed. I have
+> filed a bug/issue/inquiry on this:
+> <https://github.com/firewalld/firewalld/issues/333>.
+
 
 Create a new zone...
 
@@ -112,7 +129,7 @@ sudo firewall-cmd --get-zones
 
 ## Laptop example -- configure rules and apply to interface
 
-Note that we already created the zone in the "Preparation" section above.
+_**Note that we already created the zone in the "Preparation: Set up a custom zone" section above.**_
 
 For my laptop, most everything is commented out since it does not serve as a server to outside clients... except for ssh. Always have to have ssh. If you uncomment things like http/https or cockpit, that assumes you installed some httpd service (apache? nginx?) or cockpit. If not, leave those lines commented.
 
@@ -156,8 +173,7 @@ sudo firewall-cmd --get-active-zones
 
 **Associate these rules to our interface**
 * `wlp1s0` is what my computer reported (yours may vary)
-* to have it apply, we have to bounce the network service
-* if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?) and maybe this is not a laptop? Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
+* to have it apply, we _may_ have to bounce the network service
 
 ```shell
 #
@@ -171,8 +187,8 @@ sudo firewall-cmd --zone=todds-laptop --change-interface=wlp1s0
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=wlp1s0
 
-# bounce!
-sudo systemctl restart network
+# bounce the network -- commented out; you may not have to do this
+#sudo systemctl restart network
 
 # now associated to todds-laptop
 sudo firewall-cmd --get-active-zones
@@ -189,7 +205,7 @@ sudo systemctl restart firewalld
 ```
 
 > Note that if there are any other interfaces associated to the previously
-  default zone, they will move over to the new default zone (may have to do
+  default zone, they will move over to the new default zone (_may_ have to do
   another network bounce to make that happen, I am not sure, I haven't tested
   this)
 
@@ -197,7 +213,7 @@ sudo systemctl restart firewalld
 
 ## Server example -- configure rules and apply to interface
 
-Note that we already created the zone in the "Preparation" section above.
+_**Note that we already created the zone in the "Preparation: Set up a custom zone" section above.**_
 
 For this example, we are assuming this is a webserver, but also has another service at port 5001 available. We'll ssh tunnel to the cockpit service (I'll show how). This assumes you installed some httpd service (apache? nginx?) and cockpit. If not, comment those lines out.
 
@@ -247,8 +263,7 @@ sudo firewall-cmd --get-active-zones
 
 **Associate these rules to our interface**
 * `eth0` is what my computer reported (yours may vary)
-* to have it apply, we have to bounce the network service
-* if `--get-active-zones` show no interfaces, virtualization is probably involved (some cloud service perhaps?). Regardless, any interfaces associated to the old default zone will shift to the new default zone upon `--set-default-zone`.
+* to have it apply, we _may_ have to bounce the network service
 
 ```shell
 #
@@ -262,8 +277,8 @@ sudo firewall-cmd --zone=todds-server --change-interface=eth0
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=eth0
 
-# bounce!
-sudo systemctl restart network
+# bounce the network -- commented out; you may not have to do this
+#sudo systemctl restart network
 
 # now associated to todds-server
 sudo firewall-cmd --get-active-zones
@@ -311,13 +326,13 @@ You should not be about to browse to that IP address from your laptop to that se
 ssh -L 9091:127.0.0.1:9090 <username@server-ip> -N
 ```
 
-Now browse to your server's instance of cockpit from your laptop: <http://127.0.0.1:9091>
+Now browse to your server's instance of cockpit from your laptop: <http://127.0.0.1:9091> or <http://localhost:9091>
 
 Slick!
 
 ## I hope this was helpful...
 
-Feedback and comments: <t0dd@protonmail.com>
+Feedback and comments: `t0dd_at_protonmail.com`
 
 ## Resources
 
@@ -378,8 +393,8 @@ sudo firewall-cmd --zone=todds-laptop --list-all
 sudo firewall-cmd --get-active-zones
 # associate...
 sudo firewall-cmd --zone=todds-laptop --change-interface=wlp1s0
-# bounce the network
-sudo systemctl restart network
+# bounce the network -- commented out; you may not have to do this
+#sudo systemctl restart network
 # check that the interface is now associated to todds-laptop
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=wlp1s0
@@ -446,8 +461,8 @@ sudo firewall-cmd --zone=todds-server --list-all
 sudo firewall-cmd --get-active-zones
 # associate...
 sudo firewall-cmd --zone=todds-server --change-interface=eth0
-# bounce the network
-sudo systemctl restart network
+# bounce the network -- commented out, you may not have to do this
+#sudo systemctl restart network
 # check that the interface is now associated to todds-server
 sudo firewall-cmd --get-active-zones
 sudo firewall-cmd --get-zone-of-interface=eth0

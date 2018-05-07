@@ -9,8 +9,8 @@ focused&mdash; HowTos.
 ## How to...
 
 Networking and Access
-* [Configure FirewallD for Linux (laptop and server)](https://github.com/taw00/howto/blob/master/howto-configure-firewalld-for-linux-examples-laptop-and-server.md)
-* [Configure Fail2Ban for Linux](https://github.com/taw00/howto/blob/master/howto-configure-fail2ban-for-linux.md)
+* [Configure FirewallD for Linux (laptop and server)](https://github.com/taw00/howto/blob/master/howto-configure-firewalld.md)
+* [Configure Fail2Ban for Linux](https://github.com/taw00/howto/blob/master/howto-configure-fail2ban.md)
 * [SSH Tunnel (Port Forward via SSH)](https://github.com/taw00/howto/blob/master/howto-ssh-tunnel.md)
 * [Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md)
 

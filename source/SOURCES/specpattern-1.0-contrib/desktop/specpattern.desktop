@@ -1,13 +1,15 @@
+# https://fedoraproject.org/wiki/Packaging:Guidelines#Desktop_files
 [Desktop Entry]
 Name=Spec Pattern
+GenericName=Example Application
 Comment=This Spec Pattern RPM serves as a packaging example/template (a pattern). This desktop application exists only to serve this purpose.
-GenericName=Todd's RPM Spec template and example app configuration
 Exec=/usr/bin/specpattern
 Terminal=false
 X-MultipleArgs=false
 Type=Application
+# https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html
 Categories=Development;
-MimeType=text/plain;
+#MimeType=text/plain;
 StartupNotify=true
 Icon=specpattern
 Name[en_US]=specpattern.desktop

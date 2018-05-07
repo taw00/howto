@@ -6,7 +6,7 @@
 #
 # This is not a canonical howto, but it should be good enough to get you
 # started. Let me know if you see any blatant errors or needed correction:
-# t0dd@protonmail.com
+# t0dd_at_protonmail.com
 #
 # ---
 #
@@ -127,7 +127,7 @@ Version: %{vermajor}.%{verminor}
 # If pre-production - "targetIsProduction 0"
 # eg. 0.6.testing -- pkgrel_preprod should always = pkgrel_prod-1
 %define pkgrel_preprod 0
-%define extraver_preprod 6
+%define extraver_preprod 7
 %define snapinfo testing
 #%%define snapinfo testing.20180424
 #%%define snapinfo beta2.41d5c63.gh
@@ -212,8 +212,8 @@ Release: %{_release}
 # You can/should use URLs for sources as well. That is beyond the scope of
 # this example.
 # https://fedoraproject.org/wiki/Packaging:SourceURL
-Source0: %{name}-%{version}.tar.gz
-Source1: %{name}-%{vermajor}-contrib.tar.gz
+Source0: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{version}.tar.gz
+Source1: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
 
 # Most of the time, the build system can figure out the requires.
 # But if you need something specific...
@@ -237,7 +237,7 @@ Obsoletes: spec-pattern < 0.9
 
 License: MIT
 URL: https://github.com/taw00/howto
-# Group is deprecated. Don't use it. Left here as a reminder...
+# Group is no longer used. Left here as a reminder...
 # https://fedoraproject.org/wiki/RPMGroups 
 #Group: Unspecified
 
@@ -288,9 +288,8 @@ and deploy a graphical desktop application, systemd service, and more.
 
 
 %prep
+# an rpm creation step (right prior to %%build step)
 # Prep section starts us in directory .../BUILD -or- {_builddir}
-# CREATING RPM:
-# - prep step (comes before build)
 # - This step extracts all code archives and takes any preparatory steps
 #   necessary prior to the build.
 #
@@ -327,9 +326,8 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 
 %build
+# an rpm creation step (right prior to %%install step)
 # This section starts us in directory {_builddir}/{srcroot}
-# CREATING RPM:
-# - build step (comes before install step)
 # - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
 
@@ -347,9 +345,8 @@ cd %{srccodetree}
 
 
 %install
+# an rpm creation step (right prior to %%files step)
 # This section starts us in directory {_builddir}/{srcroot}
-# CREATING RPM:
-# - install step (comes before files step)
 # - This step moves anything needing to be part of the package into the
 #   {buildroot}, therefore mirroring the final directory and file structure of
 #   an installed RPM.
@@ -480,10 +477,9 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %files
+# an rpm creation step
 # This section starts us in directory {_buildrootdir}
 # (note, macros like %%docs, etc may locate in {_builddir}
-# CREATING RPM:
-# - files step (final step)
 # - This step makes a declaration of ownership of any listed directories
 #   or files
 # - The install step should have set permissions and ownership correctly,
@@ -568,8 +564,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 %pre
 # This section starts us in directory {_builddir}/{srcroot}
-# INSTALLING THE RPM:
-# - pre section (runs before the install process)
+# an installation step (runs right prior to installation)
 # - system users are added if needed. Any other roadbuilding.
 #
 # Note that _sharedstatedir is /var/lib and /var/lib/specpattern will be the homedir
@@ -581,10 +576,8 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 
 %post
+# an installation step (runs after install process is complete)
 # This section starts us in directory {_builddir}/{srcroot}
-# INSTALLING THE RPM:
-# - post section (runs after the install process is complete)
-#
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
@@ -592,43 +585,48 @@ umask 007
 test -e %{_sysconfdir}/%{name}/%{name}.conf && %systemd_post %{name}d.service
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+# Update the desktop database
+/usr/bin/update-desktop-database &> /dev/null || :
 
 
 %postun
+# an uninstallation step (runs after uninstall process is complete)
 # This section starts us in directory {_builddir}/{srcroot}
-# UNINSTALLING THE RPM:
-# - postun section (runs after an RPM has been removed)
-#
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
 # refresh firewalld context
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+# Update the desktop database
+/usr/bin/update-desktop-database &> /dev/null || :
 
 
 #%clean
-## Once needed if you are building on old RHEL/CentOS.
-## No longer used.
-#rm -rf %{buildroot}
+# No longer used.
 
 
 %changelog
-* Mon Apr 30 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.6.testing.taw[n]
+* Sun May 06 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw[n]
+- Tweaked the .desktop and .appdata.xml files a bit (more conforming)
+- Reduced a bit of noise in the specfile comments. Only a bit. :)
+- Source[n] values are now URLs as they should be.
+
+* Mon Apr 30 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.6.testing.taw[n]
 - Fixed some errors in the systemd scripts.
 - Improved some comments.
 - Simplified some scripting.
 
-* Sat Apr 28 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.5.testing.taw[n]
+* Sat Apr 28 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.5.testing.taw[n]
 - Deployed .desktop file correctly and include an .appdata.xml file.
 
-* Thu Apr 26 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.4.testing.taw[n]
+* Thu Apr 26 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.4.testing.taw[n]
 - cleanup - version and release build should all be together.
 
-* Tue Apr 24 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.3.testing.taw[n]
+* Tue Apr 24 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.3.testing.taw[n]
 - Further simplified the snapinfo, minorbump, and repackage logic.
 - Issue warnings if your production and snapinfo settings are atypical.
 
-* Sun Apr 22 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.2.testing.taw[n]
+* Sun Apr 22 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.2.testing.taw[n]
 - Simplified the snapinfo logic.
 - Updated the desktop icons.
 - Added a simple little specpattern loop program that runs in a terminal or  
@@ -636,5 +634,5 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 - Added systemd and firewalld service definitions. Added logrotation rules.
 - Logs nicely to the journal.
 
-* Sat Apr 14 2018 Todd Warner <t0dd@protonmail.com> 1.0.1-0.1.testing.taw[n]
+* Sat Apr 14 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.1.testing.taw[n]
 - Initial test build.
