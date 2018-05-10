@@ -137,7 +137,7 @@ Version: %{vermajor}.%{verminor}
 %define snapinfo_rp rp
 
 # if includeMinorbump
-%define minorbump taw0
+%define minorbump taw1
 
 # Building the release string (don't edit this)...
 
@@ -288,7 +288,6 @@ and deploy a graphical desktop application, systemd service, and more.
 
 
 %prep
-# an rpm creation step (right prior to %%build step)
 # Prep section starts us in directory .../BUILD -or- {_builddir}
 # - This step extracts all code archives and takes any preparatory steps
 #   necessary prior to the build.
@@ -303,7 +302,8 @@ and deploy a graphical desktop application, systemd service, and more.
 #      \_srccodetree        \_{name}-{version}
 #      \_srccontribtree     \_{name}-{vermajor}-contrib
 
-mkdir %{srcroot}
+#rm -rf %{srcroot} ; mkdir -p %{srcroot}
+mkdir -p %{srcroot}
 # sourcecode
 %setup -q -T -D -a 0 -n %{srcroot}
 # contrib
@@ -325,8 +325,12 @@ The %{name} config file is housed here: /etc/%{name}/%{name}.conf
 cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 
+##
+## Building the RPM: prep --> build --> install --> files
+##
+
+
 %build
-# an rpm creation step (right prior to %%install step)
 # This section starts us in directory {_builddir}/{srcroot}
 # - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
@@ -345,7 +349,6 @@ cd %{srccodetree}
 
 
 %install
-# an rpm creation step (right prior to %%files step)
 # This section starts us in directory {_builddir}/{srcroot}
 # - This step moves anything needing to be part of the package into the
 #   {buildroot}, therefore mirroring the final directory and file structure of
@@ -477,9 +480,9 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %files
-# an rpm creation step
 # This section starts us in directory {_buildrootdir}
-# (note, macros like %%docs, etc may locate in {_builddir}
+# (note that macros like %%docs, %%licence, etc may locate in
+# {_builddir}/{srcroot})
 # - This step makes a declaration of ownership of any listed directories
 #   or files
 # - The install step should have set permissions and ownership correctly,
@@ -561,6 +564,10 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %attr(644,root,root) %{_sysconfdir}/logrotate.d/%{name}
 
 
+##
+## Installing/Uninstalling the RPM: pre, post, posttrans, preun, postun
+##
+
 
 %pre
 # This section starts us in directory {_builddir}/{srcroot}
@@ -606,7 +613,12 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
-* Sun May 06 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw[n]
+* Thu May 10 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw1
+- spec file change:
+  - mkdir -p not just mkdir cuz... what if it is already populated.
+  - consider rm -rf ... && mkdir -p ... instead.
+
+* Sun May 06 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw0
 - Tweaked the .desktop and .appdata.xml files a bit (more conforming)
 - Reduced a bit of noise in the specfile comments. Only a bit. :)
 - Source[n] values are now URLs as they should be.
