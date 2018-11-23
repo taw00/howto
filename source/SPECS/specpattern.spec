@@ -1,4 +1,5 @@
 # specpattern.spec
+# vim:tw=0:ts=2:sw=2:et:
 #
 # This SPEC file serves as a template --a typical usage pattern-- for how I
 # create RPMs. The first iteration of this contained copious notes. I will
@@ -107,102 +108,68 @@ Summary: A packaging example/template (a pattern)
 #BuildArch: noarch
 
 %define targetIsProduction 0
-%define includeSnapinfo 1
-%define includeMinorbump 1
 %define sourceIsPrebuilt 0
 
 
-# VERSION
+# VERSION - can edit
 # eg. 1.0.1
 %define vermajor 1.0
 %define verminor 1
 Version: %{vermajor}.%{verminor}
 
 
-# RELEASE
-# If production - "targetIsProduction 1"
-# eg. 1 (and no other qualifiers)
-%define pkgrel_prod 1
+# RELEASE - can edit
+%if %{targetIsProduction}
+  %define _pkgrel 1
+%else
+  %define _pkgrel 0.9
+%endif
 
-# If pre-production - "targetIsProduction 0"
-# eg. 0.6.testing -- pkgrel_preprod should always = pkgrel_prod-1
-%define pkgrel_preprod 0
-%define extraver_preprod 7
-%define snapinfo testing
-#%%define snapinfo testing.20180424
-#%%define snapinfo beta2.41d5c63.gh
+# MINORBUMP - can edit
+%undefine minorbump
+%define minorbump taw0
 
-# if sourceIsPrebuilt (rp=repackaged)
+#
+# Build the release string - don't edit this
+#
+
+# rp = repackaged
 # eg. 1.rp (prod) or 0.6.testing.rp (pre-prod)
-%define snapinfo_rp rp
-
-# if includeMinorbump
-%define minorbump taw1
-
-# Building the release string (don't edit this)...
-
+%define _snapinfo testing
 %if %{targetIsProduction}
-  %if %{includeSnapinfo}
-    %{warn:"Warning: target is production and yet you want snapinfo included. This is not typical."}
-  %endif
-%else
-  %if ! %{includeSnapinfo}
-    %{warn:"Warning: target is pre-production and yet you elected not to incude snapinfo (testing, beta, ...). This is not typical."}
-  %endif
+  %undefine _snapinfo
 %endif
-
-# release numbers
-%undefine _relbuilder_pt1
-%if %{targetIsProduction}
-  %define _pkgrel %{pkgrel_prod}
-  %define _relbuilder_pt1 %{pkgrel_prod}
-%else
-  %define _pkgrel %{pkgrel_preprod}
-  %define _extraver %{extraver_preprod}
-  %define _relbuilder_pt1 %{_pkgrel}.%{_extraver}
+%define _snapinfo_rp rp
+%if ! %{sourceIsPrebuilt}
+   %undefine _snapinfo_rp
 %endif
-
-# snapinfo and repackage (pre-built) indicator
-%undefine _relbuilder_pt2
-%if ! %{includeSnapinfo}
-  %undefine snapinfo
-%endif
-%if 0%{?sourceIsPrebuilt:1}
-  %if ! %{sourceIsPrebuilt}
-    %undefine snapinfo_rp
-  %endif
-%else
-  %undefine snapinfo_rp
-%endif
-%if 0%{?snapinfo_rp:1}
-  %if 0%{?snapinfo:1}
-    %define _relbuilder_pt2 %{snapinfo}.%{snapinfo_rp}
+%if 0%{?_snapinfo:1}
+  %if 0%{?_snapinfo_rp:1}
+    %define snapinfo %{_snapinfo}.%{_snapinfo_rp}
   %else
-    %define _relbuilder_pt2 %{snapinfo_rp}
+    %define snapinfo %{_snapinfo}
   %endif
 %else
-  %if 0%{?snapinfo:1}
-    %define _relbuilder_pt2 %{snapinfo}
+  %if 0%{?_snapinfo_rp:1}
+    %define snapinfo %{_snapinfo_rp}
+  %else
+    %undefine snapinfo
   %endif
 %endif
 
-# put it all together
-# pt1 will always be defined. pt2 and minorbump may not be
-%define _release %{_relbuilder_pt1}
-%if ! %{includeMinorbump}
-  %undefine minorbump
-%endif
-%if 0%{?_relbuilder_pt2:1}
+# _pkgrel will be defined, snapinfo and minorbump may not be
+%define _release %{_pkgrel}
+%if 0%{?snapinfo:1}
   %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}.%{minorbump}
+    %define _release %{_pkgrel}.%{snapinfo}%{?dist}.%{minorbump}
   %else
-    %define _release %{_relbuilder_pt1}.%{_relbuilder_pt2}%{?dist}
+    %define _release %{_pkgrel}.%{snapinfo}%{?dist}
   %endif
 %else
   %if 0%{?minorbump:1}
-    %define _release %{_relbuilder_pt1}%{?dist}.%{minorbump}
+    %define _release %{_pkgrel}%{?dist}.%{minorbump}
   %else
-    %define _release %{_relbuilder_pt1}%{?dist}
+    %define _release %{_pkgrel}%{?dist}
   %endif
 %endif
 
@@ -212,6 +179,9 @@ Release: %{_release}
 # You can/should use URLs for sources as well. That is beyond the scope of
 # this example.
 # https://fedoraproject.org/wiki/Packaging:SourceURL
+# https://fedoraproject.org/wiki/User:Spot/GitHub_Guidelines
+#Source0: https://github.com/PROJECT_NAME/%%{name}/releases/download/v%%{version}/%%{name}-%%{version}.tar.gz
+#Source0: https://github.com/PROJECT_NAME/%%{name}/archive/v%%{version}/%%{name}-%%{version}.tar.gz
 Source0: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{version}.tar.gz
 Source1: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
 
@@ -220,11 +190,19 @@ Source1: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{ver
 Requires: gnome-terminal
 
 # BuildRequires indicates everything you need to build the RPM
-BuildRequires: tree
-# So I can introspect the mock build environment...
-#BuildRequires: tree vim-enhanced less
 # Required for desktop applications (validation of .desktop and .xml files)
 BuildRequires: desktop-file-utils libappstream-glib
+# As per https://fedoraproject.org/wiki/Packaging:Scriptlets?rd=Packaging:ScriptletSnippets#Systemd
+%{?systemd_requires}
+BuildRequires: systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+
+#t0dd: for build environment introspection
+%if ! %{targetIsProduction}
+BuildRequires: tree vim-enhanced less findutils
+%endif
 
 # CentOS/RHEL/EPEL can't do "Suggests:"
 %if 0%{?fedora:1}
@@ -237,6 +215,8 @@ Obsoletes: spec-pattern < 0.9
 
 License: MIT
 URL: https://github.com/taw00/howto
+# Note, for example, this will not build on ppc64le
+ExclusiveArch: x86_64 i686 i386
 # Group is no longer used. Left here as a reminder...
 # https://fedoraproject.org/wiki/RPMGroups 
 #Group: Unspecified
@@ -266,7 +246,7 @@ URL: https://github.com/taw00/howto
 # https://fedoraproject.org/wiki/Packaging:Guidelines#PIE
 %define _hardened_build 1
 
-# Extracted source tree structure (extracted in .../BUILD)
+# Extracted source tree structure (extracted in {_builddir})
 #   srcroot               {name}-1.0
 #      \_srccodetree        \_{name}-1.0.1
 #      \_srccontribtree     \_{name}-1.0-contrib
@@ -355,6 +335,10 @@ cd %{srccodetree}
 #   an installed RPM.
 
 # Cheatsheet for built-in RPM macros:
+# https://fedoraproject.org/wiki/Packaging:RPMMacros
+#   _builddir = {_topdir}/BUILD
+#   _buildrootdir = {_topdir}/BUILDROOT
+#   buildroot = {_buildrootdir}/{name}-{version}-{release}.{_arch}
 #   _bindir = /usr/bin
 #   _sbindir = /usr/sbin
 #   _datadir = /usr/share
@@ -362,12 +346,14 @@ cd %{srccodetree}
 #   _sysconfdir = /etc
 #   _localstatedir = /var
 #   _sharedstatedir is /var/lib
-#   _prefix = /usr
+#   _prefix or _usr = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
-#   https://fedoraproject.org/wiki/Packaging:RPMMacros
+# This is used to quiet rpmlint who can't seem to understand that /usr/lib is
+# still used for certain things.
+%define _usr_lib /usr/lib
 # These three are defined in newer versions of RPM (Fedora not el7)
-%define _tmpfilesdir /usr/lib/tmpfiles.d
-%define _unitdir /usr/lib/systemd/system
+%define _tmpfilesdir %{_usr_lib}/tmpfiles.d
+%define _unitdir %{_usr_lib}/systemd/system
 %define _metainfodir %{_datadir}/metainfo
 
 # Create directories
@@ -378,6 +364,8 @@ install -d -m755 -p %{buildroot}%{_bindir}
 install -d -m755 -p %{buildroot}%{_sbindir}
 # /usr/share/applications/
 install -d %{buildroot}%{_datadir}/applications
+# /usr/share/metainfo/
+install -d %{buildroot}%{_metainfodir}
 # /etc/ld.so.conf.d/
 install -d %{buildroot}%{_sysconfdir}/ld.so.conf.d
 # /etc/specpattern/
@@ -471,7 +459,7 @@ install -D -m644 -p %{srccontribtree}/logrotate/etc-logrotate.d_%{name} %{buildr
 touch %{buildroot}%{_localstatedir}/log/%{name}/debug.log
 
 # Service definition files for firewalld
-install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_prefix}/lib/firewalld/services/%{name}.xml
+install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_usr_lib}/firewalld/services/%{name}.xml
 
 # Note that we do not do this... cuz, init.d is dead. I leave it for pedantic completness
 # /etc/init.d/
@@ -480,7 +468,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %files
-# This section starts us in directory {_buildrootdir}
+# This section starts us in directory {_buildrootdir} (I think)
 # (note that macros like %%docs, %%licence, etc may locate in
 # {_builddir}/{srcroot})
 # - This step makes a declaration of ownership of any listed directories
@@ -545,7 +533,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 %attr(640,%{systemuser},%{systemgroup}) %{_sharedstatedir}/%{name}/README
 
 # firewalld service definition
-%{_prefix}/lib/firewalld/services/%{name}.xml
+%{_usr_lib}/firewalld/services/%{name}.xml
 
 # Desktop
 %{_datadir}/icons/*
@@ -596,6 +584,14 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 /usr/bin/update-desktop-database &> /dev/null || :
 
 
+%posttrans
+/usr/bin/systemd-tmpfiles --create
+
+
+%preun
+%systemd_preun zcashd.service
+
+
 %postun
 # an uninstallation step (runs after uninstall process is complete)
 # This section starts us in directory {_builddir}/{srcroot}
@@ -606,6 +602,8 @@ umask 007
 test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 # Update the desktop database
 /usr/bin/update-desktop-database &> /dev/null || :
+# systemd stuff
+%systemd_postun zcashd.service
 
 
 #%clean
@@ -613,38 +611,50 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 
 
 %changelog
+* Fri Nov 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.9.testing.taw0
+  - Fix systemd config in spec file for postun, etc.
+  - Some simplification of the release string logic.
+  - /usr/share/applications/specpatternd.desktop file Exec line updated to  
+    work better with KDA Plasma desktops. Something to do with an electron  
+    bug or somesuch. Now it reads:  
+    `Exec=env XDG_CURRENT_DESKTOP=Unity /usr/bin/riot`  
+    instead of `Exec=/usr/bin/specpattern`
+
+* Wed May 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.8.testing.taw0
+  - locking down supported architectures w/ ExclusiveArch
+
 * Thu May 10 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw1
-- spec file change:
-  - mkdir -p not just mkdir cuz... what if it is already populated.
-  - consider rm -rf ... && mkdir -p ... instead.
+  - spec file change:
+    - mkdir -p not just mkdir cuz... what if it is already populated.
+    - consider rm -rf ... && mkdir -p ... instead.
 
 * Sun May 06 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw0
-- Tweaked the .desktop and .appdata.xml files a bit (more conforming)
-- Reduced a bit of noise in the specfile comments. Only a bit. :)
-- Source[n] values are now URLs as they should be.
+  - Tweaked the .desktop and .appdata.xml files a bit (more conforming)
+  - Reduced a bit of noise in the specfile comments. Only a bit. :)
+  - Source[n] values are now URLs as they should be.
 
 * Mon Apr 30 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.6.testing.taw[n]
-- Fixed some errors in the systemd scripts.
-- Improved some comments.
-- Simplified some scripting.
+  - Fixed some errors in the systemd scripts.
+  - Improved some comments.
+  - Simplified some scripting.
 
 * Sat Apr 28 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.5.testing.taw[n]
-- Deployed .desktop file correctly and include an .appdata.xml file.
+  - Deployed .desktop file correctly and include an .appdata.xml file.
 
 * Thu Apr 26 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.4.testing.taw[n]
-- cleanup - version and release build should all be together.
+  - cleanup - version and release build should all be together.
 
 * Tue Apr 24 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.3.testing.taw[n]
-- Further simplified the snapinfo, minorbump, and repackage logic.
-- Issue warnings if your production and snapinfo settings are atypical.
+  - Further simplified the snapinfo, minorbump, and repackage logic.
+  - Issue warnings if your production and snapinfo settings are atypical.
 
 * Sun Apr 22 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.2.testing.taw[n]
-- Simplified the snapinfo logic.
-- Updated the desktop icons.
-- Added a simple little specpattern loop program that runs in a terminal or  
-  is daemonized.
-- Added systemd and firewalld service definitions. Added logrotation rules.
-- Logs nicely to the journal.
+  - Simplified the snapinfo logic.
+  - Updated the desktop icons.
+  - Added a simple little specpattern loop program that runs in a terminal  
+    or is daemonized.
+  - Added systemd and firewalld service definitions. Added logrotation rules.
+  - Logs nicely to the journal.
 
 * Sat Apr 14 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.1.testing.taw[n]
-- Initial test build.
+  - Initial test build.
