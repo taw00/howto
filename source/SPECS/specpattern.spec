@@ -59,20 +59,12 @@
 #
 # Further reading:
 # * https://docs.fedoraproject.org/quick-docs/en-US/creating-rpm-packages.html
-# * https://fedoraproject.org/wiki/Packaging:Guidelines?rd=Packaging/Guidelines
-# * https://fedoraproject.org/wiki/Packaging:Guidelines?rd=PackagingGuidelines#Desktop_files
-# * https://fedoraproject.org/wiki/Packaging:AppData
-# * https://fedoraproject.org/wiki/packaging:versioning
-# * https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+# * https://docs.fedoraproject.org/en-US/packaging-guidelines/
+# * https://docs.fedoraproject.org/en-US/packaging-guidelines/#_filesystem_layout
 # * https://developer.fedoraproject.org/deployment/rpm/about.html
 # * https://rpm-packaging-guide.github.io/
 # * http://rpm-guide.readthedocs.io/en/latest/
 # * http://backreference.org/2011/09/17/some-tips-on-rpm-conditional-macros/
-# * http://rpm5.org/docs/api/macros.html
-# * https://fedoraproject.org/wiki/Licensing:Main
-# * https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing
-# * https://fedoraproject.org/wiki/Packaging:RPMMacros
-#
 # A note about specfile comments: commented out macros have to have their %'s
 # doubled up in comments in order to have them properly escaped.
 #
@@ -122,12 +114,12 @@ Version: %{vermajor}.%{verminor}
 %if %{targetIsProduction}
   %define _pkgrel 1
 %else
-  %define _pkgrel 0.9
+  %define _pkgrel 0.11
 %endif
 
 # MINORBUMP - can edit
 %undefine minorbump
-%define minorbump taw0
+%define minorbump taw
 
 #
 # Build the release string - don't edit this
@@ -178,26 +170,34 @@ Release: %{_release}
 
 # You can/should use URLs for sources as well. That is beyond the scope of
 # this example.
-# https://fedoraproject.org/wiki/Packaging:SourceURL
-# https://fedoraproject.org/wiki/User:Spot/GitHub_Guidelines
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/SourceURL/
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/SourceURL/#_git_hosting_services
 #Source0: https://github.com/PROJECT_NAME/%%{name}/releases/download/v%%{version}/%%{name}-%%{version}.tar.gz
 #Source0: https://github.com/PROJECT_NAME/%%{name}/archive/v%%{version}/%%{name}-%%{version}.tar.gz
-Source0: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{version}.tar.gz
-Source1: https://github.com/taw00/howto/blob/master/source/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
+Source0: https://github.com/taw00/howto/raw/master/source/SOURCES/%{name}-%{version}.tar.gz
+Source1: https://github.com/taw00/howto/raw/master/source/SOURCES/%{name}-%{vermajor}-contrib.tar.gz
 
 # Most of the time, the build system can figure out the requires.
 # But if you need something specific...
 Requires: gnome-terminal
+# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
+Requires: firewalld-filesystem
+Requires(post): firewalld-filesystem
+Requires(postun): firewalld-filesystem
 
 # BuildRequires indicates everything you need to build the RPM
 # Required for desktop applications (validation of .desktop and .xml files)
 BuildRequires: desktop-file-utils libappstream-glib
-# As per https://fedoraproject.org/wiki/Packaging:Scriptlets?rd=Packaging:ScriptletSnippets#Systemd
-%{?systemd_requires}
+
+# systemd stuff
+# As per https://docs.fedoraproject.org/en-US/packaging-guidelines/Systemd/
+# Oddly, contrary to the docs, systemd-rpm-macros doesn't exist
+#BuildRequires: systemd systemd-rpm-macros
+#Requires(post): systemd
+#Requires(preun): systemd
+#Requires(postun): systemd
 BuildRequires: systemd
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
+%{?systemd_requires}
 
 #t0dd: for build environment introspection
 %if ! %{targetIsProduction}
@@ -217,8 +217,8 @@ License: MIT
 URL: https://github.com/taw00/howto
 # Note, for example, this will not build on ppc64le
 ExclusiveArch: x86_64 i686 i386
-# Group is no longer used. Left here as a reminder...
-# https://fedoraproject.org/wiki/RPMGroups 
+# Group, Vendor, Packager, and more is no longer used. Left here as a reminder...
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/#_tags_and_sections
 #Group: Unspecified
 
 # CHANGE or DELETE this for your package
@@ -238,12 +238,13 @@ ExclusiveArch: x86_64 i686 i386
 #
 # How debug info and build_ids managed (I only halfway understand this):
 # https://github.com/rpm-software-management/rpm/blob/master/macros.in
+# ...flip-flop next two lines in order to disable (nil) or enable (1) debuginfo package build
+%define debug_package 1
 %define debug_package %{nil}
 %define _unique_build_ids 1
 %define _build_id_links alldebug
 
-# https://fedoraproject.org/wiki/Changes/Harden_All_Packages
-# https://fedoraproject.org/wiki/Packaging:Guidelines#PIE
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/#_pie
 %define _hardened_build 1
 
 # Extracted source tree structure (extracted in {_builddir})
@@ -282,7 +283,7 @@ and deploy a graphical desktop application, systemd service, and more.
 #      \_srccodetree        \_{name}-{version}
 #      \_srccontribtree     \_{name}-{vermajor}-contrib
 
-#rm -rf %{srcroot} ; mkdir -p %{srcroot}
+#rm -rf %%{srcroot} ; mkdir -p %%{srcroot}
 mkdir -p %{srcroot}
 # sourcecode
 %setup -q -T -D -a 0 -n %{srcroot}
@@ -319,7 +320,7 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 # Clearing npm's cache will hopefully elminate SHA1 integrity issues.
 #/usr/bin/npm cache clean --force
 #rm -rf ../.npm/_cacache
-#rm -f %{srccodetree}/package-lock.json
+#rm -f %%{srccodetree}/package-lock.json
 
 ## Man Pages - not used as of yet
 #gzip %%{buildroot}%%{_mandir}/man1/*.1
@@ -335,7 +336,7 @@ cd %{srccodetree}
 #   an installed RPM.
 
 # Cheatsheet for built-in RPM macros:
-# https://fedoraproject.org/wiki/Packaging:RPMMacros
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/RPMMacros/
 #   _builddir = {_topdir}/BUILD
 #   _buildrootdir = {_topdir}/BUILDROOT
 #   buildroot = {_buildrootdir}/{name}-{version}-{release}.{_arch}
@@ -350,11 +351,15 @@ cd %{srccodetree}
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
 # This is used to quiet rpmlint who can't seem to understand that /usr/lib is
 # still used for certain things.
-%define _usr_lib /usr/lib
-# These three are defined in newer versions of RPM (Fedora not el7)
+%define _rawlib lib
+%define _usr_lib /usr/%{_rawlib}
+# These three are already defined in newer versions of RPM, but not in el7
+%if 0%{?rhel} && 0%{?rhel} < 8
 %define _tmpfilesdir %{_usr_lib}/tmpfiles.d
 %define _unitdir %{_usr_lib}/systemd/system
 %define _metainfodir %{_datadir}/metainfo
+%endif
+
 
 # Create directories
 # /usr/[lib,lib64]/specpattern/
@@ -414,13 +419,14 @@ install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.512x512.png %
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.svg         %{buildroot}%{_datadir}/icons/HighContrast/scalable/apps/%{name}.svg
 
 # specpattern.desktop
-# https://fedoraproject.org/wiki/Packaging:Guidelines?rd=PackagingGuidelines#Desktop_files
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/#_desktop_files
+# https://fedoraproject.org/wiki/NewMIMESystem
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications/ %{srccontribtree}/desktop/%{name}.desktop
-#install -D -m644 -p %%{srccontribtree}/desktop/%%{name}.desktop %%{buildroot}%%{_datadir}/applications/%%{name}.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 
 # specpattern.appdata.xml
-# https://fedoraproject.org/wiki/Packaging:AppData
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/AppData/
+# https://fedoraproject.org/wiki/NewMIMESystem
 install -D -m644 -p %{srccontribtree}/desktop/%{name}.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 
@@ -463,8 +469,8 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 # Note that we do not do this... cuz, init.d is dead. I leave it for pedantic completness
 # /etc/init.d/
-#install -d %{buildroot}%{_sysconfdir}/init.d
-#install -D -m755 %{srccontribtree}/systemd/etc-init.d_specpatternd.init %{buildroot}%{_sysconfdir}/init.d/specpatternd.init
+#install -d %%{buildroot}%%{_sysconfdir}/init.d
+#install -D -m755 %%{srccontribtree}/systemd/etc-init.d_specpatternd.init %%{buildroot}%%{_sysconfdir}/init.d/specpatternd.init
 
 
 %files
@@ -576,20 +582,31 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
+
 # refresh systemd context
-test -e %{_sysconfdir}/%{name}/%{name}.conf && %systemd_post %{name}d.service
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/#_scriptlets
+#test -e %%{_sysconfdir}/%%{name}/%%{name}.conf && %%systemd_post %%{name}d.service
+%systemd_post %{name}d.service
+
 # refresh firewalld context
-test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
+#test -f %%{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+%firewalld_reload
+
 # Update the desktop database
+# https://fedoraproject.org/wiki/NewMIMESystem
 /usr/bin/update-desktop-database &> /dev/null || :
 
 
 %posttrans
 /usr/bin/systemd-tmpfiles --create
+#TODO: Replace above with %%tmpfiles_create_package macro
+#TODO: https://github.com/systemd/systemd/blob/master/src/core/macros.systemd.in
 
 
 %preun
-%systemd_preun zcashd.service
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/#_scriptlets
+%systemd_preun %{name}d.service
 
 
 %postun
@@ -598,20 +615,32 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
+
 # refresh firewalld context
-test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+# https://fedoraproject.org/wiki/PackagingDrafts/ScriptletSnippets/Firewalld
+#test -f %%{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
+%firewalld_reload
+
 # Update the desktop database
+# https://fedoraproject.org/wiki/NewMIMESystem
 /usr/bin/update-desktop-database &> /dev/null || :
 # systemd stuff
-%systemd_postun zcashd.service
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/#_scriptlets
+%systemd_postun %{name}d.service
 
 
-#%clean
+#%%clean
 # No longer used.
 
 
 %changelog
-* Fri Nov 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.9.testing.taw0
+* Mon Dec 10 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.11.testing.taw
+  - cleaned up firewalld_reloads and systemd_stuff
+
+* Thu Dec 06 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.10.testing.taw
+  - cleaned up a lot of links
+
+* Fri Nov 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.9.testing.taw
   - Fix systemd config in spec file for postun, etc.
   - Some simplification of the release string logic.
   - /usr/share/applications/specpatternd.desktop file Exec line updated to  
@@ -620,7 +649,7 @@ test -f %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || true
     `Exec=env XDG_CURRENT_DESKTOP=Unity /usr/bin/riot`  
     instead of `Exec=/usr/bin/specpattern`
 
-* Wed May 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.8.testing.taw0
+* Wed May 23 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.8.testing.taw
   - locking down supported architectures w/ ExclusiveArch
 
 * Thu May 10 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.7.testing.taw1
