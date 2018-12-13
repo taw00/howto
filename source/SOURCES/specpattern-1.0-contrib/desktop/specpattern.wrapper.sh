@@ -77,15 +77,14 @@ then
     if [ $force_kde -ne 0 ] ; then noisy=1 ; fi
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ]
     then
-        if [ $force_kde -ne 0 ]
+        if [ $force_kde -eq 0 ]
         then
+            _XDG_CURRENT_DESKTOP=UNITY
+        else
             # Experimental. kde is still problematic.
             echoerr "\
 ## We have elected to force this electron-based application to work as by default with KDE.
 "
-            _XDG_CURRENT_DESKTOP=UNITY
-        else
-            : # no-op
         fi
     else
         echoerr "\
