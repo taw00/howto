@@ -11,7 +11,7 @@
 # decided to implement this wrapper so that you know what to do if your
 # application is indeed QT5 or Electron -based.
 
-# Therefore, I wrote this little wrapper script that attempts to bypass these
+# I wrote this little wrapper script that attempts to bypass these
 # issues until they are fixed. The workarounds involve setting environment
 # variables so that the application is forced to operate in a manner that is
 # different than it would by default.
@@ -19,19 +19,19 @@
 # Note that QT programs will currently "do the right thing" without intervention
 # but they will post a somewhat cryptic warning message
 #   "Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway."
-# We control that explicitely here so that this error doesn't crop up.
+# We control that explicitely here so that this message doesn't crop up.
 
 # How this script it used.
-# 1. It is called from the commandline instead of calling specpattern directly, or,
-# 2. It is called from specpattern.desktop (which is used by your window manager
+# 1. It is called from the commandline instead of calling application directly, or,
+# 2. It is called from <application>.desktop (which is used by your window manager
 #    open the application), and...
-# 3. If you use specpattern as a template for your own applications, you flip on
-#    the relevant flag below if your application is a QT5 application or an
+# 3. If you use this as a template for your own application, you flip on the
+#    relevant flag below if your application is a QT5 application or an
 #    Electron-based application.
 
 # This can be "qt5" or "electron" or "neither"
-type_of_application=qt5
-type_of_application=electron
+#type_of_application=qt5
+#type_of_application=electron
 type_of_application=neither
 
 _XDG_SESSION_TYPE=$XDG_SESSION_TYPE
