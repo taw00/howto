@@ -6,12 +6,13 @@ Name=Spec Pattern
 GenericName=Example Application
 Comment=This Spec Pattern RPM serves as a packaging example/template (a pattern). This desktop application exists only to serve this purpose.
 Categories=Development;
-Exec=env XDG_CURRENT_DESKTOP=Unity /usr/bin/specpattern
+Exec=specpattern.wrapper.sh
 Terminal=false
 X-MultipleArgs=false
 Type=Application
 #MimeType=text/plain;
 StartupNotify=true
 Icon=specpattern
-Name[en_US]=specpattern.desktop
+Name[en_US]=Spec Pattern
 GenericName[en_US]=Example Application
+X-Desktop-File-Install-Version=0.23

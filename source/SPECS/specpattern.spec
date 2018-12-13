@@ -114,7 +114,7 @@ Version: %{vermajor}.%{verminor}
 %if %{targetIsProduction}
   %define _pkgrel 1
 %else
-  %define _pkgrel 0.11
+  %define _pkgrel 0.12
 %endif
 
 # MINORBUMP - can edit
@@ -421,6 +421,7 @@ install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.svg         %
 # specpattern.desktop
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/#_desktop_files
 # https://fedoraproject.org/wiki/NewMIMESystem
+install -m755  %{srccontribtree}/desktop/%{name}.wrapper.sh %{buildroot}%{_bindir}/
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications/ %{srccontribtree}/desktop/%{name}.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 
@@ -513,6 +514,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 # Binaries
 %{_bindir}/%{name}
+%{_bindir}/%{name}.wrapper.sh
 %{_sbindir}/%{name}d
 %defattr(-,%{systemuser},%{systemgroup},-)
 %{_datadir}/%{name}/%{name}-process.sh
@@ -634,6 +636,11 @@ umask 007
 
 
 %changelog
+* Thu Dec 13 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.12.testing.taw
+  - added an example wrapper script that specpattern.desktop will call  
+    and can be used if a derived application is sensitive to certain bugs in  
+    the QT5+GNOME+Wayland environment or KDE+Electron.
+
 * Mon Dec 10 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.11.testing.taw
   - cleaned up firewalld_reloads and systemd_stuff
 
