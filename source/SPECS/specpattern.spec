@@ -213,6 +213,9 @@ BuildRequires: tree vim-enhanced less findutils
 Provides: spec-pattern = 0.9
 Obsoletes: spec-pattern < 0.9
 
+
+# https://fedoraproject.org/wiki/Licensing:Main?rd=Licensing
+# https://spdx.org/licenses/ (these differ!?!)
 License: MIT
 URL: https://github.com/taw00/howto
 # Note, for example, this will not build on ppc64le
