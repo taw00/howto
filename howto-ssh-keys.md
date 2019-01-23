@@ -3,7 +3,7 @@
 SSH is short for "secure shell". SSH is used to "log in" to a remote system
 through a secure communication channel. So, for example, if you have a remote
 system, "x.y.z", and you are user, "todd" on that system, you can log into (ssh
-into) that machine with a simple command: `ssh todd@x.y.z`. 
+into) that machine with a simple command: `ssh todd@x.y.z`.
 
 Each time you log into that remote system, you need to enter a password. This
 is fine if you only occassionally log in, but a better way. A more secure way
@@ -15,10 +15,18 @@ system. This establishes a fixed authenticated association between one user on
 the local machine and one user on the remote machine. Once established, you
 will no longer be required to enter a password when ssh'ing in.
 
+
+<!-- TOC START min:2 max:2 link:true update:true -->
+- [Create a SSH public private key pair](#create-a-ssh-public-private-key-pair)
+- [Using the SSH key pair](#using-the-ssh-key-pair)
+- [Lock down the root user...](#lock-down-the-root-user)
+
+<!-- TOC END -->
+
+
 ## Create a SSH public private key pair
 
-Let's say the username on the remote system is **todd** user from our previous
-example.
+Let's say the username on the remote system is username **todd**...
 
 Log into your local machine and create a 2048-bit or 4096-bit rsa key-pair...
 
@@ -135,3 +143,54 @@ ssh xyz mkdir directory1
 rsync --progress -r Documents todd@xyz:directory1
 ```
 
+
+## Lock down the root user...
+
+You can now ssh using a password, or using the ssh-key pair.
+
+Let's lock down root from remote access. Before we can do that, you will want
+to set up the normal user with sudo access, and then turn off access to root
+from remote ssh.
+
+### `sudo` setup for a normal user...
+
+In our example, the normal user username is "todd".
+
+**Add "todd" to the "wheel" user group**
+
+```
+usermod -a -G wheel todd
+```
+
+**(optional, but recommended)** Turn off password checking upon sudo...
+
+* Edit the `/etc/sudoers` configuration file
+* uncomment the `%wheel` line that includes the `NOPASSWD` qualifier
+* You can now execute any sudo command without having to enter the admin
+  password.
+* Test it: `sudo ls -l /root/`
+
+### Turn off "root" user remote ssh logins...
+
+In our example, the normal user username is "todd".
+
+* Edit `/etc/ssh/sshd_config`
+* Either add or edit these lines (add only if the setting does not already
+  exist)...      
+
+```
+PermitRootLogin no
+AllowUsers todd
+PasswordAuthentication no
+# Probably already set to no...
+ChallengeResponseAuthentication no
+```
+
+_Note: `AllowUsers` can be set to multiple users._
+
+* Once complete, restart sshd: `sudo systemctl restart sshd`
+* IMPORTANT TEST: While remaining logged into "todd" in one terminal, test that
+  you can still ssh-in to the machine using another terminal. If not, you need
+  to troubleshoot. If you lose that connection or are logged out from the other
+  terminal, you may have lost access to the machine. Fair warning.
+* All tested and better now? Good. Your system is now significantly more secure.
