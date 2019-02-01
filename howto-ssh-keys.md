@@ -111,15 +111,15 @@ Edit that file -- `config` -- and add a stanza that looks like this...
 ```
 # My remote test box gets an alias and configuration
 host xyz
-    #hostname IP_or_HOSTNAME_OF_REMOTE_SYSTEM
-    #for example...
+    #hostname IP_or_HOSTNAME_OF_REMOTE_SYSTEM, for example...
     hostname x.y.z
     user todd
-    ForwardX11Trusted yes
-    ForwardAgent yes
-    ForwardX11 yes
-    GatewayPorts yes
     IdentityFile ~/.ssh/xyzkey
+    # Optional settings - `man ssh_config` to learn more
+    #ForwardX11Trusted yes
+    #ForwardAgent yes
+    #ForwardX11 yes
+    #GatewayPorts yes
     #IdentitiesOnly yes
 ```
 
