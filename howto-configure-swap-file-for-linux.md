@@ -75,14 +75,14 @@ sudo su -
 # Multiple (how many times the size of RAM?)...
 m=2
 
-# Create a swapfile...
+# Size, in bytes
 size=$(free -b|grep Mem|awk '{print $2}')
 size=$(echo "$size * $m" | bc)
 size=$(printf "%.0f\n" $size)
+
+# Create the swapfile...
 fallocate -l $size /swapfile
 chmod 0600 /swapfile
-
-# Turn that file into a file formatted to be swap
 mkswap /swapfile
 
 # Turn it on
