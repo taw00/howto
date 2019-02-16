@@ -67,7 +67,37 @@ I will show you how to implement a couple options...
 
 ## Creating a swap file and enabling it is easy:
 
+<!-- NEW WAY -->
 ```
+# As root...
+sudo su -
+
+# Multiple (how many times the size of RAM?)...
+m=2
+
+# Create a swapfile...
+size=$(free -b|grep Mem|awk '{print $2}')
+size=$(echo "$size * $m" | bc)
+size=$(printf "%.0f\n" $size)
+fallocate -l $size /swapfile
+chmod 0600 /swapfile
+
+# Turn that file into a file formatted to be swap
+mkswap /swapfile
+
+# Turn it on
+swapon /swapfile
+
+# You can see it running with a "swapon -s" or "free" command
+free -h
+
+# Enable even after reboot
+cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
+echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
+cat /etc/fstab # double check your fstab file looks fine
+```
+
+<!-- OLD WAY```
 # As root...
 sudo su -
 
@@ -76,7 +106,7 @@ sudo su -
 #bs=512  # 1/2 times the size of RAM (1024/2 * 1)
 #bs=1024 # One times the size of RAM (1024   * 1)
 #bs=1536 # 1.5 times the size of RAM (1024   * 1.5)
-bs=2048 # Twice the size of RAM (1024 * 2) -- recommended if in doubt
+bs=2048 # Twice the size of RAM (1024 * 2) - recommended if in doubt
 
 # Create a swapfile - it can take a bit to finish - be patient
 TOTAL_MEM=$(free -k|grep Mem|awk '{print $2}')
@@ -96,7 +126,7 @@ free -h
 cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
 echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
 cat /etc/fstab # double check your fstab file looks fine
-```
+```-->
 
 ## That's it! Good luck.  
 
