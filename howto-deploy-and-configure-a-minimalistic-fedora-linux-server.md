@@ -42,7 +42,7 @@ bare-metal blade, server, white-box, whatever.
 ### Example: A cloud service installation, for example Vultr
 
 **Deploy to Vultr**
-  - Browse to https://my.vultr.com/
+  - Browse to [https://my.vultr.com/](https://www.vultr.com/?ref=7047925)
   - Create an account and login.
   - Click the ( + ) button.
   - Step (1): Choose some location
