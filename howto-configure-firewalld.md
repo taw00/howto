@@ -240,7 +240,7 @@ sudo firewall-cmd --zone=todds-server --permanent --add-rich-rule='rule service 
 sudo firewall-cmd --zone=todds-server --permanent --add-rich-rule='rule service name=cockpit accept limit value=10/m'
 # I have some specialized service that runs on ports 5001 to 5002, but doesn't
 # have a service definition file with a human readable name...
-sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 port port="5001-5002" protocol=tcp limit value=20/s accept'
+sudo firewall-cmd --zone=todds-server --permanent --add-rich-rule='rule family=ipv4 port port="5001-5002" protocol=tcp limit value=20/s accept'
 ```
 
 _For your servers you want to use REJECT. Could use 'default' here instead of
