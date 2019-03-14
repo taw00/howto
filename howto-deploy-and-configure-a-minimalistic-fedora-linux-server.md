@@ -1,28 +1,25 @@
 # HowTo: Deploy and Configure a Fedora Linux Operating System
+
 ***...to serve as a minimalist server platform***
 
 Note: These are instruction for deploying a base- or minimal- system. No
 application related configurations are made here.
 
-## Summary -- the objectives are straight-forward:
+**Summary -- the objectives are straight-forward:**
 
 <!-- TOC min:2 max:2 link:true update:true -->
 
 - [HowTo: Deploy and Configure a Fedora Linux Operating System](#howto-deploy-and-configure-a-fedora-linux-operating-system)
-  - [Summary -- the objectives are straight-forward:](#summary----the-objectives-are-straight-forward)
-  - [[1] Deploy a minimal operating system](#1-deploy-a-minimal-operating-system)
+  - [[0] Deploy a minimal operating system](#0-deploy-a-minimal-operating-system)
     - [Example: A cloud service installation, for example Vultr](#example-a-cloud-service-installation-for-example-vultr)
     - [Example: A traditional bare-metal server installation](#example-a-traditional-bare-metal-server-installation)
-  - [[2] Fully update the system and reboot](#2-fully-update-the-system-and-reboot)
+  - [[1] Fully update the system](#1-fully-update-the-system)
+  - [[2] Add swap space to give your system memory some elbow room...](#2-add-swap-space-to-give-your-system-memory-some-elbow-room)
   - [[3] Create user, setup SSH and sudo access...](#3-create-user-setup-ssh-and-sudo-access)
-  - [[4] Minimize root user exposure](#4-minimize-root-user-exposure)
-  - [[5] Install and Configure FirewallD](#5-install-and-configure-firewalld)
-  - [[6] Install and Configure Fail2Ban](#6-install-and-configure-fail2ban)
-    - [Install `fail2ban`...](#install-fail2ban)
-    - [Configure `fail2ban`...](#configure-fail2ban)
-    - [Enable `fail2ban` and restart...](#enable-fail2ban-and-restart)
-    - [Monitor / Analyze](#monitor--analyze)
-    - [Reference:](#reference)
+  - [[4] Install and Configure FirewallD](#4-install-and-configure-firewalld)
+  - [[5] Install and Configure Fail2Ban](#5-install-and-configure-fail2ban)
+  - [[6] Minimize root user exposure](#6-minimize-root-user-exposure)
+  - [[7] Reboot and test logins](#7-reboot-and-test-logins)
   - [ALL DONE!](#all-done)
   - [Appendix - Advanced Topics](#appendix---advanced-topics)
     - [Improve SSD Write & Delete Performance for Linux Systems by Enabling ATA TRIM](#improve-ssd-write--delete-performance-for-linux-systems-by-enabling-ata-trim)
@@ -33,7 +30,7 @@ application related configurations are made here.
 > dictates the beefy-ness of your system. For our purposes we are going to use
 > a system with 2G RAM and double that for swapspace as our example.
 
-## [1] Deploy a minimal operating system
+## [0] Deploy a minimal operating system
 
 There are two primary means to install the operating system that will covered
 here. (1) Via a cloud service, like Vultr.com, or (2) via a traditional
@@ -81,13 +78,54 @@ timedatectl set-timezone 'UTC'
 date
 ```
 
-  - **Add swap space** to give your system memory some elbow room...
 
-Vulr initially boots with no configured swap. A reasonable
-[rule of thumb](https://github.com/taw00/howto/blob/master/howto-configure-swap-file-on-linux.md)
-is to configure swap to be twice the size of your RAM. Swap-size is more art
-than science, but your system will be brutalized occassionally... 2-times your
-RAM is a good choice.
+### Example: A traditional bare-metal server installation
+
+I leave it as an exercise for the reader to perform a bare-metal installation
+of  Fedora, CentOS, or even RHEL. For Fedora, go here - https://getfedora.org/
+For CentOS, go here - https://www.centos.org/download/ For Fedora, I recommend
+the "Server" install. You need only a minimum configuration. Dependency
+resolution of installed RPM packages per these instructions will bring in
+anything you need.
+
+As you walk through the installation process, choose to enable swap, it needs
+to be at least equal to the size of RAM, 2GB and ideally twice that, 4GB. Like
+I said earlier though, swap size is a much larger discussion than what we can
+do here. 2x RAM is a good starting point.
+
+Once installed, follow similar process as the Vultr VPS example above for SSH
+configuration. I.e., General instructions for the creation and initial
+configuration of SSH can be found
+[here](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md).
+
+
+## [1] Fully update the system
+
+Install a few vitals and then update everything  
+As `root`...
+
+```
+# If Fedora...
+dnf install -y vim-enhanced findutils screen
+dnf upgrade -y
+
+# If CentOS7 or RHEL7...
+#yum install -y epel-release
+#yum install -y vim-enhanced findutils screen
+#yum update -y
+```
+
+## [2] Add swap space to give your system memory some elbow room...
+
+Vulr initially boots with no configured swap. A bare-metal install will probably include swap. You can determine if you have swap configured with...
+
+```
+swapon -s
+```
+
+A reasonable rule of thumb is to configure swap to be twice the size of your RAM.
+Swap-size is more art than science, but your system will be brutalized occassionally...
+2-times your RAM is a good choice. These instructions and more can be found at:   <https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md>
 
 ```
 # As root...
@@ -114,43 +152,7 @@ free -h
 # Enable even after reboot
 cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
 echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
-cat /etc/fstab # double check your fstab file looks fine
-```
-
-
-### Example: A traditional bare-metal server installation
-
-I leave it as an exercise for the reader to perform a bare-metal installation
-of  Fedora, CentOS, or even RHEL. For Fedora, go here - https://getfedora.org/
-For CentOS, go here - https://www.centos.org/download/ For Fedora, I recommend
-the "Server" install. You need only a minimum configuration. Dependency
-resolution of installed RPM packages per these instructions will bring in
-anything you need.
-
-As you walk through the installation process, choose to enable swap, it needs
-to be at least equal to the size of RAM, 2GB and ideally twice that, 4GB. Like
-I said earlier though, swap size is a much larger discussion than what we can
-do here. 2x RAM is a good starting point.
-
-Once installed, follow similar process as the Vultr VPS example above for SSH
-configuration. I.e., General instructions for the creation and initial
-configuration of SSH can be found
-[here](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md).
-
-
-## [2] Fully update the system and reboot
-
-As `root`...
-
-```
-# If Fedora...
-dnf upgrade -y
-reboot
-
-# If CentOS7 or RHEL7...
-#yum install -y epel-release
-#yum update -y
-#reboot
+cat /etc/fstab # double check that your fstab file looks fine
 ```
 
 
@@ -177,9 +179,10 @@ usermod -a -G wheel todd
 #usermod -a -G sudoers todd
 ```
 
-**IMPORTANT:** Work through the SSH instructions (see Vultr example) and set it
-up so you can ssh into the system as your normal user without a password from
-your desktop system.
+**IMPORTANT:** Work through the SSH instructions (see the Vultr example above) and set
+it up so you can ssh into the system as your normal user without a password from your
+desktop system. Read more about setting up SSH keys here:  
+<https://github.com/taw00/howto/blob/master/howto-ssh-keys.md>
 
 
 > ***Recommendation1:***
@@ -193,47 +196,20 @@ your desktop system.
 > `todd` user without having to cut-n-paste a password all the time.
 
 
+## [4] Install and Configure FirewallD
 
-## [4] Minimize root user exposure
+See also: <https://github.com/taw00/howto/blob/master/howto-configure-firewalld.md>
 
-***Turn off SSH logins for root...***
-
-Attackers _love_ to attempt to login to root via SSH. Turn that off.
-
-* Edit `/etc/ssh/sshd_config`
-* Either add or edit these lines (add only if the setting does not already
-  exist)...
-
-```
-PermitRootLogin no
-AllowUsers todd
-PasswordAuthentication no
-# Probably already set to no...
-ChallengeResponseAuthentication no
-```
-
-_Note: `AllowUsers` can be set to multiple users._
-
-* Once complete, restart sshd: `sudo systemctl restart sshd`
-* IMPORTANT TEST: While remaining logged into "todd" in one terminal, test that
-  you can still ssh-in to the machine using another terminal. If not, you need
-  to troubleshoot. If you lose that connection or are logged out from the other
-  terminal, you may have lost access to the machine. Fair warning.
-* All tested and better now? Good. Your system is now significantly more secure.
-
-
-## [5] Install and Configure FirewallD
-
-As a normal user (example `todd`)...
+As root...
 
 **Install**
 
 ```
 # If Fedora...
-sudo dnf install -y firewalld
+dnf install -y firewalld
 
 # If CentOS7 or RHEL7...
-#sudo yum install -y firewalld
+#yum install -y firewalld
 ```
 
 
@@ -247,16 +223,16 @@ sudo dnf install -y firewalld
 ```
 # Is firewalld running?
 # Turn on and enable firewalld if not already done...
-sudo firewall-cmd --state
-sudo systemctl start firewalld.service
-sudo systemctl enable firewalld.service
+firewall-cmd --state
+systemctl start firewalld.service
+systemctl enable firewalld.service
 
 # Determine what the default zone is.
 # On vultr, for example, the default zone is FedoraServer (it is the assumption
 # for this example)
-sudo firewall-cmd --get-active-zone
+firewall-cmd --get-active-zone
 # ...or better yet...
-sudo firewall-cmd --list-all |grep -iE '(active|interfaces|services)'
+firewall-cmd --list-all |grep -iE '(active|interfaces|services)'
 
 # Whatever that default zone is, that is the starting conditions for your
 # configuration. For this example, I am going to demonstrate how to edit my
@@ -267,18 +243,18 @@ sudo firewall-cmd --list-all |grep -iE '(active|interfaces|services)'
 # FedoraServer usually starts with ssh, dhcp6-client, and cockpit opened up I
 # want to allow SSH, but I don't want cockpit running all the time and by
 # having a static IP, dhcpv6 service is unneccessary.
-sudo firewall-cmd --permanent --add-service ssh
-sudo firewall-cmd --permanent --remove-service dhcpv6-client
-sudo firewall-cmd --permanent --remove-service cockpit
+firewall-cmd --permanent --add-service ssh
+firewall-cmd --permanent --remove-service dhcpv6-client
+firewall-cmd --permanent --remove-service cockpit
 
 # Rate limit incoming ssh and cockpit (if configured on) traffic to 10/minute
-sudo firewall-cmd --permanent --add-rich-rule='rule service name=ssh limit value=10/m accept'
-#sudo firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit value=10/m accept'
+firewall-cmd --permanent --add-rich-rule='rule service name=ssh limit value=10/m accept'
+#firewall-cmd --permanent --add-rich-rule='rule service name=cockpit limit value=10/m accept'
 
 # did it take?
-sudo firewall-cmd --reload
-sudo firewall-cmd --state
-sudo firewall-cmd --list-all
+firewall-cmd --reload
+firewall-cmd --state
+firewall-cmd --list-all
 ```
 
 _After you `--list-all`, if you see a service you do not wish to be available,
@@ -295,20 +271,24 @@ feel free to remove it following the pattern we demonstrated above._
 * Do some web searching for more about firewalld
 
 
-## [6] Install and Configure Fail2Ban
+## [5] Install and Configure Fail2Ban
 
-### Install `fail2ban`...
+See also: <https://github.com/taw00/howto/blob/master/howto-configure-fail2ban.md>
+
+**Install `fail2ban`...**
+
+As root...
 
 ```
 # If Fedora...
-sudo dnf install -y fail2ban fail2ban-systemd
+dnf install -y fail2ban fail2ban-systemd
 
 # If CentOS or RHEL
-#sudo yum install epel-release # if not already installed
-#sudo yum install -y fail2ban fail2ban-systemd
+#yum install epel-release # if not already installed
+#yum install -y fail2ban fail2ban-systemd
 
 # If Debian or Ubuntu
-#sudo apt install -y fail2ban
+#apt install -y fail2ban
 ```
 
 If you are not using FirewallD, and instead are using IPTables for your
@@ -316,13 +296,13 @@ firewall, uninstall fail2ban-firewalld (for the Red Hat-based systems only).
 
 ```
 # If Fedora...
-sudo dnf remove -y fail2ban-firewalld
+dnf remove -y fail2ban-firewalld
 
 # If CentOS or RHEL
-#sudo yum remove -y fail2ban-firewalld
+#yum remove -y fail2ban-firewalld
 ```
 
-### Configure `fail2ban`...
+**Configure `fail2ban`...**
 
 Edit `/etc/fail2ban/jail.d/local.conf` _(Optionally `/etc/fail2ban/jail.local`
 instead)_
@@ -356,39 +336,82 @@ For more about setting up "send-only email", read
 [this](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md).
 
 
-### Enable `fail2ban` and restart...
+**Enable `fail2ban` and restart...**
 
 ```
-sudo systemctl enable fail2ban
-sudo systemctl restart fail2ban
+systemctl enable fail2ban
+systemctl restart fail2ban
 ```
 
-### Monitor / Analyze
+**Monitor / Analyze**
 
 Watch the IP addresses slowly pile up by occasionally looking in the SSH jail...
 
 ```
-sudo fail2ban-client status sshd
+fail2ban-client status sshd
 ```
 
 Also watch...
 
 ```
-sudo journalctl -u fail2ban.service -f
+journalctl -u fail2ban.service -f
+```
+```
+tail -F /var/log/fail2ban.log
 ```
 
-...and...
-
-```
-sudo tail -F /var/log/fail2ban.log
-```
-
-### Reference:
+**Reference:**
 
 * <https://fedoraproject.org/wiki/Fail2ban_with_FirewallD>
 * <https://en.wikipedia.org/wiki/Fail2ban>
 * <http://www.fail2ban.org/>
 
+
+## [6] Minimize root user exposure
+
+***Turn off SSH logins for root...***
+
+Attackers _love_ to attempt to login to root via SSH. Turn that off.
+
+* Edit `/etc/ssh/sshd_config`
+* Either add or edit these lines (add only if the setting does not already
+  exist)...
+
+```
+PermitRootLogin no
+AllowUsers todd
+PasswordAuthentication no
+# Probably already set to no...
+ChallengeResponseAuthentication no
+```
+
+_Note: `AllowUsers` can be set to multiple users._
+
+* Once complete, double check your work...
+* **IMPORTANT:** In another terminal ssh in as your normal user ("todd" in our example).
+  If you screw up SSH configuration, that user will still be logged in and can fix
+  things. Otherwise, you are in danger of being locked out.
+* Triple check your work and restart sshd: `systemctl restart sshd
+
+**Test your configuration...**`
+* After restarting sshd, ssh-login with that "todd" user in another terminal. If you
+  configured things correctly, it will work.
+* In yet another terminal, attempt to login with ssh as "root". Your new configuration
+  should disallow this. If so, this is correct behavior.
+* All tested and better now? Good. Your system is now significantly more secure.
+
+## [7] Reboot and test logins
+
+In one of your terminals where you logged in as your normal user ("todd" in our
+example)...
+
+```
+sudo reboot
+```
+
+Once rebooted...
+* Attempt to login with `ssh` as your normal user. This shoudl work.
+* Attempt to login with `ssh` as root. This should not work.
 
 
 &nbsp;
