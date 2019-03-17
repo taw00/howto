@@ -45,7 +45,7 @@ sudo setenforce 0
 **Register and configure your domain and subdomain...**  
 _Note that this is performed at your domain provider._
 1. Register a domain at your domain provider: [Gandi](https://gandi.net), [Bluehost](https://www.bluehost.com), or [Godaddy](https://godaddy.com), ...wherever. There are [a lot](https://www.icann.org/registrar-reports/accredited-list.html) of them.
-2. Add a DNS record for your subdomain redirecting it towards the IP address of your wordpress server. The DNS record would look something like: `wwwtest   A   1800   198.51.100.35`
+2. Add a DNS record for your subdomain redirecting it towards the IP address of your wordpress server. The DNS record would look something like: `blogtest   A   1800   198.51.100.35`
 
 It will take a couple minutes to percolate out, but then the mapping should be in place for, `blogtest.example.com` (use a test domain until ready to publish to the world).
 
@@ -200,6 +200,7 @@ server {
     listen 443; 
     # we are 198.51.100.35
     server_name blogtest.example.com;
+
     access_log /var/log/nginx/example/access.log;
     error_log  /var/log/nginx/example/error.log;
     types_hash_max_size 4096;
@@ -326,10 +327,9 @@ _For the rest of the process, here are some good starting points._
 * <https://wordpress.org/support/article/how-to-install-wordpress/#finishing-installation>
 * <https://wordpress.org/support/article/first-steps-with-wordpress/>
 
-## Build out complete? Time to make it a "production" website
+## Is your build-out complete? Time to make it a "production" website
 
 Once you feel you are at a good place with your test site, you need remove "test" from your domain and you need to enable TLS (the new acronym for SSL).
-
 
 ### Switch from "test site" to "production site"...
 
