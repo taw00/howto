@@ -13,6 +13,7 @@ General deployment (ties together many of these howtos)
 
 Specific applications
 * [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
+* [Install Turtl Secure Notebook on Fedora Linux (desktop and server)](https://github.com/taw00/turtl-rpm)
 
 Networking and Access
 * [Configure FirewallD for Linux (laptop and server)](https://github.com/taw00/howto/blob/master/howto-configure-firewalld.md)
