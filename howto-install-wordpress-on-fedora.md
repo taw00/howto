@@ -22,9 +22,9 @@ _Note that values you should replace with your own are marked with a superscript
 * Nginx error.log: `/var/log/nginx/example/error.log`<sup>*</sup>
 * Nginx website config: `/etc/nginx/conf.d/example.conf`<sup>*</sup>
 * php-fpm unix socket path: `unix:/var/run/php-fpm/www.sock`
-* php-fpm unix port config: `127.0.0.1:9000` -- but not used
+* php-fpm unix port config: `127.0.0.1:9000` --but not used
 * php-fpm error_log: `/var/log/php-fpm/error.log`
-* mariadb system user: `mysqladmin` (the default already-created user)
+* mariadb system user: `mysqladmin` --the default already-created user
 * DB root password: `'this is the admin password'`<sup>*</sup>
 * Site database - DB_NAME: `examplewpdb`<sup>*</sup>
 * Site db user - DB_USER: `'sqluser'`<sup>*</sup>
