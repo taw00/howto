@@ -81,7 +81,7 @@ sudo systemctl enable nginx.service php-fpm.service mariadb.service
 
 ## [3] Punch a whole in your firewall and set up reasonable connection rate limits...
 
-This makes ports 80 (http) and 443 (https) accessible by the outside world...
+This makes ports 80 (http) and 443 (https) accessible by the outside world.
 
 ```
 sudo firewall-cmd --permanent --add-service=http
@@ -165,8 +165,9 @@ _Note, I am sure there are ways to reduce the redundancy in this configuration. 
 
 ```
 server {
-    listen 80; 
-    # we are 198.51.100.35
+    listen 80;
+    listen [::]:80;
+
     server_name blogtest.example.com;
 
     access_log /var/log/nginx/example/access.log;
@@ -198,15 +199,16 @@ server {
 
 
 server {
-    listen 443; 
-    # we are 198.51.100.35
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
     server_name blogtest.example.com;
 
     access_log /var/log/nginx/example/access.log;
     error_log  /var/log/nginx/example/error.log;
     types_hash_max_size 4096;
 
-    # For now, we error on https
+    ########### For now, we error on https ###########
     return 302 https://$server_name$request_uri;
 
     #
@@ -215,8 +217,8 @@ server {
     #   openssl s_client -debug -connect blog.example.com:443
     #
     # Uncomment only after certs are created
-    #ssl_certificate /etc/nginx/ssl/example/blog.example.com.cert.pem;
-    #ssl_certificate_key /etc/nginx/ssl/example/blog.example.com.key.pem;
+    #ssl_certificate /etc/nginx/ssl/example.com/blog.example.com.cert.pem;
+    #ssl_certificate_key /etc/nginx/ssl/example.com/blog.example.com.key.pem;
 
     # generated with: openssl dhparam -out /etc/ssl/dhparam.pem 4096
     # Uncomment only after certs are created
@@ -339,25 +341,74 @@ Once you feel you are at a good place with your test site, you need remove "test
 * Restart Nginx: `sudo systemctl restart nginx.service`
 * Test your new configuration: `http://blog.example.com`
 
-### Enable TLS... _(not written yet)_
+### Enable TLS...
 
-Not written yet, but... The instructions in the Turtl server setup can give you an idea how it is done: <https://github.com/taw00/turtl-rpm/blob/master/README-turtl-server.md#generate-issue-a-tls-certicate-from-lets-encrypt-for-this-service>
+Log into root fully. Install `socat` and install `acme.sh`.
 
-**Create TLS/SSL cert for your new subdomain...**
+```
+# Login to root
+sudo su -
+```
 
-[still to be written]
+```
+# Install socat (mini-webserver) and the acme tools. Re-source root's '~/.bashrc' file
+dnf install socat -y
+curl https://get.acme.sh | sh
+. ~/.bashrc
+```
+
+> Note that the acme installer will perform 3 actions:
+> 
+> 1. Create and copy `acme.sh` to your home dir ($HOME): `~/.acme.sh/`  
+>    All certs will be placed in this folder too.
+> 2. Create alias for: `acme.sh=~/.acme.sh/acme.sh`
+> 3. Create daily cron job to check and renew the certs if needed.
+
+Set these temp environment variables to make things easier...
+```
+DOMAIN=example.com
+SITE=blog.${DOMAIN}
+```
+
+Issue your TLS certificate (using our blog.example.com example)
+```
+# This will populate ~/.acme.sh/$SITE/ with certs and keys and such
+# If your DNS is not set up, this will fail.
+systemctl stop nginx
+acme.sh --issue --standalone -d $SITE
+systemctl start nginx
+```
+
+Install your cert and key to an appropriate directory to be used by Nginx
+```
+# We're still root...
+mkdir -p /etc/nginx/ssl/$DOMAIN
+
+acme.sh --install-cert -d $SITE \
+--fullchain-file /etc/nginx/ssl/$DOMAIN/$SITE.cert.pem \
+--key-file       /etc/nginx/ssl/$DOMAIN/$SITE.key.pem  \
+--reloadcmd     "systemctl force-reload nginx"
+```
+
+Populate openssl dhparams to /etc/ssl...
+```
+# We're still root...
+openssl dhparam -out /etc/ssl/dhparam.pem 4096
+```
 
 **Edit your configuration file in `/etc/nginx/conf.d/` adding in certificate information...**
-
-[still to be written]
+  * Comment out the line starting with `return 302`..."
+  * Uncomment the lines that pertain to the above generated `*.pem` files.
+  * Doublecheck that the paths are correct and the files exist in the `/etc/nginx/ssl` tree.
 
 **Edit `/etc/wordpress/wp-config.php`...**
 
-[still to be written]
+Replace `WP_HOME` and `WP_SITEURL` settings with `https` instead of `http`.
 
 **Restart Nginx and test your new website...**
-  * Restart Nginx: `sudo systemctl restart nginx.service`
-  * Test your new, more secure, configuration: `https://blog.example.com`
+  * Restart Nginx: `sudo systemctl restart nginx.service`  
+    ***If a failure occurs, you probably typo'ed something (check those paths!) or didn't use the --install-cert command.***
+  * Test your new, now more secure, configuration: `https://blog.example.com`
 
 &nbsp;
 
