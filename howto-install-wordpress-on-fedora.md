@@ -340,6 +340,8 @@ Once you feel you are at a good place with your test site, you need remove "test
 
 ### Enable TLS... _(not written yet)_
 
+Not written yet, but... The instructions in the Turtl server setup can give you an idea how it is done: <https://github.com/taw00/turtl-rpm/blob/master/README-turtl-server.md#generate-issue-a-tls-certicate-from-lets-encrypt-for-this-service>
+
 **Create TLS/SSL cert for your new subdomain...**
 
 [still to be written]
