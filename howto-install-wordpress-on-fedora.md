@@ -4,7 +4,8 @@ This document describes the minimum process for getting up and running with Word
 
 Though this document will get you up and running, there are a few things still left incomplete that I will add later.
   1. Configuring TLS (ssl) using Let's Encrypt
-  2. Making any necessary SELinux configuration changes
+  2. Backing things up
+  3. Making any necessary SELinux configuration changes
 
 Assumptions:
   * The reader has moderate linux administrative skills
@@ -372,8 +373,11 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
 
 ## Addendum
 
-References:
+**References...**
 * Excellent article by the esteemable Paul Frields: <https://fedoramagazine.org/howto-install-wordpress-fedora/>
 * <https://www.if-not-true-then-false.com/2011/install-nginx-php-fpm-on-fedora-centos-red-hat-rhel/>
 * <https://www.itzgeek.com/web/wordpress/install-wordpress-with-nginx-on-fedora-21.html>
+
+**Backing things up...**
+[not written yet]
 
