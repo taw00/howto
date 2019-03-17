@@ -9,7 +9,7 @@ focused&mdash; HowTos.
 ## How to...
 
 General deployment (ties together many of these howtos)
-* [Deploy and Configure a Minimalistic Fedora Linux Server](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
+* [Deploy and Configure a Fedora Linux Server](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
 
 Specific applications
 * [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
