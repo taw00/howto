@@ -342,7 +342,7 @@ Once you feel you are at a good place with your test site, you need remove "test
 
 ### Enable TLS...
 
-Log into root fully. Install `socat` and install `acme.sh`.
+Log into root fully. Install `socat` and `acme.sh`.
 
 ```
 # Login to root
@@ -369,7 +369,7 @@ DOMAIN=example.com
 SITE=blog.${DOMAIN}
 ```
 
-Issue your TLS certificate (using our blog.example.com example)
+Issue your TLS certificate (using our blog.example.com example).
 ```
 # This will populate ~/.acme.sh/$SITE/ with certs and keys and such
 # If your DNS is not set up, this will fail.
@@ -378,7 +378,7 @@ acme.sh --issue --standalone -d $SITE
 systemctl start nginx
 ```
 
-Install your cert and key to an appropriate directory to be used by Nginx
+**Install your cert and key to an appropriate directory to be used by Nginx...**
 ```
 # We're still root...
 mkdir -p /etc/nginx/ssl/$DOMAIN
@@ -389,7 +389,7 @@ acme.sh --install-cert -d $SITE \
 --reloadcmd     "systemctl force-reload nginx"
 ```
 
-Populate openssl dhparams to /etc/ssl...
+**Populate openssl dhparams to `/etc/ssl/`...**
 ```
 # We're still root...
 openssl dhparam -out /etc/ssl/dhparam.pem 4096
