@@ -407,7 +407,7 @@ Replace `WP_HOME` and `WP_SITEURL` settings with `https` instead of `http`.
 
 **Restart Nginx and test your new website...**
   * Restart Nginx: `sudo systemctl restart nginx.service`  
-    ***If a failure occurs, you probably typo'ed something (check those paths!) or didn't use the --install-cert command.***
+    ***If a failure occurs, you probably typo'ed something (check those paths!) or didn't use the acme.sh `--install-cert command` as described.***
   * Test your new, now more secure, configuration: `https://blog.example.com`
 
 &nbsp;
