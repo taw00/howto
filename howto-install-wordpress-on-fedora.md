@@ -3,9 +3,8 @@
 This document describes the minimum process for getting up and running with Wordpress on your own Fedora Linux system leveraging Nginx as your webserver and MariaDB (mysql) as the database.
 
 Though this document will get you up and running, there are a few things still left incomplete that I will add later.
-  1. Configuring TLS (ssl) using Let's Encrypt
-  2. Backing things up
-  3. Making any necessary SELinux configuration changes
+  1. Backing things up
+  2. Making any necessary SELinux configuration changes
 
 Assumptions:
   * The reader has moderate linux administrative skills
