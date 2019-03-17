@@ -1,6 +1,6 @@
 # HowTo: Deploy and Configure a Fedora Linux Operating System
 
-***...to serve as a minimalist server platform***
+***...to serve as a minimal headless application server platform***
 
 Note: These are instruction for deploying a base- or minimal- system. No
 application related configurations are made here.

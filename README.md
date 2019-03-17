@@ -11,6 +11,9 @@ focused&mdash; HowTos.
 General deployment (ties together many of these howtos)
 * [Deploy and Configure a Minimalistic Fedora Linux Server](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
 
+Specific applications
+* [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
+
 Networking and Access
 * [Configure FirewallD for Linux (laptop and server)](https://github.com/taw00/howto/blob/master/howto-configure-firewalld.md)
 * [Configure Fail2Ban for Linux](https://github.com/taw00/howto/blob/master/howto-configure-fail2ban.md)
