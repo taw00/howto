@@ -176,17 +176,17 @@ server {
     location / {
         root /usr/share/wordpress;
         index index.php index.html index.htm;
- 
+
         if ( -f $request_filename ) {
             expires 30d;
             break;
         }
- 
+
         if ( !-e $request_filename ) {
             rewrite ^(.+)$ /index.php?q=$1 last;
         }
     }
- 
+
     location ~ .php$ {
         #fastcgi_pass 127.0.0.1:9000;
         fastcgi_pass  unix:/var/run/php-fpm/www.sock;
@@ -239,17 +239,17 @@ server {
     location / {
         root /usr/share/wordpress;
         index index.php index.html index.htm;
- 
+
         if ( -f $request_filename ) {
             expires 30d;
             break;
         }
- 
+
         if ( !-e $request_filename ) {
             rewrite ^(.+)$ /index.php?q=$1 last;
         }
     }
- 
+
     location ~ .php$ {
         #fastcgi_pass 127.0.0.1:9000;
         fastcgi_pass  unix:/var/run/php-fpm/www.sock;
@@ -357,7 +357,7 @@ curl https://get.acme.sh | sh
 ```
 
 > Note that the acme installer will perform 3 actions:
-> 
+>
 > 1. Create and copy `acme.sh` to your home dir ($HOME): `~/.acme.sh/`  
 >    All certs will be placed in this folder too.
 > 2. Create alias for: `acme.sh=~/.acme.sh/acme.sh`
@@ -430,4 +430,3 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
 
 **Backing things up...**
 [not written yet]
-
