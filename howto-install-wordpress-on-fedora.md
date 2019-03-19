@@ -1,24 +1,9 @@
 # HowTo Install Wordpress on Fedora Linux, MariaDB, and Nginx
-<style>
-.divbox {
-  display: block;
-  width: 96%;
-  border: 5px solid darkgrey;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin: 15px 0px;
-}
-.aleft   { text-align: left; }
-.acenter { text-align: center; }
-.aright  { text-align: right; }
-.dinline { display: inline; }
-.dblock  { display: block; }
-</style>
-<!---------------------------------------------------------------------------->
 
-<div class="divbox aleft">
-- <strong>Disclaimer:</strong> This is a work in progress and fine-tuning of your wordpress deployment will be required. Please do your own due diligence and spend some time studying hardening your website, best practices for file and directory permissions, etc. etc.
-</div>
+> **Disclaimer:** This is a work in progress and fine-tuning of your wordpress
+> deployment will be required. Please do your own due diligence and spend some
+> time studying hardening your website, best practices for file and directory
+> permissions, etc. etc.
 
 This document describes the minimum process for getting up and running with Wordpress on your own Fedora Linux system leveraging Nginx as your webserver and MariaDB (mysql) as the database.
 
