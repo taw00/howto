@@ -1,10 +1,32 @@
 # HowTo Install Wordpress on Fedora Linux, MariaDB, and Nginx
+<style>
+.divbox {
+  display: block;
+  width: 96%;
+  border: 5px solid darkgrey;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 15px 0px;
+}
+.aleft   { text-align: left; }
+.acenter { text-align: center; }
+.aright  { text-align: right; }
+.dinline { display: inline; }
+.dblock  { display: block; }
+</style>
+<!---------------------------------------------------------------------------->
+
+<div class="divbox aleft">
+- <strong>Disclaimer:</strong> This is a work in progress and fine-tuning of your wordpress deployment will be required. Please do your own due diligence and spend some time studying hardening your website, best practices for file and directory permissions, etc. etc.
+</div>
 
 This document describes the minimum process for getting up and running with Wordpress on your own Fedora Linux system leveraging Nginx as your webserver and MariaDB (mysql) as the database.
 
 Though this document will get you up and running, there are a few things still left incomplete that I will add later.
-  1. Backing things up
-  2. Making any necessary SELinux configuration changes
+  1. Backing things up -- remedial instructions at end of document
+  2. Fully vetted directory and file permissions
+  3. No instructions for ftp setup yet
+  4. Making any necessary SELinux configuration changes
 
 Assumptions:
   * The reader has moderate linux administrative skills
@@ -266,12 +288,34 @@ server {
 sudo nginx -t
 ```
 
-## [7] Configure Wordpress
+## [7] Adjust PHP configurations
+
+`php.ini` restricts things a bit much. Make these changes. We are choosing arbitrarily large numbers here. Adjust as needed over time.
+
+**Boost your file size limits (I like to a note in the comments that I changed the default)...**
+```
+;upload_max_filesize = 2M
+; adjusted -todd
+upload_max_filesize = 128M
+```
+```
+;post_max_size = 8M
+; adjusted -todd
+post_max_size = 256M
+```
+```
+;max_execution_time = 30
+; adjusted -todd
+max_execution_time = 300
+```
+
+## [8] Configure Wordpress
 
 **Edit `/etc/wordpress/wp-config.php`**
 
 Set these relevant configurations...
 ```
+define( 'DISALLOW_FILE_MODS', false ); // allows for "Add New" updates
 define( 'WP_HOME', 'http://blogtest.example.com' );
 define( 'WP_SITEURL', 'http://blogtest.example.com' );
 define( 'DB_NAME', 'examplewpdb' );
@@ -296,7 +340,27 @@ define('LOGGED_IN_SALT',   '_=VEE&h{=RQ-!q ,1X8j-a&)C%tfqLi^,B0MW |Y0:1#[B{y4gj-
 define('NONCE_SALT',       'sY*OQrBg117%=1bcp&2Z+@*rMp.y@-tq]g=:w=1+o$B|J[AS?-VLOe3IYpG),~[q');
 ```
 
-## (Re)start services and monitor logs
+### Directory and File Permissions
+
+_A word of caution, my views here are, at best, imperfect. I will keep updating this howto over time._
+
+Wordpress on Fedora installs assuming Apache will be the webserver serving most content and therefore most everything beneath `.../wp-content` is permissioned `apache:ftp`. Our instructions here leverage `php-fpm` (fastcgi) behind the scenes serving up content to Nginx that then serves it to the user. `php-fpm` is configured to also act with permissions `apache:apache`.
+
+Permission problems most often arise when you are writing content to the website versus pulling information from it. Hence, it is advised that you set permissions on the directory trees as mentioned above ("TL;DR section").
+
+**General rules of thumb...**
+* `php-fpm` (fastcgi) operates with `apache:apache` permissions
+* `root:root` permissions for static content is fine, generally
+* Don't arbitrarily change all the permissions under your document root `/usr/share/worpress/` It's bad practice and potentially very insecure.
+* `/usr/share/wordpress/wp-content` can remain `root:root` but do this...  
+  ```
+  sudo chmod u+s /usr/share/wordpress/wp-content/{uploads,plugins,themes,upgrade}
+  ```
+
+More stuff (but dated): <https://nealpoole.com/blog/2011/04/setting-up-php-fastcgi-and-nginx-dont-trust-the-tutorials-check-your-configuration/>
+
+
+### (Re)start services and monitor logs
 
 ```
 #sudo systemctl restart nginx.service php-fpm.service
@@ -310,17 +374,21 @@ _(open a terminal for each of these commands)_
 sudo tail -f /var/log/nginx/example/error.log
 sudo tail -f /var/log/nginx/example/access.log
 sudo tail -f /var/log/php-fpm/error.log
+sudo tail -f /var/log/php-fpm/www-error.log
+# Way too noisy, but can be valuable...
 sudo journalctl -xe
 sudo journalctl -u nginx
 ```
 
-## Try it out!
+## [9] Try it out!
 
 **Visit your website:** <http://blogtest.example.com>
 
 You should see a freshly minted Wordpress welcome page.
 
-## INSTALLED!
+If not, pick through the information found in those log files and see if you can figure out what error you made. Most of my errors are related to typos. :)
+
+## [10] INSTALLED! Now build that website!
 
 Congratulations. You now have Wordpress running. Now the real work begins...
 
@@ -329,9 +397,9 @@ _For the rest of the process, here are some good starting points._
 * <https://wordpress.org/support/article/how-to-install-wordpress/#finishing-installation>
 * <https://wordpress.org/support/article/first-steps-with-wordpress/>
 
-## Is your build-out complete? Time to make it a "production" website
+## [10] Take it to "production"
 
-Once you feel you are at a good place with your test site, you need remove "test" from your domain and you need to enable TLS (the new acronym for SSL).
+Is your build-out complete? Time to make it a "production" website. Once you feel you are at a good place with your test site, you need remove "test" from your domain and you need to enable TLS (i.e., what we used to call SSL).
 
 ### Switch from "test site" to "production site"...
 
@@ -369,7 +437,7 @@ DOMAIN=example.com
 SITE=blog.${DOMAIN}
 ```
 
-Issue your TLS certificate (using our blog.example.com example).
+Issue your TLS certificate (using our blog.example.com example)
 ```
 # This will populate ~/.acme.sh/$SITE/ with certs and keys and such
 # If your DNS is not set up, this will fail.
@@ -427,6 +495,29 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
 * Excellent article by the esteemable Paul Frields: <https://fedoramagazine.org/howto-install-wordpress-fedora/>
 * <https://www.if-not-true-then-false.com/2011/install-nginx-php-fpm-on-fedora-centos-red-hat-rhel/>
 * <https://www.itzgeek.com/web/wordpress/install-wordpress-with-nginx-on-fedora-21.html>
+* Hardening Wordpress: <https://codex.wordpress.org/Hardening_WordPress>
 
 **Backing things up...**
-[not written yet]
+
+***Not complete***, but a good starting point is to back up...
+  * `/etc/nginx`
+  * `/etc/wordpress`
+  * `/etc/php-fpm`
+  * `/etc/php.ini`
+  * `/usr/share/wordpress/wp-content`
+  * `/usr/share/wordpress/wp-admin`
+  * `/usr/share/wordpress` -- perhaps just the whole directory tree
+
+Maybe something like this...
+```
+# As root...
+DATE_F=$(date +%F)
+mkdir blog-example-com-$DATE_F
+cp -a /etc/php.ini blog-example-com-$DATE_F/etc-php.ini
+cp -a /etc/nginx blog-example-com-$DATE_F/etc-nginx
+cp -a /etc/wordpress blog-example-com-$DATE_F/etc-wordpress
+cp -a /etc/php-fpm blog-example-com-$DATE_F/etc-php-fpm
+cp -a /usr/share/wordpress blog-example-com-$DATE_F/usr-share-wordpress
+tar -cvzf blog-example-com-$DATE_F.tar.gz blog-example-com-$DATE_F
+rm blog-example-com-$DATE_F
+```
