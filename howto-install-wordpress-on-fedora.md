@@ -1,9 +1,6 @@
 # HowTo Install Wordpress on Fedora Linux, MariaDB, and Nginx
 
-> **Disclaimer:** This is a work in progress and fine-tuning of your wordpress
-> deployment will be required. Please do your own due diligence and spend some
-> time studying hardening your website, best practices for file and directory
-> permissions, etc. etc.
+> **Disclaimer:** This is a work in progress and fine-tuning of your wordpress deployment will be required. Please do your own due diligence and spend some time studying hardening your website, best practices for file and directory permissions, etc. etc.
 
 This document describes the minimum process for getting up and running with Wordpress on your own Fedora Linux system leveraging Nginx as your webserver and MariaDB (mysql) as the database.
 
@@ -246,17 +243,17 @@ server {
     location / {
         root /usr/share/wordpress;
         index index.php index.html index.htm;
-
+ 
         if ( -f $request_filename ) {
             expires 30d;
             break;
         }
-
+ 
         if ( !-e $request_filename ) {
             rewrite ^(.+)$ /index.php?q=$1 last;
         }
     }
-
+ 
     location ~ .php$ {
         #fastcgi_pass 127.0.0.1:9000;
         fastcgi_pass  unix:/var/run/php-fpm/www.sock;
@@ -392,6 +389,18 @@ Is your build-out complete? Time to make it a "production" website. Once you fee
 * Change the appropriate test values you set in the configuration files in `/etc/nginx/conf.d/` and `/etc/wordpress/`
 * Restart Nginx: `sudo systemctl restart nginx.service`
 * Test your new configuration: `http://blog.example.com`
+* Lock down the database access a bit more -- <https://mariadb.com/kb/en/library/mysql_secure_installation/>
+   ```
+   # As root, run this command and answer the prompted questions
+   # as such (given our currently documented setup)...
+   # Answer these questions as such ...
+   # Change the root password? [Y/n] n
+   # Remove anonymous users? [Y/n] y
+   # Disallow root login remotely? [Y/n] y
+   # Remove test database and access to it? [Y/n] y
+   # Reload privilege tables now? [Y/n] y
+   mysql_secure_installation
+   ```
 
 ### Enable TLS...
 
@@ -410,7 +419,7 @@ curl https://get.acme.sh | sh
 ```
 
 > Note that the acme installer will perform 3 actions:
->
+> 
 > 1. Create and copy `acme.sh` to your home dir ($HOME): `~/.acme.sh/`  
 >    All certs will be placed in this folder too.
 > 2. Create alias for: `acme.sh=~/.acme.sh/acme.sh`
@@ -476,15 +485,22 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
 
 ## Addendum
 
-**References...**
+### Addendum - references
 * Excellent article by the esteemable Paul Frields: <https://fedoramagazine.org/howto-install-wordpress-fedora/>
 * <https://www.if-not-true-then-false.com/2011/install-nginx-php-fpm-on-fedora-centos-red-hat-rhel/>
 * <https://www.itzgeek.com/web/wordpress/install-wordpress-with-nginx-on-fedora-21.html>
+* Hosting Wordpress: <https://codex.wordpress.org/Hosting_WordPress>
 * Hardening Wordpress: <https://codex.wordpress.org/Hardening_WordPress>
+...backing things up
+* Wordpress Backups: <https://codex.wordpress.org/WordPress_Backups>
+* Backing up the database: <https://stackoverflow.com/a/13484728>  
+  ...and restoration: <http://webcheatsheet.com/SQL/mysql_backup_restore.php>  
+  ...other thoughts: <http://www.nilinfobin.com/mysql/how-to-login-in-mariadb-with-os-user-without-password/>
+* Controlling bash history: <https://stackoverflow.com/a/29188490> and <https://www.guyrutenberg.com/2011/05/10/temporary-disabling-bash-history/>
 
-**Backing things up...**
+### Addendum - backing things up...
 
-***Not complete***, but a good starting point is to back up...
+Probably not complete, but a good starting point is to back up...
   * `/etc/nginx`
   * `/etc/wordpress`
   * `/etc/php-fpm`
@@ -492,17 +508,74 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
   * `/usr/share/wordpress/wp-content`
   * `/usr/share/wordpress/wp-admin`
   * `/usr/share/wordpress` -- perhaps just the whole directory tree
+  * `/root/.bashrc`
+  * `/root/.acme.sh`
+  * the database using `mysqldump`
 
 Maybe something like this...
+
+
 ```
+#!/usr/bin/bash
+
+$(return 0 > /dev/null 2>&1) && issourced=1 || issourced=0
+if [ "$EUID" -ne 0 ]
+  then echo "Please run with root priviledges"
+  (( $issourced )) && return 1 || exit 1
+fi
+
 # As root...
-DATE_F=$(date +%F)
-mkdir blog-example-com-$DATE_F
-cp -a /etc/php.ini blog-example-com-$DATE_F/etc-php.ini
-cp -a /etc/nginx blog-example-com-$DATE_F/etc-nginx
-cp -a /etc/wordpress blog-example-com-$DATE_F/etc-wordpress
-cp -a /etc/php-fpm blog-example-com-$DATE_F/etc-php-fpm
-cp -a /usr/share/wordpress blog-example-com-$DATE_F/usr-share-wordpress
-tar -cvzf blog-example-com-$DATE_F.tar.gz blog-example-com-$DATE_F
-rm blog-example-com-$DATE_F
+_datef=$(date +%F)
+_sitename=blog.example.com
+_histfile=$HISTFILE ; unset HISTFILE
+_dbuser=sqluser
+_dbname=examplewpdb
+# ..._dbpass is not used if mariadb is set to ignore scripted passwords
+_dbpass='my password here, maybe, see above comment'
+export HISTFILE=$_histfile
+
+rm -rf $_sitename-$_datef ; mkdir $_sitename-$_datef
+cd $_sitename-$_datef
+
+echo "Database"
+# FYI: mariadb/mysql disallows commandline passwords, so... prompted
+# To restore: mysql -u $_dbuser -p < [/path/to/database/backup/]$_dbname.sql
+mysqldump -u $_dbuser -p $_dbname > ./$_dbname.sql
+if (( "$?" != 0 )) ; then
+  echo "Caught an error. Exiting."
+  cd .. ; rm -rf $_sitename-$_datef
+  (( $issourced )) && return 1 || exit 1
+fi
+echo "DB password is good and we are backed up to $(pwd)/${_dbname}.sql"
+sleep 2
+
+echo "Configuration"
+cp -a /etc/php.ini ./etc_php.ini
+cp -a /etc/nginx ./etc-nginx
+cp -a /etc/wordpress ./etc-wordpress
+cp -a /etc/php-fpm.conf ./etc_php-fpm.conf
+cp -a /etc/php-fpm.d ./etc-php-fpm.d
+cp -a /root/.bashrc ./root_.bashrc
+cp -a /root/.acme.sh ./root-.acme.sh
+
+echo "Content"
+cp -a /usr/share/wordpress ./usr-share-wordpress
+
+# Archive it
+# ...remember to store this backup somewhere AND TEST IT
+cd ..
+tar -cvzf $_sitename-$_datef.tar.gz $_sitename-$_datef
+rm $_sitename-$_datef
+if [ ! -z ${SUDO_USER + x} ] ; then
+  chown $SUDO_USER:$SUDO_USER tar -cvzf $_sitename-$_datef.tar.gz
+fi
+echo "Backup archive created..."
+ls -lh $_sitename-$_datef.tar.gz
 ```
+
+Make that into a script. Use often. Test it!
+
+### Addendum - restoring from backup...
+
+[not written yet]
+
