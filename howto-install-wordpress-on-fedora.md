@@ -150,7 +150,7 @@ sudo chmod 600 ~wordpress_sshuser/.ssh/authorized_keys
 ```
 # Append the public key into that user's 'authorized_keys'
 # Note: >> means append, > means overwrite
-sudo cat /etc/wordpress/blog.example.com.rsa.pub >> ~wordpress_sshuser/.ssh/authorized_keys
+sudo echo 'from="127.0.0.1"' $(cat /etc/wordpress/blog.example.com.rsa.pub) >> ~wordpress_sshuser/.ssh/authorized_keys
 ```
 
 Finally, edit `/etc/ssh/sshd_config` and add `wordpress_sshuser` to AllowUsers to look like this:
