@@ -373,7 +373,7 @@ tail -F /var/log/fail2ban.log
 
 Attackers _love_ to attempt to login to root via SSH. Turn that off.
 
-* Edit `/etc/ssh/sshd_config`
+* Edit `/etc/ssh/sshd_config` -- note **sshd_config** not **ssh_config** 
 * Either add or edit these lines (add only if the setting does not already
   exist)...
 
@@ -391,7 +391,7 @@ _Note: `AllowUsers` can be set to multiple users._
 * **IMPORTANT:** In another terminal ssh in as your normal user ("todd" in our example).
   If you screw up SSH configuration, that user will still be logged in and can fix
   things. Otherwise, you are in danger of being locked out.
-* Triple check your work and restart sshd: `systemctl restart sshd
+* Triple check your work and restart sshd: `systemctl restart sshd`
 
 **Test your configuration...**`
 * After restarting sshd, ssh-login with that "todd" user in another terminal. If you
