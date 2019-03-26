@@ -1,13 +1,13 @@
 # HowTo Install Wordpress on Fedora Linux, MariaDB, and Nginx
 
-> **Disclaimer:** This is a work in progress and fine-tuning of your wordpress deployment will be required. Please do your own due diligence and spend some time studying hardening your website, best practices for file and directory permissions, etc. etc.
+> **Disclaimer:** This is a work in progress and fine-tuning of your Wordpress deployment will be required. Please do your own due diligence and spend some time studying hardening your website, best practices for file and directory permissions, etc. etc.
 
 This document describes the minimum process for getting up and running with Wordpress on your own Fedora Linux system leveraging Nginx as your webserver and MariaDB (mysql) as the database.
 
 Though this document will get you up and running, there are a few things still left incomplete that I will add later.
-  1. Backing things up -- remedial instructions at end of document
-  2. Fully vetted directory and file permissions
-  3. No instructions for ftp setup yet
+  1. Restoring from backup
+  2. Working SSH2 (sftp) instructions -- I've included non-working instructions :)
+  3. Fully vetted directory and file permissions
   4. Making any necessary SELinux configuration changes
 
 Assumptions:
@@ -22,12 +22,14 @@ _Note that values you should replace with your own are marked with a superscript
 * Subdomain used for testing: `blogtest.example.com`<sup>*</sup>
 * Wordpress root: `/usr/share/wordpress`
 * Wordpress config: `/etc/wordpress/wp-config.php`
+* Wordpress's SSH user: `wordpress_sshuser`
 * Nginx access.log: `/var/log/nginx/example/access.log`<sup>*</sup>
 * Nginx error.log: `/var/log/nginx/example/error.log`<sup>*</sup>
 * Nginx website config: `/etc/nginx/conf.d/example.conf`<sup>*</sup>
 * php-fpm unix socket path: `unix:/var/run/php-fpm/www.sock`
 * php-fpm unix port config: `127.0.0.1:9000` --but not used
 * php-fpm error_log: `/var/log/php-fpm/error.log`
+* php-fpm error_log: `/var/log/php-fpm/www-error.log`
 * mariadb system user: `mysqladmin` --the default already-created user
 * DB root password: `'this is the admin password'`<sup>*</sup>
 * Site database - DB_NAME: `examplewpdb`<sup>*</sup>
@@ -39,7 +41,15 @@ _Note that values you should replace with your own are marked with a superscript
 
 Reference: ["HowTo: Deploy and Configure a Fedora Linux Operating System"](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
 
-And, for now, turn off selinux...  
+**And, for now, turn off selinux...**
+
+Edit `/etc/selinux/config` and revert to "permissive" behavior...
+```
+SELINUX=permissive
+```
+
+Save that and then on the commandline...
+
 ```
 sudo setenforce 0
 ```
@@ -67,6 +77,7 @@ host blogtest.example.com
 sudo dnf install -y nginx php-fpm
 sudo dnf install -y wordpress
 sudo dnf install -y php-mysqlnd mariadb-server
+sudo dnf install -y libssh2 php-pecl-ssh2 php-phpseclib-net-ssh2
 ```
 
 **Disable the apache webserver (just to be sure)...**
@@ -77,14 +88,14 @@ sudo systemctl disable httpd.service
 sudo systemctl stop httpd.service
 ```
 
-**Enable Nginx webserver, php-fpm, and the Mariadb (Mysql) database...**
+**Enable the services...**
 ```
 sudo systemctl enable nginx.service php-fpm.service mariadb.service
 ```
 
 ## [3] Punch a whole in your firewall and set up reasonable connection rate limits...
 
-This makes ports 80 (http) and 443 (https) accessible by the outside world.
+This makes ports 80 (http) and 443 (https) accessible by the outside world. Note that ssh is already enabled if you followed the instructions in step [0].
 
 ```
 sudo firewall-cmd --permanent --add-service=http
@@ -92,9 +103,69 @@ sudo firewall-cmd --permanent --add-service=https
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=http accept limit value=10/s'
 sudo firewall-cmd --permanent --add-rich-rule='rule service name=https accept limit value=10/s'
 sudo firewall-cmd --reload
+sudo firewall-cmd --list-all
 ```
 
-## [4] Set up the Database
+## [4] Create a system user and SSH keypair just for Wordpress usage
+
+This is for update and "Add New" access. Using SSH instead of FTP.
+
+> **WARNING:** This does NOT work correctly yet and I am unsure why
+
+**Create the ssh keys...**  
+Note, wordpress makes a big deal out of the keys having to be SSH2, but that is
+created by default with `-t rsa`...
+```
+# When prompted, change "id_rsa" to "/root/.ssh/blog.example.com.rsa"
+# Result will be two files in path '/root/.ssh/' called:
+#   blog.example.com.rsa
+#   blog.example.com.rsa.pub
+sudo ssh-keygen -t rsa -b 4096 -C "Keyset for Wordpress usage"
+
+# Copy to '/etc/wordpress/ and change owndership to apache:ftp
+# Liberalize the mode settings a smidge so the webserver/php-fpm
+# can work with it
+sudo mv /root/.ssh/blog.example.com.id_rsa* /etc/wordpress/
+chown root:apache /etc/wordpress/blog.example.com.rsa*
+chmod 640 /etc/wordpress/blog.example.com.rsa*
+```
+
+**Create user `wordpress_sshuser`...**  
+Note: the user will only be used for the purpose the name suggests.
+```
+# Create the user and give them ftp group membership
+sudo useradd -G ftp wordpress_sshuser
+# Give the user a long randomized password, then forget it, you won't need it.
+sudo passwd wordpress_sshuser
+```
+
+```
+# Create your typical '.ssh' directory structure...
+sudo mkdir ~wordpress_sshuser/.ssh
+sudo chmod 700 ~wordpress_sshuser/.ssh
+sudo touch ~wordpress_sshuser/.ssh/authorized_keys
+sudo chmod 600 ~wordpress_sshuser/.ssh/authorized_keys
+```
+
+```
+# Append the public key into that user's 'authorized_keys'
+# Note: >> means append, > means overwrite
+sudo cat /etc/wordpress/blog.example.com.rsa.pub >> ~wordpress_sshuser/.ssh/authorized_keys
+```
+
+Finally, edit `/etc/ssh/sshd_config` and add `wordpress_sshuser` to AllowUsers to look like this:
+```
+# Assuming 'todd' is your normal everyday workhorse user
+AllowUsers todd wordpress_sshuser
+```
+
+Bounce sshd...
+```
+sudo systemctl restart sshd.service
+```
+
+
+## [5] Set up the Database
 
 **Start the database...**
 ```
@@ -148,7 +219,7 @@ Query OK, 0 rows affected (0.01 sec)
 Bye
 ```
 
-## [5] Webserver (Nginx) and Wordpress prepwork
+## [6] Webserver (Nginx) and Wordpress prepwork
 
 **On the filesystem...**
 ```
@@ -161,10 +232,11 @@ sudo cp /etc/wordpress/wp-config.php /etc/wordpress/wp-config-original.php
 sudo cp /usr/share/wordpress/wp-config-sample.php /etc/wordpress/wp-config.php
 ```
 
-## [6] Configure webserver (Nginx)
+## [7] Configure webserver (Nginx)
 
 **Create `/etc/nginx/conf.d/example.conf`...**
-_Note, I am sure there are ways to reduce the redundancy in this configuration. Suggestions welcome._
+
+_you could even split these into two files, `example-80.conf` and `example-443.conf`_
 
 ```
 server {
@@ -172,59 +244,99 @@ server {
     listen [::]:80;
 
     server_name blogtest.example.com;
+    # When we are ready to test SSL, uncomment the next line...
+    #return 302 https://$server_name$request_uri;
+    root /usr/share/wordpress;
+    index index.php;
 
-    access_log /var/log/nginx/example/access.log;
-    error_log  /var/log/nginx/example/error.log;
+    access_log /var/log/nginx/tandemfarms/access.log;
+    error_log  /var/log/nginx/tandemfarms/error.log warn;
     types_hash_max_size 4096;
-
-    location / {
-        root /usr/share/wordpress;
-        index index.php index.html index.htm;
-
-        if ( -f $request_filename ) {
-            expires 30d;
-            break;
-        }
-
-        if ( !-e $request_filename ) {
-            rewrite ^(.+)$ /index.php?q=$1 last;
-        }
-    }
-
-    location ~ .php$ {
-        #fastcgi_pass 127.0.0.1:9000;
-        fastcgi_pass  unix:/var/run/php-fpm/www.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME /usr/share/wordpress/$fastcgi_script_name;
-        fastcgi_param PATH_INFO       $fastcgi_script_name;
-        include /etc/nginx/fastcgi_params;
-    }
-
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-
-    server_name blogtest.example.com;
-
-    access_log /var/log/nginx/example/access.log;
-    error_log  /var/log/nginx/example/error.log;
-    types_hash_max_size 4096;
-
-    ########### For now, we error on https ###########
-    return 302 https://$server_name$request_uri;
 
     #
     # TLS stuff
-    # Note, later you can troubleshoot with, for example:
-    #   openssl s_client -debug -connect blog.example.com:443
+    # Troubleshoot with...
+    # openssl s_client -debug -connect blogtest.example.com:443
     #
-    # Uncomment only after certs are created
-    #ssl_certificate /etc/nginx/ssl/example.com/blog.example.com.cert.pem;
-    #ssl_certificate_key /etc/nginx/ssl/example.com/blog.example.com.key.pem;
+    ssl_certificate /etc/nginx/ssl/tandemfarms.ag/blogtest.example.com.cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/tandemfarms.ag/blogtest.example.com.key.pem;
 
     # generated with: openssl dhparam -out /etc/ssl/dhparam.pem 4096
-    # Uncomment only after certs are created
+    ssl_dhparam /etc/ssl/dhparam.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.1;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers AES256+EECDH:AES256+EDH:!aNULL;
+    ssl_session_cache shared:TLS:2m;
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 1.1.1.1;
+
+    # Set HSTS to 365 days
+    add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
+
+    # Want a fancier 404 page? Create your own and stick it in the document root
+    # ie /usr/share/wordpress
+    #error_page 404 /404-fancy.html;
+    #location /404-fancy.html {
+    #    internal;
+    #}
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$args =404;
+    }
+
+    location ~ \.php$ {
+        # this "try_files" will look for existence of the file first, if not,
+        # 404, but if exists continue and send to php-fpm. Otherwise, it will give
+        # a "No input file specified" error
+        try_files $uri =404;
+        include fastcgi.conf;
+        fastcgi_intercept_errors on;
+        fastcgi_pass unix:/var/run/php-fpm/www.sock;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
+    }
+}
+
+
+server {
+    listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server;
+
+    server_name blogtest.example.com;
+    root /usr/share/wordpress;
+    index index.php;
+
+    access_log /var/log/nginx/tandemfarms/access.log;
+    error_log  /var/log/nginx/tandemfarms/error.log warn;
+    types_hash_max_size 4096;
+
+    ## Uncomment the *.pem lines once you get your SSL certs in order
+    # TLS stuff #####################################################
+    # Troubleshoot with...
+    # openssl s_client -debug -connect blogtest.example.com:443
+    #
+    #ssl_certificate /etc/nginx/ssl/tandemfarms.ag/blogtest.example.com.cert.pem;
+    #ssl_certificate_key /etc/nginx/ssl/tandemfarms.ag/blogtest.example.com.key.pem;
+
+    # generated with: openssl dhparam -out /etc/ssl/dhparam.pem 4096
     #ssl_dhparam /etc/ssl/dhparam.pem;
 
     ssl_protocols TLSv1.2 TLSv1.1;
@@ -240,27 +352,41 @@ server {
     # Set HSTS to 365 days
     add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains';
 
-    location / {
-        root /usr/share/wordpress;
-        index index.php index.html index.htm;
- 
-        if ( -f $request_filename ) {
-            expires 30d;
-            break;
-        }
- 
-        if ( !-e $request_filename ) {
-            rewrite ^(.+)$ /index.php?q=$1 last;
-        }
+    # Want a fancier 404 page? Create your own and stick it in the document root
+    # ie /usr/share/wordpress
+    #error_page 404 /404-fancy.html;
+    #location /404-fancy.html {
+    #    internal;
+    #}
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
     }
- 
-    location ~ .php$ {
-        #fastcgi_pass 127.0.0.1:9000;
-        fastcgi_pass  unix:/var/run/php-fpm/www.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME /usr/share/wordpress/$fastcgi_script_name;
-        fastcgi_param PATH_INFO       $fastcgi_script_name;
-        include /etc/nginx/fastcgi_params;
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$args =404;
+    }
+
+    location ~ \.php$ {
+        # this "try_files" will look for existence of the file first, if not,
+        # 404, but if exists continue and send to php-fpm. Otherwise, it will give
+        # a "No input file specified" error
+        try_files $uri =404;
+        include fastcgi.conf;
+        fastcgi_intercept_errors on;
+        fastcgi_pass unix:/var/run/php-fpm/www.sock;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
     }
 }
 ```
@@ -270,9 +396,16 @@ server {
 sudo nginx -t
 ```
 
-## [7] Adjust PHP configurations
+## [8] Adjust PHP configurations
 
-`php.ini` restricts things a bit much. Make these changes. We are choosing arbitrarily large numbers here. Adjust as needed over time.
+`/etc/php.ini` needs this bit flipped off to play nicely with nginx and php-fpm...
+```
+;cgi.fix_pathinfo=1
+; adjusted -todd
+cgi.fix_pathinfo=0
+```
+
+`/etc/php.ini` restricts things a bit much. Make these changes. We are choosing arbitrarily large numbers here. Adjust as needed over time.
 
 **Boost your file size limits (I like to a note in the comments that I changed the default)...**
 ```
@@ -291,22 +424,34 @@ post_max_size = 256M
 max_execution_time = 300
 ```
 
-## [8] Configure Wordpress
+## [9] Configure Wordpress
 
 **Edit `/etc/wordpress/wp-config.php`**
 
 Set these relevant configurations...
 ```
-define( 'DISALLOW_FILE_MODS', false ); // allows for "Add New" updates
 define( 'WP_HOME', 'http://blogtest.example.com' );
 define( 'WP_SITEURL', 'http://blogtest.example.com' );
+// database stuff
 define( 'DB_NAME', 'examplewpdb' );
 define( 'DB_USER', 'sqluser' );
 define( 'DB_PASSWORD', '<insert my db password here' );
 define( 'DB_HOST', 'localhost' );
+// Admin dashboard stuff
+define( 'DISALLOW_FILE_EDIT', true ); // no editing in the dashboard (security)
+define( 'DISALLOW_FILE_MODS', false ); // allows for "Add New" updates
+// SSH stuff
+define('FS_METHOD', 'ssh2');
+define('FTP_BASE', '/usr/share/wordpress/');
+define('FTP_CONTENT_DIR', '/usr/share/wordpress/wp-content/');
+define('FTP_PLUGIN_DIR ', '/usr/share/wordpress/wp-content/plugins/');
+define('FTP_USER', 'wordpress_sshuser');
+define('FTP_PASS', '');
+define('FTP_PUBKEY', '/etc/wordpress/blog.example.com.rsa.pub');
+define('FTP_PRIKEY', '/etc/wordpress/blog.example.com.rsa');
+define('FTP_HOST', '127.0.0.1');
 ```
 
-&nbsp;
 **Visit this site and replace the appropriate values in `wp-config.php`:** <https://api.wordpress.org/secret-key/1.1/salt/>
 
 These values are unique per visit to the link above. They can be regenerated and replaced at any time. You do not have to securely tuck them away in case of disaster or anything...
@@ -322,24 +467,24 @@ define('LOGGED_IN_SALT',   '_=VEE&h{=RQ-!q ,1X8j-a&)C%tfqLi^,B0MW |Y0:1#[B{y4gj-
 define('NONCE_SALT',       'sY*OQrBg117%=1bcp&2Z+@*rMp.y@-tq]g=:w=1+o$B|J[AS?-VLOe3IYpG),~[q');
 ```
 
-### Directory and File Permissions
+### Directory and File Permissions and Ownership
 
 _A word of caution, my views here are, at best, imperfect. I will keep updating this howto over time._
 
-Wordpress on Fedora installs assuming Apache will be the webserver serving most content and therefore most everything beneath `.../wp-content` is permissioned `apache:ftp`. Our instructions here leverage `php-fpm` (fastcgi) behind the scenes serving up content to Nginx that then serves it to the user. `php-fpm` is configured to also act with permissions `apache:apache`.
+Wordpress on Fedora installs assuming Apache will be the webserver serving most content and therefore most everything beneath `.../wp-content` is owned `apache:ftp`. This deployment leverages `php-fpm` (fastcgi) behind the scenes serving up content to Nginx that then serves it to the user. `php-fpm` is configured to take action with ownership `apache:apache`.
 
-Permission problems most often arise when you are writing content to the website versus pulling information from it. Hence, it is advised that you set permissions on the directory trees as mentioned above ("TL;DR section").
+Permission and access problems most often arise when you are writing content to the website versus pulling information from it. Hence, it is advised that you set permissions on the directory trees as mentioned above ("TL;DR section").
 
 **General rules of thumb...**
-* `php-fpm` (fastcgi) operates with `apache:apache` permissions
-* `root:root` permissions for static content is fine, generally
+* `php-fpm` (fastcgi) operates with `apache:apache` user:group priviledges
+* `root:root` access for static file content is fine generally (and a permissions setting of 640 -- and 750 for directories).
 * Don't arbitrarily change all the permissions under your document root `/usr/share/worpress/` It's bad practice and potentially very insecure.
 * `/usr/share/wordpress/wp-content` can remain `root:root` but do this...  
   ```
   sudo chmod u+s /usr/share/wordpress/wp-content/{uploads,plugins,themes,upgrade}
   ```
 
-More stuff (but dated): <https://nealpoole.com/blog/2011/04/setting-up-php-fastcgi-and-nginx-dont-trust-the-tutorials-check-your-configuration/>
+Read the "Hardening Wordpress" article found in Addendum below.
 
 
 ### (Re)start services and monitor logs
@@ -353,16 +498,23 @@ sudo systemctl start nginx.service php-fpm.service
 _(open a terminal for each of these commands)_
 
 ```
+ls -lt /var/log/php-fpm/*error.log /var/log/nginx/*.log /var/log/nginx/tandemfarms/*.log /var/log/mariadb/mariadb.log
 sudo tail -f /var/log/nginx/example/error.log
 sudo tail -f /var/log/nginx/example/access.log
-sudo tail -f /var/log/php-fpm/error.log
 sudo tail -f /var/log/php-fpm/www-error.log
-# Way too noisy, but can be valuable...
-sudo journalctl -xe
-sudo journalctl -u nginx
+# ...etc...
 ```
 
-## [9] Try it out!
+```
+# Also useful, but can be noisy and hard to parse...
+sudo tail -f /var/log/audit/audit.log
+sudo journalctl -xe
+sudo journalctl -u nginx
+sudo journalctl -u mariadb
+sudo journalctl -u php-fpm
+```
+
+## [10] Try out your website!
 
 **Visit your website:** <http://blogtest.example.com>
 
@@ -370,7 +522,7 @@ You should see a freshly minted Wordpress welcome page.
 
 If not, pick through the information found in those log files and see if you can figure out what error you made. Most of my errors are related to typos. :)
 
-## [10] INSTALLED! Now build that website!
+## [11] INSTALLED! Now build that website!
 
 Congratulations. You now have Wordpress running. Now the real work begins...
 
@@ -379,7 +531,7 @@ _For the rest of the process, here are some good starting points._
 * <https://wordpress.org/support/article/how-to-install-wordpress/#finishing-installation>
 * <https://wordpress.org/support/article/first-steps-with-wordpress/>
 
-## [10] Take it to "production"
+## [12] Take it to "production"
 
 Is your build-out complete? Time to make it a "production" website. Once you feel you are at a good place with your test site, you need remove "test" from your domain and you need to enable TLS (i.e., what we used to call SSL).
 
@@ -419,7 +571,7 @@ curl https://get.acme.sh | sh
 ```
 
 > Note that the acme installer will perform 3 actions:
-> 
+>
 > 1. Create and copy `acme.sh` to your home dir ($HOME): `~/.acme.sh/`  
 >    All certs will be placed in this folder too.
 > 2. Create alias for: `acme.sh=~/.acme.sh/acme.sh`
@@ -486,17 +638,24 @@ Comments? Suggestions? Please let me know how this can be improved: <https://key
 ## Addendum
 
 ### Addendum - references
-* Excellent article by the esteemable Paul Frields: <https://fedoramagazine.org/howto-install-wordpress-fedora/>
+Warning: Much is dated and therefore should be taken with a grain of salt...
+
+* Understanding Nginx (dated, but great): <https://blog.martinfjordvald.com/2010/07/nginx-primer/>
+* Nginx Wordpress "recipe": <https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/>
 * <https://www.if-not-true-then-false.com/2011/install-nginx-php-fpm-on-fedora-centos-red-hat-rhel/>
-* <https://www.itzgeek.com/web/wordpress/install-wordpress-with-nginx-on-fedora-21.html>
+* Warning, dated: <https://www.itzgeek.com/web/wordpress/install-wordpress-with-nginx-on-fedora-21.html>
 * Hosting Wordpress: <https://codex.wordpress.org/Hosting_WordPress>
 * Hardening Wordpress: <https://codex.wordpress.org/Hardening_WordPress>
+* Debugging Wordpress: <https://codex.wordpress.org/Debugging_in_WordPress>
+* Common Wordpress Errors: <https://codex.wordpress.org/Common_WordPress_Errors>
 ...backing things up
 * Wordpress Backups: <https://codex.wordpress.org/WordPress_Backups>
 * Backing up the database: <https://stackoverflow.com/a/13484728>  
   ...and restoration: <http://webcheatsheet.com/SQL/mysql_backup_restore.php>  
   ...other thoughts: <http://www.nilinfobin.com/mysql/how-to-login-in-mariadb-with-os-user-without-password/>
 * Controlling bash history: <https://stackoverflow.com/a/29188490> and <https://www.guyrutenberg.com/2011/05/10/temporary-disabling-bash-history/>
+* Security ideas to muse upon: <https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/>
+* Don't follow this, but, this is an excellent article by the esteemable Paul Frields: <https://fedoramagazine.org/howto-install-wordpress-fedora/>
 
 ### Addendum - backing things up...
 
@@ -513,7 +672,6 @@ Probably not complete, but a good starting point is to back up...
   * the database using `mysqldump`
 
 Maybe something like this...
-
 
 ```
 #!/usr/bin/bash
@@ -578,4 +736,3 @@ Make that into a script. Use often. Test it!
 ### Addendum - restoring from backup...
 
 [not written yet]
-
