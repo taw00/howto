@@ -187,6 +187,7 @@ Requires(postun): firewalld-filesystem
 
 %if 0%{?suse_version:1}
 # https://en.opensuse.org/openSUSE:Build_Service_cross_distribution_howto
+# mock builds of suse don't include cacerts for some reason
 BuildRequires: ca-certificates-cacert ca-certificates-mozilla ca-certificates
 BuildRequires: desktop-file-utils appstream-glib
 %else
