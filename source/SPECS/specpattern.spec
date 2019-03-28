@@ -114,7 +114,7 @@ Version: %{vermajor}.%{verminor}
 %if %{targetIsProduction}
   %define _pkgrel 1
 %else
-  %define _pkgrel 0.12
+  %define _pkgrel 0.13
 %endif
 
 # MINORBUMP - can edit
@@ -185,9 +185,15 @@ Requires: firewalld-filesystem
 Requires(post): firewalld-filesystem
 Requires(postun): firewalld-filesystem
 
-# BuildRequires indicates everything you need to build the RPM
+%if 0%{?suse_version:1}
+# https://en.opensuse.org/openSUSE:Build_Service_cross_distribution_howto
+BuildRequires: ca-certificates-cacert ca-certificates-mozilla ca-certificates
+BuildRequires: desktop-file-utils appstream-glib
+%else
 # Required for desktop applications (validation of .desktop and .xml files)
 BuildRequires: desktop-file-utils libappstream-glib
+%endif
+
 
 # systemd stuff
 # As per https://docs.fedoraproject.org/en-US/packaging-guidelines/Systemd/
@@ -204,10 +210,6 @@ BuildRequires: systemd
 BuildRequires: tree vim-enhanced less findutils
 %endif
 
-# CentOS/RHEL/EPEL can't do "Suggests:"
-%if 0%{?fedora:1}
-#Suggests:
-%endif
 
 # obsolete fictitious previous version of package after a rename
 Provides: spec-pattern = 0.9
@@ -251,12 +253,12 @@ ExclusiveArch: x86_64 i686 i386
 %define _hardened_build 1
 
 # Extracted source tree structure (extracted in {_builddir})
-#   srcroot               {name}-1.0
-#      \_srccodetree        \_{name}-1.0.1
-#      \_srccontribtree     \_{name}-1.0-contrib
-%define srcroot %{name}-%{vermajor}
-%define srccodetree %{name}-%{version}
-%define srccontribtree %{name}-%{vermajor}-contrib
+#   sourceroot               {name}-1.0
+#      \_sourcetree             \_{name}-1.0.1
+#      \_sourcetree_contrib     \_{name}-1.0-contrib
+%define sourceroot %{name}-%{vermajor}
+%define sourcetree %{name}-%{version}
+%define sourcetree_contrib %{name}-%{vermajor}-contrib
 # /usr/share/specpattern
 %define installtree %{_datadir}/%{name}
 
@@ -280,21 +282,16 @@ and deploy a graphical desktop application, systemd service, and more.
 # * http://ftp.rpm.org/max-rpm/s1-rpm-inside-macros.html
 # * http://rpm.org/user_doc/autosetup.html
 # * autosetup -q and setup -q leave out the root directory.
-# I create a root dir and place the source and contribution trees under it.
-# Extracted source tree structure (extracted in .../BUILD)
-#   srcroot               {name}-{vermajor}
-#      \_srccodetree        \_{name}-{version}
-#      \_srccontribtree     \_{name}-{vermajor}-contrib
 
-#rm -rf %%{srcroot} ; mkdir -p %%{srcroot}
-mkdir -p %{srcroot}
+#rm -rf %%{sourceroot} ; mkdir -p %%{sourceroot}
+mkdir -p %{sourceroot}
 # sourcecode
-%setup -q -T -D -a 0 -n %{srcroot}
+%setup -q -T -D -a 0 -n %{sourceroot}
 # contrib
-%setup -q -T -D -a 1 -n %{srcroot}
+%setup -q -T -D -a 1 -n %{sourceroot}
 
 # Libraries ldconfig file - we create it, because lib or lib64
-echo "%{_libdir}/%{name}" > %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf
+echo "%{_libdir}/%{name}" > %{sourcetree_contrib}/etc-ld.so.conf.d_%{name}.conf
 
 # README message about the /var/lib/specpattern directory
 echo "\
@@ -303,10 +300,33 @@ This directory only exists as an example data directory
 The %{systemuser} home dir is here: /var/lib/%{name}
 The systemd managed %{name} datadir is also here: /var/lib/%{name}
 The %{name} config file is housed here: /etc/%{name}/%{name}.conf
-" > %{srccontribtree}/systemd/var-lib-%{name}_README
+" > %{sourcetree_contrib}/systemd/var-lib-%{name}_README
 
 # For debugging purposes...
-cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
+cd .. ; /usr/bin/tree -df -L 1 %{sourceroot} ; cd -
+
+%if 0%{?suse_version:1}
+  echo "======== Opensuse version: %{suse_version}"
+%endif
+
+%if 0%{?fedora:1}
+  echo "======== Fedora version: %{fedora}"
+%if 0%{?fedora} < 28
+  echo "Fedora 27 and older can't be supported. Sorry."
+  exit 1
+%endif
+%endif
+
+%if 0%{?rhel:1}
+  echo "======== EL version: %{rhel}"
+%if 0%{?rhel} < 7
+  echo "EL 6 and older can't be supported. Sorry."
+  exit 1
+%endif
+%if 0%{?rhel} >= 8
+  echo "EL 8 and newer is untested thus far. Good luck."
+%endif
+%endif
 
 
 ##
@@ -315,7 +335,7 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 
 
 %build
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{sourceroot}
 # - This step performs any action that takes the code and turns it into a
 #   runnable form. Usually by compiling.
 
@@ -323,17 +343,17 @@ cd .. ; /usr/bin/tree -df -L 1 %{srcroot} ; cd -
 # Clearing npm's cache will hopefully elminate SHA1 integrity issues.
 #/usr/bin/npm cache clean --force
 #rm -rf ../.npm/_cacache
-#rm -f %%{srccodetree}/package-lock.json
+#rm -f %%{sourcetree}/package-lock.json
 
 ## Man Pages - not used as of yet
 #gzip %%{buildroot}%%{_mandir}/man1/*.1
 
-cd %{srccodetree}
+cd %{sourcetree}
 # <insert program building instructions here>
 
 
 %install
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{sourceroot}
 # - This step moves anything needing to be part of the package into the
 #   {buildroot}, therefore mirroring the final directory and file structure of
 #   an installed RPM.
@@ -396,98 +416,98 @@ install -d %{buildroot}%{_tmpfilesdir}
 # Binaries - a little ugly - symbolic link creation
 ln -s %{installtree}/%{name}-gnome-terminal.sh %{buildroot}%{_bindir}/%{name}
 ln -s %{installtree}/%{name}-daemon.sh %{buildroot}%{_sbindir}/%{name}d
-install -D -p %{srccodetree}/%{name}-gnome-terminal.sh %{buildroot}%{installtree}/%{name}-gnome-terminal.sh
-install -D -p %{srccodetree}/%{name}-daemon.sh %{buildroot}%{installtree}/%{name}-daemon.sh
-install -D -p %{srccodetree}/%{name}-process.sh %{buildroot}%{installtree}/%{name}-process.sh
+install -D -p %{sourcetree}/%{name}-gnome-terminal.sh %{buildroot}%{installtree}/%{name}-gnome-terminal.sh
+install -D -p %{sourcetree}/%{name}-daemon.sh %{buildroot}%{installtree}/%{name}-daemon.sh
+install -D -p %{sourcetree}/%{name}-process.sh %{buildroot}%{installtree}/%{name}-process.sh
 
 # Desktop
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.16x16.png   %{buildroot}%{_datadir}/icons/hicolor/16x16/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.22x22.png   %{buildroot}%{_datadir}/icons/hicolor/22x22/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.24x24.png   %{buildroot}%{_datadir}/icons/hicolor/24x24/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.32x32.png   %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.48x48.png   %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.128x128.png %{buildroot}%{_datadir}/icons/hicolor/128x128/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.256x256.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.512x512.png %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.hicolor.svg         %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.16x16.png   %{buildroot}%{_datadir}/icons/hicolor/16x16/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.22x22.png   %{buildroot}%{_datadir}/icons/hicolor/22x22/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.24x24.png   %{buildroot}%{_datadir}/icons/hicolor/24x24/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.32x32.png   %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.48x48.png   %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.128x128.png %{buildroot}%{_datadir}/icons/hicolor/128x128/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.256x256.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.512x512.png %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.hicolor.svg         %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.16x16.png   %{buildroot}%{_datadir}/icons/HighContrast/16x16/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.22x22.png   %{buildroot}%{_datadir}/icons/HighContrast/22x22/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.24x24.png   %{buildroot}%{_datadir}/icons/HighContrast/24x24/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.32x32.png   %{buildroot}%{_datadir}/icons/HighContrast/32x32/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.48x48.png   %{buildroot}%{_datadir}/icons/HighContrast/48x48/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.128x128.png %{buildroot}%{_datadir}/icons/HighContrast/128x128/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.256x256.png %{buildroot}%{_datadir}/icons/HighContrast/256x256/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.512x512.png %{buildroot}%{_datadir}/icons/HighContrast/512x512/apps/%{name}.png
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.highcontrast.svg         %{buildroot}%{_datadir}/icons/HighContrast/scalable/apps/%{name}.svg
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.16x16.png   %{buildroot}%{_datadir}/icons/HighContrast/16x16/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.22x22.png   %{buildroot}%{_datadir}/icons/HighContrast/22x22/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.24x24.png   %{buildroot}%{_datadir}/icons/HighContrast/24x24/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.32x32.png   %{buildroot}%{_datadir}/icons/HighContrast/32x32/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.48x48.png   %{buildroot}%{_datadir}/icons/HighContrast/48x48/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.128x128.png %{buildroot}%{_datadir}/icons/HighContrast/128x128/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.256x256.png %{buildroot}%{_datadir}/icons/HighContrast/256x256/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.512x512.png %{buildroot}%{_datadir}/icons/HighContrast/512x512/apps/%{name}.png
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.highcontrast.svg         %{buildroot}%{_datadir}/icons/HighContrast/scalable/apps/%{name}.svg
 
 # specpattern.desktop
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/#_desktop_files
 # https://fedoraproject.org/wiki/NewMIMESystem
-install -m755  %{srccontribtree}/desktop/%{name}.wrapper.sh %{buildroot}%{_bindir}/
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications/ %{srccontribtree}/desktop/%{name}.desktop
+install -m755  %{sourcetree_contrib}/desktop/%{name}.wrapper.sh %{buildroot}%{_bindir}/
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications/ %{sourcetree_contrib}/desktop/%{name}.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 
 # specpattern.appdata.xml
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/AppData/
 # https://fedoraproject.org/wiki/NewMIMESystem
-install -D -m644 -p %{srccontribtree}/desktop/%{name}.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+install -D -m644 -p %{sourcetree_contrib}/desktop/%{name}.appdata.xml %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.appdata.xml
 
 # Libraries
 #install -D -m755 -p %%{buildroot}%%{installtree}/libffmpeg.so %%{buildroot}%%{_libdir}/%%{name}/libffmpeg.so
 #install -D -m755 -p %%{buildroot}%%{installtree}/libnode.so %%{buildroot}%%{_libdir}/%%{name}/libnode.so
-install -D -m644 -p %{srccontribtree}/etc-ld.so.conf.d_%{name}.conf %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf
+install -D -m644 -p %{sourcetree_contrib}/etc-ld.so.conf.d_%{name}.conf %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf
 
 ## Man Pages - not used as of yet
 #install -d %%{buildroot}%%{_mandir}
-#install -D -m644 %%{srccodetree}/share/man/man1/* %%{buildroot}%%{_mandir}/man1/
+#install -D -m644 %%{sourcetree}/share/man/man1/* %%{buildroot}%%{_mandir}/man1/
 
 ## Bash completion
-#install -D -m644 %%{srccontribtree}/bash/%%{name}.bash-completion  %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}
-#install -D -m644 %%{srccontribtree}/bash/%%{name}d.bash-completion %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}d
+#install -D -m644 %%{sourcetree_contrib}/bash/%%{name}.bash-completion  %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}
+#install -D -m644 %%{sourcetree_contrib}/bash/%%{name}d.bash-completion %%{buildroot}%%{_datadir}/bash-completion/completions/%%{name}d
 
 # Config
-install -D -m640 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
-install -D -m644 %{srccontribtree}/systemd/etc-%{name}_%{name}.conf %{srccontribtree}/%{name}.conf.example
+install -D -m640 %{sourcetree_contrib}/systemd/etc-%{name}_%{name}.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -D -m644 %{sourcetree_contrib}/systemd/etc-%{name}_%{name}.conf %{sourcetree_contrib}/%{name}.conf.example
 
 # README message about the /var/lib/specpattern directory
-install -D -m644 %{srccontribtree}/systemd/var-lib-%{name}_README %{buildroot}%{_sharedstatedir}/%{name}/README
+install -D -m644 %{sourcetree_contrib}/systemd/var-lib-%{name}_README %{buildroot}%{_sharedstatedir}/%{name}/README
 
 # System services
-install -D -m600 -p %{srccontribtree}/systemd/etc-sysconfig_%{name}d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/send-email.sh
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_config-file-check.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/config-file-check.sh
-install -D -m755 -p %{srccontribtree}/systemd/etc-sysconfig-%{name}d-scripts_write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/write-to-journal.sh
-install -D -m644 -p %{srccontribtree}/systemd/usr-lib-systemd-system_%{name}d.service %{buildroot}%{_unitdir}/%{name}d.service
-install -D -m644 -p %{srccontribtree}/systemd/usr-lib-tmpfiles.d_%{name}d.conf %{buildroot}%{_tmpfilesdir}/%{name}d.conf
+install -D -m600 -p %{sourcetree_contrib}/systemd/etc-sysconfig_%{name}d %{buildroot}%{_sysconfdir}/sysconfig/%{name}d
+install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-%{name}d-scripts_send-email.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/send-email.sh
+install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-%{name}d-scripts_config-file-check.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/config-file-check.sh
+install -D -m755 -p %{sourcetree_contrib}/systemd/etc-sysconfig-%{name}d-scripts_write-to-journal.sh %{buildroot}%{_sysconfdir}/sysconfig/%{name}d-scripts/write-to-journal.sh
+install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-systemd-system_%{name}d.service %{buildroot}%{_unitdir}/%{name}d.service
+install -D -m644 -p %{sourcetree_contrib}/systemd/usr-lib-tmpfiles.d_%{name}d.conf %{buildroot}%{_tmpfilesdir}/%{name}d.conf
 
 # Log files
 # ...logrotate file rules
-install -D -m644 -p %{srccontribtree}/logrotate/etc-logrotate.d_%{name} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -D -m644 -p %{sourcetree_contrib}/logrotate/etc-logrotate.d_%{name} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 # ...ghosted log files - need to exist in the installed buildroot
 touch %{buildroot}%{_localstatedir}/log/%{name}/debug.log
 
 # Service definition files for firewalld
-install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_usr_lib}/firewalld/services/%{name}.xml
+install -D -m644 -p %{sourcetree_contrib}/firewalld/usr-lib-firewalld-services_%{name}.xml %{buildroot}%{_usr_lib}/firewalld/services/%{name}.xml
 
 # Note that we do not do this... cuz, init.d is dead. I leave it for pedantic completness
 # /etc/init.d/
 #install -d %%{buildroot}%%{_sysconfdir}/init.d
-#install -D -m755 %%{srccontribtree}/systemd/etc-init.d_specpatternd.init %%{buildroot}%%{_sysconfdir}/init.d/specpatternd.init
+#install -D -m755 %%{sourcetree_contrib}/systemd/etc-init.d_specpatternd.init %%{buildroot}%%{_sysconfdir}/init.d/specpatternd.init
 
 
 %files
 # This section starts us in directory {_buildrootdir} (I think)
 # (note that macros like %%docs, %%licence, etc may locate in
-# {_builddir}/{srcroot})
+# {_builddir}/{sourceroot})
 # - This step makes a declaration of ownership of any listed directories
 #   or files
 # - The install step should have set permissions and ownership correctly,
 #   but of final tweaking is often done in this section
 #
 %defattr(-,root,root,-)
-%license %{srccodetree}/LICENSE
+%license %{sourcetree}/LICENSE
 
 # The directories...
 # /etc/specpattern/
@@ -513,7 +533,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 #%%{_mandir}/man1/*.1.gz
 #%%{_docsdir}/*
 # config example
-%doc %{srccontribtree}/%{name}.conf.example
+%doc %{sourcetree_contrib}/%{name}.conf.example
 
 # Binaries
 %{_bindir}/%{name}
@@ -569,7 +589,7 @@ install -D -m644 -p %{srccontribtree}/firewalld/usr-lib-firewalld-services_%{nam
 
 
 %pre
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{sourceroot}
 # an installation step (runs right prior to installation)
 # - system users are added if needed. Any other roadbuilding.
 #
@@ -583,7 +603,7 @@ getent passwd %{systemuser} >/dev/null || useradd -r -g %{systemgroup} -d %{_sha
 
 %post
 # an installation step (runs after install process is complete)
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{sourceroot}
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
@@ -616,7 +636,7 @@ umask 007
 
 %postun
 # an uninstallation step (runs after uninstall process is complete)
-# This section starts us in directory {_builddir}/{srcroot}
+# This section starts us in directory {_builddir}/{sourceroot}
 umask 007
 # refresh library context
 /sbin/ldconfig > /dev/null 2>&1
@@ -639,6 +659,10 @@ umask 007
 
 
 %changelog
+* Wed Mar 27 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.13.testing.taw
+  - added os versioning examples
+  - cleaned up some things in the specfile as well
+
 * Thu Dec 13 2018 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.12.testing.taw
   - added an example wrapper script that specpattern.desktop will call  
     and can be used if a derived application is sensitive to certain bugs in  
