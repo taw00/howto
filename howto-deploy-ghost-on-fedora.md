@@ -1,4 +1,4 @@
-# HowTo: Deploy Ghost blogging platform on Fedora
+# HowTo: Deploy the Ghost blogging platform on Fedora
 
 ### [0] Purchase a Domain
 
@@ -324,16 +324,7 @@ Some themes to get you started:
 * https://ghost.org/marketplace/
 * https://blog.ghost.org/free-ghost-themes/
 
-### [23] Mail and Disqus (commenting) functionality
-
-* https://docs.ghost.org/integrations/disqus/
-* Email signup (TODO)
-* Integrate stuff. For example...
-  - https://zapier.com/apps/ghost/integrations
-  - https://zapier.com/apps/ghost/integrations/pocket
-* Check out the Ghost Forums: https://forum.ghost.org/c/themes
-
-### [24] Troubleshooting
+### [23] Troubleshooting
 
 Log in as your normal linux user (not root, not ghost)...
 
@@ -349,18 +340,18 @@ sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 ```
 
-## Email
+## Minimal required email support
 
 Your blog needs to be able to email people. Forgot your password? Invites to admins? Email subscribers? You get it.
 
-### [25] Install sSMTP
+### [24] Install sSMTP
 ```
 sudo dnf install ssmtp mailx -y
 ```
 
 You are not going to use mailx in this example, but you may if you want to do direct testing with the command `mail`. See <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md> (Method 2) for more information.
 
-### [26] Set up an email account with your domain provider
+### [25] Set up an email account with your domain provider
 
 Something like `noreply@example.com` and set a password. I use Lastpass to generate passwords.
 
@@ -368,7 +359,7 @@ Find our what the name of the smtp server is for your domain provider. For examp
 
 They should also list the TLS requirements. Probably TLS and port 587.
 
-### [27] Configure sSMTP
+### [26] Configure sSMTP
 
 **Tell the OS which MTA you are going to be using...**
 
@@ -456,7 +447,7 @@ echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email 
 ```
 
 
-### [28] Edit `config.production.json`
+### [27] Edit `config.production.json`
 
 ```
 sudo -u ghost vim /var/www/ghost/core/server/config/env/config.production.json
@@ -480,7 +471,7 @@ Change the `"mail"` stanza to look something like this:
   },
 ```
 
-### [29] Restart Ghost and Test
+### [28] Restart Ghost and Test
 
 ```
 sudo systemctl restart ghost.service
@@ -489,6 +480,46 @@ sudo systemctl status ghost.service
 
 Navigate to the admin screens, click Staff, and invite someone (I invite myself of course). It should send them an email.
 
+Copy that production config to backup now.
+
+```
+sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
+```
+
+### [24] Subscriptions and Disqus (commenting) functionality
+
+* https://docs.ghost.org/integrations/disqus/
+* Email subscription (TODO)
+* Integrate stuff. For example...
+  - https://zapier.com/apps/ghost/integrations
+  - https://zapier.com/apps/ghost/integrations/pocket
+* Check out the Ghost Forums: https://forum.ghost.org/c/themes
+* 
+
+## Back everything up
+
+You did all this work! You gotta back everything up now. :)
+
+Log in as your normal working user. Not root. Not ghost. And... let's tarball the lot of it.
+
+```
+# Shut down ghost and nginx
+sudo systemctl stop ghost
+sudo systemctl stop nginx
+
+# Back everything up
+DATE_YMD=$(date +%Y%m%d)
+rpm -qa | sort > $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
+sudo tar -cvzf ./ghost-on-fedora-${DATE_YMD}.tar.gz \
+  /var/www/ghost /etc/nginx /etc/ssmtp/revaliases \
+  /etc/systemd/system/ghost.service /etc/ssmtp/ssmtp.conf \/etc/letsencrypt $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
+
+# Start ghost and nginx
+sudo systemctl start ghost
+sudo systemctl start nginx
+```
+
+Over time, that backup will get larger and larger. Feel free to refine it.
 
 ## Congratulations! YOU'RE DONE!
 
@@ -507,6 +538,6 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * Not recommended. MariaDB/MySQL is unneeded for a blog, no matter the size and popularity, unless the data and database sit on different servers (which is also unneeded): <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
 * Email: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
-* Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-blogging-platform-on-fedora.md>
+* Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md>
 * Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-deploy-the-ghost-blogging-platform-on-fedora/>
 
