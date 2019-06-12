@@ -2,7 +2,7 @@
 
 ### [0] Purchase a Domain
 
-Gandi.net is one of my current favorite registrars, but there are many. Purchase a domain, for example, `example.com`. And we'll assume your blog will be `blog.example.com`
+Gandi.net is one of my current favorite registrars, but there are many. Purchase a domain, for example, `example.com`. And for the purposes of this article, we'll also assume your blog is `blog.example.com`.
 
 ## Install the server
 
@@ -529,7 +529,7 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 ---
 
-## References
+## Reference
 
 * <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>
 * <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
