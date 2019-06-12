@@ -1,16 +1,16 @@
 # HowTo: Deploy Ghost blogging platform on Fedora
 
-0. Purchase a Domain
+### [0] Purchase a Domain
 
 Gandi.net is one of my current favorite registrars, but there are many. Purchase a domain, for example, `example.com`. And we'll assume your blog will be `blog.example.com`
 
 ## Install the server
 
-1. Install the latest Fedora Linux server
+### [1] Install the latest Fedora Linux server
 
 HowTo Deploy and Configure a Minimalistic Fedora Linux Server: <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>
 
-2. Install additional packages
+### [2] Install additional packages
 
 ```
 # Stuff I like
@@ -21,7 +21,7 @@ sudo dnf install nginx nodejs node-gyp make certbot -y
 
 Note:  `certbot` is the _Let's Encrypt_ client, so you can set up SSL to work with your domain.
 
-3. Obtain an SSL (TLS) certificate
+### [3] Obtain an SSL (TLS) certificate
 
 **Point your domain at your new server**
 
@@ -74,7 +74,7 @@ Save that and exit.
 
 ## Configure Nginx
 
-4. Configure SELinux to allow Nginx traffic to flow to Ghost
+### [4] Configure SELinux to allow Nginx traffic to flow to Ghost
 
 Nginx relays traffic through port 2368 (in our configuration) which is the port that the Ghost application manages things through. SELinux does not like this.
 
@@ -95,13 +95,13 @@ And then edit `/etc/selinux/config` and set `SELINUX=permissive`
 > * I ran this: `sudo semanage port -a -t http_port_t -p tcp 2368 ; sudo semanage port -l|grep http`
 > * I then restarted nginx and tried again. Dunno. Not working
 
-5. Crank up nginx
+### [5] Crank up nginx
 
 ```
 sudo systemctl start nginx.service && sudo systemctl enable nginx.service
 ```
 
-6. Configure `/etc/nginx/conf.d/ghost.conf`
+### [6] Configure `/etc/nginx/conf.d/ghost.conf`
 
 Or better yet, `/etc/nginx/conf.d/example.com.ghost.conf`
 
@@ -129,13 +129,13 @@ server {
 }
 ```
 
-7. Check Nginx syntax:
+### [7] Check Nginx syntax:
 
 ```
 sudo nginx -t
 ```
 
-8. Reload Nginx configuration:
+### [8] Reload Nginx configuration:
 
 ```
 sudo systemctl reload nginx.service
@@ -143,7 +143,7 @@ sudo systemctl reload nginx.service
 
 ## Install Ghost
 
-9. Create a ghost user
+### [9] Create a ghost user
 
 ```
 sudo useradd -c "Ghost Application" ghost 
@@ -159,7 +159,7 @@ sudo chown -R ghost:ghost /var/www/ghost
 sudo chmod 775 /var/www/ghost
 ```
 
-11. Download Ghost
+### [11] Download Ghost
 
 <!--
 ```
@@ -178,28 +178,28 @@ sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/rel
 # curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url' | sudo -u ghost xargs -I GHOST_URL curl -L GHOST_URL -o /tmp/ghost.zip
 ```
 
-12. Unzip/Refresh Ghost application
+### [12] Unzip/Refresh Ghost application
 
 ```
 sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
 sudo rm /tmp/ghost.zip
 ```
 
-13. Navigate to `/var/www/ghost` as `ghost` user
+### [13] Navigate to `/var/www/ghost` as `ghost` user
 
 ```
 sudo su - ghost
 cd /var/www/ghost
 ```
 
-14. Install Ghost
+### [14] Install Ghost
 
 ```
 # You are still the ghost user
 cd /var/www/ghost ; npm install --production
 ```
 
-15. Configure Ghost to use your domain and sqlite3
+### [15] Configure Ghost to use your domain and sqlite3
 
 ```
 # You are still the ghost user
@@ -244,7 +244,7 @@ Swap out the existing config.production.json with something that looks like this
 }
 ```
 
-16. Start Ghost (initial testing)
+### [16] Start Ghost (initial testing)
 
 ```
 # You are still the ghost user
@@ -260,13 +260,13 @@ cd /var/www/ghost ; NODE_ENV=production node index.js >> /var/www/ghost/content/
 -->
 
 
-17. Test that it works
+### [17] Test that it works
 
 Browse to `https://blog.example.com` (well, your configured domain).
 
 Now shut it down. `^C` in that window that you are using to run ghost.
 
-18. Configure a ghost service
+### [18] Configure a ghost service
 
 Log out of the ghost user and do this as your normal working user sudoing these actions.
 
@@ -297,7 +297,7 @@ SyslogIdentifier=ghost
 WantedBy=multi-user.target
 ```
 
-20. Crank up that Ghost service!
+### [20] Crank up that Ghost service!
 
 ```
 # You are still your normal working user
@@ -311,11 +311,11 @@ Test it again.
 
 ## Post install configuration
 
-21. Set up your admin credentials
+### [21] Set up your admin credentials
 
 Browse to `https://blog.example.com/ghost` and set your credentials promptly.
 
-22. Change your theme
+### [22] Change your theme
 
 The default is nice, but there are others. You find a theme like, download and unzip to `/var/www/ghost/content/themes` and configure in the link provided above.
 
@@ -324,7 +324,7 @@ Some themes to get you started:
 * https://ghost.org/marketplace/
 * https://blog.ghost.org/free-ghost-themes/
 
-23. Mail and Disqus (commenting) functionality
+### [23] Mail and Disqus (commenting) functionality
 
 * https://docs.ghost.org/integrations/disqus/
 * Email signup (TODO)
@@ -333,7 +333,7 @@ Some themes to get you started:
   - https://zapier.com/apps/ghost/integrations/pocket
 * Check out the Ghost Forums: https://forum.ghost.org/c/themes
 
-23. Troubleshooting
+### [24] Troubleshooting
 
 Log in as your normal linux user (not root, not ghost)...
 
@@ -353,14 +353,14 @@ sudo tail -f /var/log/nginx/access.log
 
 Your blog needs to be able to email people. Forgot your password? Invites to admins? Email subscribers? You get it.
 
-24. Install sSMTP
+### [25] Install sSMTP
 ```
 sudo dnf install ssmtp mailx -y
 ```
 
 You are not going to use mailx in this example, but you may if you want to do direct testing with the command `mail`. See <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md> (Method 2) for more information.
 
-25. Set up an email account with your domain provider
+### [26] Set up an email account with your domain provider
 
 Something like `noreply@example.com` and set a password. I use Lastpass to generate passwords.
 
@@ -368,7 +368,7 @@ Find our what the name of the smtp server is for your domain provider. For examp
 
 They should also list the TLS requirements. Probably TLS and port 587.
 
-26. Configure sSMTP
+### [27] Configure sSMTP
 
 **Tell the OS which MTA you are going to be using...**
 
@@ -456,7 +456,7 @@ echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email 
 ```
 
 
-27. Edit `config.production.json`
+### [28] Edit `config.production.json`
 
 ```
 sudo -u ghost vim /var/www/ghost/core/server/config/env/config.production.json
@@ -480,7 +480,7 @@ Change the `"mail"` stanza to look something like this:
   },
 ```
 
-27. Restart Ghost and Test
+### [29] Restart Ghost and Test
 
 ```
 sudo systemctl restart ghost.service
@@ -507,4 +507,6 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * Not recommended. MariaDB/MySQL is unneeded for a blog, no matter the size and popularity, unless the data and database sit on different servers (which is also unneeded): <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
 * Email: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
+* Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-blogging-platform-on-fedora.md>
+* Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-deploy-the-ghost-blogging-platform-on-fedora/>
 
