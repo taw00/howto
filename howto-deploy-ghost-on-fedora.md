@@ -10,7 +10,7 @@ But there was a stumbling block. The installation instructions for Fedora Linux 
 
 I fixed that. Enjoy.
 
-> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>.
+> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
 
 ---
 
@@ -30,6 +30,20 @@ This howto will walk you through:
 * Properly setting up email support on the system
 * Some troubleshooting guidance
 * Backing everything up
+
+The technical specs of what was used to develop my blog and write this howto were...
+
+* Vultr.com VPS -- 1G RAM, 25G SSD storage, 1vCore CPU, and a lot of available bandwidth
+* Fedora Linux 30 (and the latest FirewallD, etc.)
+* OS Supplied:
+  * Web server: Nginx - nginx-1.16.0-3.fc30.x86_64
+  * Database: SQLite - sqlite-3.26.0-5.fc30.x86_64
+  * Development: NodeJS - nodejs-10.16.0-3.fc30.x86_64
+  * Node.js compiler: node-gyp - node-gyp-3.6.0-7.fc30.noarch
+  * Email relayer: sSMTP - ssmtp-2.64-22.fc30.x86_64
+  * Let's Encrypt (TLS) commandline frontend: Certbot - certbot-0.34.2-3.fc30.noarch
+* Ghost - zip file downloaded was 2.23.4
+
 
 ---
 
