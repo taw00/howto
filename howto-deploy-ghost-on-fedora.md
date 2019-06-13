@@ -210,7 +210,7 @@ sudo systemctl reload nginx.service
 sudo useradd -c "Ghost Application" ghost 
 ```
 
-10. Create Ghost's document root and set permissions
+### [10] Create Ghost's document root and set permissions
 
 Default webroot for Nginx is `/usr/share/nginx/html`. Note that
 `/usr/share` is for static read-only content. Therefore, we want
