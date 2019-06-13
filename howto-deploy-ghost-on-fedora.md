@@ -643,4 +643,6 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md>
 * Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-deploy-the-ghost-blogging-platform-on-fedora/>
 
+---
 
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
