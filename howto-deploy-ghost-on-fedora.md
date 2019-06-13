@@ -1,4 +1,4 @@
-![ghost-fedora-logo.src.svg](https://raw.githubusercontent.com/taw00/howto/master/appurtenances/ghost-fedora-logo.src.svg)
+![ghost-fedora-logo.src.svg](appurtenances/ghost-fedora-logo.src.svg)
 
 # HowTo: Deploy the Ghost blogging platform on Fedora
 
