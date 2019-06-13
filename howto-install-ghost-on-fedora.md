@@ -1,6 +1,6 @@
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-# HowTo: Deploy the Ghost blogging platform on Fedora
+# HowTo install the Ghost blogging platform on Fedora
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the biggest and best. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -10,7 +10,7 @@ But there was a stumbling block. The installation instructions for Fedora Linux 
 
 I fixed that. Enjoy.
 
-> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
+> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
 
 ---
 
@@ -640,8 +640,8 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * Not recommended. MariaDB/MySQL is unneeded for a blog, no matter the size and popularity, unless the data and database sit on different servers (which is also unneeded): <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
 * Email: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
-* Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md>
-* Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-deploy-the-ghost-blogging-platform-on-fedora/>
+* Article on Github: <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
+* Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-the-ghost-blogging-platform-on-fedora/>
 
 ---
 
