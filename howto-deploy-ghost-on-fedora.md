@@ -45,7 +45,7 @@ Follow the instructions for "HowTo Deploy and Configure a Minimalistic Fedora Li
 # Stuff I like
 sudo dnf install vim-enhanced screen -y
 # Development-ish and app-related stuff
-sudo dnf install nginx nodejs node-gyp make certbot -y
+sudo dnf install nginx nodejs node-gyp make certbot git -y
 ```
 
 ### [2] Purchase a domain name and configure DNS at your registrar
@@ -365,6 +365,17 @@ Some themes to get you started:
 * https://colorlib.com/wp/best-free-ghost-themes/
 * https://ghost.org/marketplace/
 * https://blog.ghost.org/free-ghost-themes/
+
+**Example:**
+```
+sudo su - ghost
+cd /var/www/ghost/content/themes
+git clone https://github.com/TryGhost/Massively
+exit
+sudo systemctl restart ghost.service
+```
+Then browse to <https://blog.example.com/ghost> --> Design --> scroll down to "massively" --> activate
+
 
 ### [23] Troubleshooting
 
