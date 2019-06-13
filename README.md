@@ -38,7 +38,7 @@ Other
 * [Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
 * [Enforce a base script is "sourced" or "executed"](https://github.com/taw00/howto/blob/master/howto-enforce-bash-script-is-sourced-or-executed.md)
 <br />
-* [...Do Miscellaneous Things](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
+* [HowTo do Miscellaneous Things (a grabbag)](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
 ---
 
