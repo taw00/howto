@@ -526,7 +526,7 @@ Copy that production config to backup now.
 sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
 ```
 
-### [24] Email subscriptions and Disqus commenting functionality
+### [29] Email subscriptions and Disqus commenting functionality
 
 ***This section is not complete yet***
 
@@ -536,7 +536,6 @@ sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www
   - https://zapier.com/apps/ghost/integrations
   - https://zapier.com/apps/ghost/integrations/pocket
 * Check out the Ghost Forums: https://forum.ghost.org/c/themes
-* 
 
 ## Back everything up
 
