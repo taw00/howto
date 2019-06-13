@@ -580,12 +580,24 @@ sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www
 
 You did all this work! You gotta back everything up now. :)
 
-Log in as your normal working user. Not root. Not ghost. And... let's tarball the lot of it.
+Log in as your normal working user. Not root. Not ghost. Create a back script and copy to a safe place...
+
+Edit `vim backup-ghost.sh` add this and save it...
 
 ```
+#!/usr/bin/bash
+
+# This script will
+# - shut down the ghost and nginx systemd services
+# - create an RPM manifest for reference
+# - back up ghost and the configurations for nginx, ssmtp, letsencrypt/certbot
+#   (this does not back up your OS configuration)
+# - restarts the ghost and nginx systemd services
+
+echo """"
 # Shut down ghost and nginx
-sudo systemctl stop ghost
-sudo systemctl stop nginx
+sudo systemctl stop ghost.service
+sudo systemctl stop nginx.service
 
 # Back everything up
 DATE_YMD=$(date +%Y%m%d)
@@ -595,13 +607,21 @@ sudo tar -cvzf ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz \
   /etc/systemd/system/ghost.service /etc/ssmtp/ssmtp.conf \
   /etc/letsencrypt /etc/sysconfig/certbot \
   $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
+rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
 
 # Start ghost and nginx
-sudo systemctl start ghost
-sudo systemctl start nginx
+sudo systemctl start ghost.service
+sudo systemctl start nginx.service
+
+echo "Here is your backup tarball, copy it somewhere safe:"
+ls -lh ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz
 ```
 
-Over time, that backup will get larger and larger. Feel free to refine it.
+Save that script, then run it...
+
+```
+. ./backup-ghost.sh
+```
 
 ## Congratulations! YOU'RE DONE!
 
