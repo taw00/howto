@@ -8,6 +8,8 @@ But there was a stumbling block. The installation instructions for Fedora Linux 
 
 I fixed that. Enjoy.
 
+> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>.
+
 ---
 
 This howto will walk you through:
@@ -551,7 +553,7 @@ sudo systemctl stop nginx
 # Back everything up
 DATE_YMD=$(date +%Y%m%d)
 rpm -qa | sort > $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
-sudo tar -cvzf ./ghost-on-fedora-${DATE_YMD}.tar.gz \
+sudo tar -cvzf ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz \
   /var/www/ghost /etc/nginx /etc/ssmtp/revaliases \
   /etc/systemd/system/ghost.service /etc/ssmtp/ssmtp.conf \
   /etc/letsencrypt /etc/sysconfig/certbot \
@@ -583,4 +585,5 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * Email: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
 * Article on Github: <https://github.com/taw00/howto/blob/master/howto-deploy-ghost-on-fedora.md>
 * Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-deploy-the-ghost-blogging-platform-on-fedora/>
+
 
