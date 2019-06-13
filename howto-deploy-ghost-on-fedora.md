@@ -155,16 +155,12 @@ Or better yet, `/etc/nginx/conf.d/example.com.ghost.conf`
 
 ```
 server {
-
+  # This manages blog.DOMAIN
   listen 80;
   listen [::]:80;
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   server_name blog.example.com;
-  
-  # Changed our mind. Not going to redirect
-  # example.com, nor www.example.com
-  #server_name example.com www.example.com;
 
   ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
@@ -176,7 +172,21 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_pass http://127.0.0.1:2368;
   }
+}
 
+server {
+  # This redirects www.DOMAIN and the bare DOMAIN to blog.DOMAIN
+  listen 80;
+  listen [::]:80;
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name example.com www.example.com;
+
+  ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+  return 301 $scheme://blog.example.com$request_uri;
 }
 ```
 
