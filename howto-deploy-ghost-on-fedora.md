@@ -1,4 +1,4 @@
-![ghost-fedora-logo.src.svg](appurtenances/ghost-fedora-logo.src.svg)
+![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
 # HowTo: Deploy the Ghost blogging platform on Fedora
 
