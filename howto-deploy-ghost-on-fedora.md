@@ -1,3 +1,5 @@
+![ghost-fedora-logo.src.svg](https://raw.githubusercontent.com/taw00/howto/master/appurtenances/ghost-fedora-logo.src.svg)
+
 # HowTo: Deploy the Ghost blogging platform on Fedora
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the biggest and best. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
