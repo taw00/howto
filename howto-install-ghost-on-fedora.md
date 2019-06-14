@@ -44,7 +44,6 @@ The technical specs of what was used to develop my blog and write this howto wer
   * Let's Encrypt (TLS) commandline frontend: Certbot - certbot-0.34.2-3.fc30.noarch
 * Ghost - zip file downloaded was 2.23.4
 
-
 ---
 
 ## Install the server
@@ -400,7 +399,6 @@ sudo systemctl restart ghost.service
 ```
 Then browse to <https://blog.example.com/ghost> --> Design --> scroll down to "massively" --> activate
 
-
 ### [23] Troubleshooting
 
 Log in as your normal linux user (not root, not ghost)...
@@ -584,6 +582,7 @@ Log in as your normal working user. Not root. Not ghost. Create a back script an
 
 Edit `vim backup-ghost.sh` add this and save it...
 
+
 ```
 #!/usr/bin/bash
 
@@ -633,15 +632,35 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 ## Reference
 
-* <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>
-* <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
-* <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
-* Initial configuration: <https://docs.ghost.org/concepts/config/>
-* Not recommended. MariaDB/MySQL is unneeded for a blog, no matter the size and popularity, unless the data and database sit on different servers (which is also unneeded): <https://docs.ghost.org/install/ubuntu/>
+#### Getting help
+
+* Ghost: <https://ghost.org/>
+* Ghost Forum: <https://forum.ghost.org/>
+* Ghost Docs: <https://docs.ghost.org/>
+* Fedora Project: <https://start.fedoraproject.org/> (docs, ask Fedora, etc)
+* Fedora's Community Blog: <https://communityblog.fedoraproject.org/>
+* Fedora on IRC: <https://fedoraproject.org/wiki/IRC>
+* Ask Fedora: <https://ask.fedoraproject.org/c/community>
+* Some Fedora Community thing: <https://discussion.fedoraproject.org/>
+
+#### Other resources and inspirations
+
+* Installing the OS: <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>
+* FirewallD: <https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md>
+* Email SMTP setup: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
+
+&nbsp;
+
+* Dated ghost on fedora guide (old and incomplete): <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
+* Another dated ghost on fedora guide (old and incomplete):<https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
+* Initial configuration guidance and discussion: <https://docs.ghost.org/concepts/config/>
+* MariaDB/MySQL instead of SQLite &mdash;Not recommended&mdash; MariaDB/MySQL is unneeded for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
-* Email: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
-* Article on Github: <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
-* Article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-the-ghost-blogging-platform-on-fedora/>
+
+&nbsp;
+
+* This article on Github: <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
+* This article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-the-ghost-blogging-platform-on-fedora/>
 
 ---
 
