@@ -23,6 +23,7 @@ application related configurations are made here.
   - [ALL DONE!](#all-done)
   - [Appendix - Advanced Topics](#appendix---advanced-topics)
     - [Improve SSD Write & Delete Performance for Linux Systems by Enabling ATA TRIM](#improve-ssd-write--delete-performance-for-linux-systems-by-enabling-ata-trim)
+    - [Cap the size of the system journal](#cap-the-size-of-the-system-journal)
 
 <!-- /TOC -->
 
@@ -373,7 +374,7 @@ tail -F /var/log/fail2ban.log
 
 Attackers _love_ to attempt to login to root via SSH. Turn that off.
 
-* Edit `/etc/ssh/sshd_config` -- note **sshd_config** not **ssh_config** 
+* Edit `/etc/ssh/sshd_config` -- note **sshd_config** not **ssh_config**
 * Either add or edit these lines (add only if the setting does not already
   exist)...
 
@@ -431,12 +432,35 @@ Got a dash of feedback? Send it my way <https://keybase.io/toddwarner>
 
 ---
 
-## Appendix - Advanced Topics
+## Appendix - Advanced / Extra Topics
 
 ### Improve SSD Write & Delete Performance for Linux Systems by Enabling ATA TRIM
 
-Because of the way SSDs (Solid State Drives) work, saving new data can impact performance. Namely, data marked as "deleted" have to be completely erased before write. With traditional magnetic drives, data marked for deletion is simply overwritten. Because SSDs have to take this extra step, performance can be impacted and slowly worsens over time.
+Because of the way SSDs (Solid State Drives) work, saving new data can impact
+performance. Namely, data marked as "deleted" have to be completely erased
+before write. With traditional magnetic drives, data marked for deletion is
+simply overwritten. Because SSDs have to take this extra step, performance can
+be impacted and slowly worsens over time.
 
-If, on the other hand, you can alert the operating system that it needs to wipe deleted data in the background, writes (and deletes) can improve in performance.
+If, on the other hand, you can alert the operating system that it needs to wipe
+deleted data in the background, writes (and deletes) can improve in
+performance.
 
-To learn more, follow this link: <https://github.com/taw00/howto/blob/master/howto-enable-ssd-trim-for-linux.md>
+To learn more, follow this link:
+<https://github.com/taw00/howto/blob/master/howto-enable-ssd-trim-for-linux.md>
+
+### Cap the size of the system journal
+
+The system journal -- `sudo du -skh /var/log/journal` -- can get out of hand (a
+couple gig). Let's cap it to something more reasonable. Like say, 500M:
+
+1. Edit root's crontab: `sudo crontab -e`
+2. Add this to the cron configutions, save and exit:
+```
+# At 2:30 in the morning, cap it!
+30 2 * * * /usr/bin/journalctl --vacuum-size=500M
+```
+
+Note, you can read more about a more nuanced approached to managing resources
+and how journald consumes diskspace via `man journald.conf`, but I like the
+quick and dirty method of the cronjob.
