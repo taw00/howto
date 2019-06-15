@@ -568,7 +568,7 @@ sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www
 ***This section is not complete yet***
 
 * https://docs.ghost.org/integrations/disqus/
-* Email subscription (TODO)
+* Email subscription (TODO – [Mailchimp](https://docs.ghost.org/integrations/mailchimp/)?)
 * Integrate stuff. For example...
   - https://zapier.com/apps/ghost/integrations
   - https://zapier.com/apps/ghost/integrations/pocket
