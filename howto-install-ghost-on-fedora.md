@@ -568,7 +568,11 @@ sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www
 ***This section is not complete yet***
 
 * https://docs.ghost.org/integrations/disqus/
-* Email subscription (TODO – [Mailchimp](https://docs.ghost.org/integrations/mailchimp/)?)
+* Email subscriptions:  
+  Currently
+  [experimenting](https://docs.ghost.org/faq/enable-subscribers-feature/). You
+  can also integrate [Mailchimp](https://docs.ghost.org/integrations/mailchimp/).
+  Not all themes support it. YMMV.
 * Integrate stuff. For example...
   - https://zapier.com/apps/ghost/integrations
   - https://zapier.com/apps/ghost/integrations/pocket
