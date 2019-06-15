@@ -1,6 +1,6 @@
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-# HowTo install the Ghost blogging platform on Fedora
+# How to install the Ghost blogging platform on Fedora Linux
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
