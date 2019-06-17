@@ -27,8 +27,9 @@ This howto will walk you through:
   _...using sqlite3 and not MySQL or MariaDB with is unneeded complexity IMHO_
 * Setting up Ghost to be managed by systemd  
   _...and not pm2 or screen or some other less reliable mechanism_
-* Properly setting up email support on the system
 * Some troubleshooting guidance
+* Properly setting up email support on the system
+* Setting up subscription management via MailChimp
 * Backing everything up
 
 The technical specs of what was used to develop my blog and write this howto were...
@@ -563,16 +564,33 @@ Copy that production config to backup now.
 sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
 ```
 
-### [29] Email subscriptions and Disqus commenting functionality
+### [29] Email subscriptions
 
-***This section is not complete yet***
+You can use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like it simple, so I just use MailChimp directly, for that...
+
+Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
+* Create a [MailChimp](https://mailchimp.com/) account.
+* Create two email campaigns: Click into "Campaigns" (on the MailChimp website) and
+  1. Create a "Single welcome email" for new subscribers
+  2. Create a "Weekly blog updates" that sends an RSS feed summary. See also [these instructions](https://mailchimp.com/features/rss-to-email/).
+* Embed an subscribe-by-email widget to the bottom of every entry page by...
+  - Click into the "Audience" tab on the MailChimp website.
+  - Using the "Manage Audience" dropdown menu, choose "Signup Forms"
+  - Click "Embedded Forms"
+  - Change the form title to something like "Subscribe to the Example.com Blog!"
+  - Click "Condensed"
+  - Copy the embedded code that mailchimp provides you.
+  - SSH into your blog server and edit the `/var/www/ghost/content/themes/casper/post.hbs` file (your chosen theme should have an equivalent .hbs file).
+  - Uncomment and edit the section that starts with `<section class="post-full-comments">` and add that embedded code that MailChimp provided you.
+* Restart Ghost: `sudo systemctl restart ghost.service`
+
+You should now see an email subscription field at the bottom of each of your blog entries.
+
+### [30] Disqus commenting functionality and other integrations
+
+I leave this to the reader to figure out.
 
 * https://docs.ghost.org/integrations/disqus/
-* Email subscriptions:  
-  Currently
-  [experimenting](https://docs.ghost.org/faq/enable-subscribers-feature/). You
-  can also integrate [Mailchimp](https://docs.ghost.org/integrations/mailchimp/).
-  Not all themes support it. YMMV.
 * Integrate stuff. For example...
   - https://zapier.com/apps/ghost/integrations
   - https://zapier.com/apps/ghost/integrations/pocket
@@ -597,7 +615,6 @@ Edit `vim backup-ghost.sh` add this and save it...
 #   (this does not back up your OS configuration)
 # - restarts the ghost and nginx systemd services
 
-echo """"
 # Shut down ghost and nginx
 sudo systemctl stop ghost.service
 sudo systemctl stop nginx.service
@@ -669,3 +686,4 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 ---
 
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+
