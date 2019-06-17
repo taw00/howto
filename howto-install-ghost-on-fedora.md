@@ -645,7 +645,7 @@ Save that script, then run it...
 
 ## Congratulations! YOU'RE DONE!
 
-...at least done with the initial setup. You now have an end-to-end functioning Ghost blogging platform installed.
+Or you are at least done with the initial setup. You now have an end-to-end functioning Ghost blogging platform installed.
 
 Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
