@@ -672,11 +672,13 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 &nbsp;
 
-* Dated ghost on fedora guide (old and incomplete): <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
-* Another dated ghost on fedora guide (old and incomplete):<https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
+* Some dated and incomplete "Ghost on Fedora" guides:
+  * <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
+  * <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
 * Initial configuration guidance and discussion: <https://docs.ghost.org/concepts/config/>
 * MariaDB/MySQL instead of SQLite? &mdash;Not recommended&mdash; SQLite is sufficient (and perhaps even more performant) for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
+* Redirects are useful, learn to use them: <https://docs.ghost.org/tutorials/implementing-redirects/>
 
 &nbsp;
 
