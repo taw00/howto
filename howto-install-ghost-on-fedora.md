@@ -681,7 +681,7 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 &nbsp;
 
 * This article on Github: <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
-* This article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-the-ghost-blogging-platform-on-fedora/>
+* This article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-ghost-on-fedora/>
 
 ---
 
