@@ -411,7 +411,7 @@ sudo reboot
 ```
 
 Once rebooted...
-* Attempt to login with `ssh` as your normal user. This shoudl work.
+* Attempt to login with `ssh` as your normal user. This should work.
 * Attempt to login with `ssh` as root. This should not work.
 
 
