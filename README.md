@@ -27,9 +27,9 @@ Filesystem / Performance
 * [Configure Swap with a Swap File for Linux](https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md)
 * [Rotate Log Files on Linux](https://github.com/taw00/howto/blob/master/howto-logrotate.md)
 
-Maintenance and deployment
+Maintenance and Deployment
 * [Schedule a Nightly YUM or DNF Download of RPM Packages After Hours](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-download-rpm-packages-after-hours.md)
-* [Set up a local YUM or DNF RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
+* [Set up a local DNF RPM repository](https://github.com/taw00/howto/blob/master/howto-setup-a-local-yum-dnf-repository.md)
 * [Package an Application as an RPM and Build It Using Mock](https://github.com/taw00/howto/blob/master/howto-package-an-app-as-an-rpm-and-build-it-using-mock.md)
 * [Schedule Cron Jobs to Run at Random Intervals](https://github.com/taw00/howto/blob/master/howto-schedule-cron-jobs-to-run-at-random-intervals.md)
 
