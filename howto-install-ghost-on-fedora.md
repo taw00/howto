@@ -679,6 +679,7 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 * MariaDB/MySQL instead of SQLite? &mdash;Not recommended&mdash; SQLite is sufficient (and perhaps even more performant) for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
 * Redirects are useful, learn to use them: <https://docs.ghost.org/tutorials/implementing-redirects/>
+* Email support using Postfix (not tested): <http://blog.benoitblanchon.fr/postfix-and-ghost/>
 
 &nbsp;
 
@@ -687,5 +688,5 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 ---
 
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
