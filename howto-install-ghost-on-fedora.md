@@ -4,11 +4,11 @@
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
-I looked at a whole pile of blogging options when I finally decided to go with Ghost. It's well supported, and, by the looks of it, well designed. I was looking for a platform that embraces markdown and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. So here it is.
+I looked at a whole pile of blogging options when I finally decided to go with Ghost. It checks all the boxes for what I required in a blogging platform: It's well supported, and, by the looks of it, well designed. A platform that embraces [Markdown](https://ghost.org/blog/markdown/) (a critical, must-have feature IMHO) and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. Bonus! Ghost is wildly popular, so it should have some longevity.
 
-But there was a stumbling block. The installation instructions for Fedora Linux were incomplete and very dated.
+_But there was a stumbling block. The installation instructions for Fedora Linux were incomplete and very dated._
 
-I fixed that. Enjoy.
+I fixed that with this article. Enjoy.
 
 > _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
 
@@ -230,6 +230,7 @@ sudo chmod 775 /var/www/ghost
 ```
 # Direct method for a solitary version
 sudo dnf install curl -y
+# Note, this example will invariably be an old version
 curl -L https://github.com/TryGhost/Ghost/releases/download/2.23.4/Ghost-2.23.4.zip -o ghost.zip
 ```
 -->
@@ -308,6 +309,10 @@ Swap out the existing config.production.json with something that looks like this
   }
 }
 ```
+
+> Note, once you have Ghost up and running, create a redundant
+> backup of this file. Future updates tend to overwrite it:
+> `cp -a config.production.json config.production.json--backup`
 
 ### [16] Start Ghost (initial testing)
 
@@ -389,6 +394,12 @@ Some themes to get you started:
 * https://colorlib.com/wp/best-free-ghost-themes/
 * https://ghost.org/marketplace/
 * https://blog.ghost.org/free-ghost-themes/
+* https://ghost-o-matic.com/ghost-o-matic/
+
+More themes, but none of which are free:
+
+* https://creativemarket.com/themes/ghost/recent
+* https://themeix.com/product-category/ghost-themes/
 
 **Example:**
 ```
@@ -549,6 +560,10 @@ Change the `"mail"` stanza to look something like this:
   },
 ```
 
+> Note (again), once you have Ghost up and running, create a redundant
+> backup of this file. Future updates tend to overwrite it:
+> `cp -a config.production.json config.production.json--backup`
+
 ### [28] Restart Ghost and Test
 
 ```
@@ -556,7 +571,7 @@ sudo systemctl restart ghost.service
 sudo systemctl status ghost.service
 ```
 
-Navigate to the admin screens, click Staff, and invite someone (I invite myself of course). It should send them an email.
+Navigate to the admin screens, click Staff, and invite someone (I invited myself for testing purposes). It should send them an email.
 
 Copy that production config to backup now.
 
@@ -588,7 +603,7 @@ You should now see an email subscription field at the bottom of each of your blo
 
 ### [30] Disqus commenting functionality and other integrations
 
-I leave this to the reader to figure out.
+I leave this to the reader to figure out. I don't currently enable commenting on my blog.
 
 * https://docs.ghost.org/integrations/disqus/
 * Integrate stuff. For example...
@@ -604,7 +619,6 @@ Log in as your normal working user. Not root. Not ghost. Create a back script an
 
 Edit `vim backup-ghost.sh` add this and save it...
 
-
 ```
 #!/usr/bin/bash
 
@@ -615,23 +629,66 @@ Edit `vim backup-ghost.sh` add this and save it...
 #   (this does not back up your OS configuration)
 # - restarts the ghost and nginx systemd services
 
+echo "Shutting down ghost and nginx services..."
 # Shut down ghost and nginx
 sudo systemctl stop ghost.service
 sudo systemctl stop nginx.service
+echo "...done."
 
 # Back everything up
 DATE_YMD=$(date +%Y%m%d)
+echo "Grabbing the RPM manifest of this server..."
 rpm -qa | sort > $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
-sudo tar -cvzf ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz \
+echo "...done."
+
+echo "Creating README file for backup..."
+echo "\
+Critical configuration files (and directories) are...
+
+For Ghost itself:
+/var/www/ghost/core/server/config/env/config.production.json
+/var/www/ghost/content/themes/
+/var/www/ghost/content/data/ghost.db
+/var/www/ghost/content/data/redirects.json
+
+For the Ghost systemd service:
+/etc/systemd/system/ghost.service
+
+For mail handling:
+/etc/ssmtp/ssmtp.conf
+/etc/ssmtp/revaliases
+
+For the webserver:
+/etc/nginx/
+...but especially...
+/etc/nginx/nginx.conf
+/etc/nginx/conf.d/
+
+For the TLS (SSL) certificates:
+/etc/letsencrypt/
+/etc/sysconfig/certbot
+...but especially...
+/etc/letsencrypt/live/
+/etc/letsencrypt/archive/
+/etc/letsencrypt/renewal/
+" > $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
+echo "...done."
+
+echo "Backing up Ghost, Nginx, and associated configuration..."
+sudo tar -czf ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz \
   /var/www/ghost /etc/nginx /etc/ssmtp/revaliases \
   /etc/systemd/system/ghost.service /etc/ssmtp/ssmtp.conf \
   /etc/letsencrypt /etc/sysconfig/certbot \
-  $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
-rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
+  $HOSTNAME-rpm-manifest-${DATE_YMD}.txt \
+  $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
+rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
+echo "...done."
 
+echo "Starting up ghost and nginx services..."
 # Start ghost and nginx
 sudo systemctl start ghost.service
 sudo systemctl start nginx.service
+echo "...done."
 
 echo "Here is your backup tarball, copy it somewhere safe:"
 ls -lh ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz
@@ -645,9 +702,35 @@ Save that script, then run it...
 
 ## Congratulations! YOU'RE DONE!
 
-Or you are at least done with the initial setup. You now have an end-to-end functioning Ghost blogging platform installed.
+Or you  at least done with the initial setup. You now have an end-to-end functioning Ghost blogging platform installed.
 
 Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
+
+## Addendum: Updates and Upgrades
+
+**Updating the operating system**
+
+Should just work: `sudo dnf upgrade -y --refresh; sudo reboot`
+
+**Upgrading Ghost**
+
+The process is relatively simple
+1. Backup -- See _"Back Everything Up"_ above
+2. Download the new tarball -- See _"Download Ghost"_ above
+3. Make a convenience backup of your Ghost configuration file: `sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /tmp/`
+4. Shut down services:
+```
+sudo systemctl stop ghost.service
+sudo systemctl stop nginx.service
+```
+5. Install Ghost -- See _"Unzip/Refresh Ghost application"_, _"Navigate to `/var/www/ghost`"_, and _"Install Ghost"_ above
+6. Replace config file with backup: `sudo mv  /tmp/config.production.json /var/www/ghost/core/server/config/env/`
+7. Restart services:
+```
+sudo systemctl start ghost.service
+sudo systemctl start nginx.service
+```
+8. Browse to your domain and your domain/ghost and check that everything works correctly.
 
 ---
 
@@ -676,7 +759,7 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
   * <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
   * <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
 * Initial configuration guidance and discussion: <https://docs.ghost.org/concepts/config/>
-* MariaDB/MySQL instead of SQLite? &mdash;Not recommended&mdash; SQLite is sufficient (and perhaps even more performant) for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
+* MariaDB/MySQL instead of SQLite? &mdash;Not recommended&mdash; SQLite is sufficient, and perhaps even more performant, for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
 * Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
 * Redirects are useful, learn to use them: <https://docs.ghost.org/tutorials/implementing-redirects/>
 * Email support using Postfix (not tested): <http://blog.benoitblanchon.fr/postfix-and-ghost/>
@@ -690,3 +773,4 @@ Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
+Copyright © Todd Warner
