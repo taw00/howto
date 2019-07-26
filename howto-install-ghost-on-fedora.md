@@ -4,13 +4,9 @@
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
-I looked at a whole pile of blogging options when I finally decided to go with Ghost. It checks all the boxes for what I required in a blogging platform: It's well supported, and, by the looks of it, well designed. A platform that embraces [Markdown](https://ghost.org/blog/markdown/) (a critical, must-have feature IMHO) and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. Bonus! Ghost is wildly popular, so it should have some longevity.
+I looked at a whole pile of blogging options when I finally decided to go with Ghost. It checks all the boxes for what I required in a blogging platform: It's well supported, and, by the looks of it, well designed. A platform that embraces [Markdown](https://ghost.org/blog/markdown/) (a critical, must-have feature IMHO) and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. Bonus! Ghost is wildly popular, so it should have some longevity. _But there was a stumbling block for me when first attempting to install the software on my favorite flavor of linux. The installation instructions for Fedora Linux were incomplete and very dated._ I fixed that with this article. Enjoy.
 
-_But there was a stumbling block. The installation instructions for Fedora Linux were incomplete and very dated._
-
-I fixed that with this article. Enjoy.
-
-> _If you are reading this [on another platform](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
+> _If you are reading this [on another platform, like github](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
 
 ---
 
@@ -32,7 +28,7 @@ This howto will walk you through:
 * Setting up subscription management via MailChimp
 * Backing everything up
 
-The technical specs of what was used to develop my blog and write this howto were...
+The technical specs (June 2019) of what was used to develop my blog and write this howto were...
 
 * Vultr.com VPS -- 1G RAM, 25G SSD storage, 1vCore CPU, and a lot of available bandwidth
 * Fedora Linux 30 (and the latest FirewallD, etc.)
@@ -43,7 +39,7 @@ The technical specs of what was used to develop my blog and write this howto wer
   * Node.js compiler: node-gyp - node-gyp-3.6.0-7.fc30.noarch
   * Email relayer: sSMTP - ssmtp-2.64-22.fc30.x86_64
   * Let's Encrypt (TLS) commandline frontend: Certbot - certbot-0.34.2-3.fc30.noarch
-* Ghost - zip file downloaded was 2.23.4
+* Ghost - the original zip file downloaded was version 2.23.4
 
 ---
 
@@ -56,10 +52,11 @@ Follow the instructions for "HowTo Deploy and Configure a Minimalistic Fedora Li
 ### [1] Install additional packages
 
 ```
-# Stuff I like
+# Stuff I like to add to most any installation of linux
 sudo dnf install vim-enhanced screen -y
-# Development-ish and app-related stuff
-sudo dnf install nginx nodejs node-gyp make certbot git -y
+# Development-ish and app-related stuff required by Ghost
+# and this installation process
+sudo dnf install nginx nodejs node-gyp make certbot git curl -y
 ```
 
 ### [2] Purchase a domain name and configure DNS at your registrar
@@ -68,7 +65,7 @@ Gandi.net is one of my current favorite registrars, but there are many. Purchase
 
 Once purchased, edit the DNS tables and point your domain at your new server. The DNS record would look something like: `blog A 1800 123.123.123.12`
 
-If you want the raw domain to route there, then `@ A 1800 123.123.123.123`
+If you want the raw domain to route there, then `@ A 1800 123.123.123.12`
 
 ### [3] Obtain an SSL (TLS) certificate
 
@@ -137,7 +134,7 @@ To ensure it sticks after reboot...
 Edit `/etc/selinux/config` and set `SELINUX=permissive`
 
 > _Extra credit work..._  
-> If you can figure out how to get SELinux to work with ghost proxying things to port 2368, more power to you. I got stuck here:
+> If you can figure out how to get SELinux to work with ghost proxying things to port 2368, please email me. I got stuck here:
 > * I examined `/var/log/audit/audit.log` (after full installation)
 > * I even used `audit2why` and `sealert` to analysize things
 > * I ran this: `sudo semanage port -a -t http_port_t -p tcp 2368 ; sudo semanage port -l|grep http`
@@ -161,6 +158,14 @@ server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
   server_name blog.example.com;
+
+  # You could set this in ../nginx.conf, but I prefer only editing
+  # configuration files under the conf.d/ directory if possible.
+  types_hash_max_size 4096;
+
+  # Set this to whatever you want
+  # But remember, smaller file sizes are generally better
+  client_max_body_size 10M;
 
   ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
@@ -207,6 +212,7 @@ sudo systemctl reload nginx.service
 ### [9] Create a ghost user
 
 ```
+# This will be a non-priviledged "normal" user specific for this use.
 sudo useradd -c "Ghost Application" ghost 
 ```
 
@@ -228,20 +234,17 @@ sudo chmod 775 /var/www/ghost
 
 <!--
 ```
-# Direct method for a solitary version
-sudo dnf install curl -y
 # Note, this example will invariably be an old version
 curl -L https://github.com/TryGhost/Ghost/releases/download/2.23.4/Ghost-2.23.4.zip -o ghost.zip
 ```
 -->
 
 ```
-sudo dnf install curl jq -y
 sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
 # Note: Downloading to /tmp so that any user has permissions to it
 
 # Alternative:
-# curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url' | sudo -u ghost xargs -I GHOST_URL curl -L GHOST_URL -o /tmp/ghost.zip
+#curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url' | sudo -u ghost xargs -I GHOST_URL curl -L GHOST_URL -o /tmp/ghost.zip
 ```
 
 ### [12] Unzip/Refresh Ghost application
@@ -251,29 +254,30 @@ sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
 sudo rm /tmp/ghost.zip
 ```
 
-### [13] Navigate to `/var/www/ghost` as `ghost` user
+### [13] Install Ghost
 
 ```
-sudo su - ghost
-cd /var/www/ghost
+# Navigate to the webroot and install
+cd /var/www/ghost ; sudo -u ghost npm install --production
 ```
 
-### [14] Install Ghost
+### [14] Configure Ghost to use your domain and sqlite3
+
+You'll be editing `config.production.json`.
 
 ```
-# You are still the ghost user
-cd /var/www/ghost ; npm install --production
-```
-
-### [15] Configure Ghost to use your domain and sqlite3
-
-```
-# You are still the ghost user
+# Switch the correct directory
 cd core/server/config/env/
-cp -a config.production.json config.production.json--ORIGINAL
+# Make a backup of the original default configuration
+sudo cp -a config.production.json config.production.json--ORIGINAL
 ```
 
-Swap out the existing config.production.json with something that looks like this...
+```
+# Edit the configation file
+sudo -u ghost vim config.production.json
+```
+
+Replace the contents with something that looks like this (using your specific information). Then save and exit...
 
 ```
 {
@@ -312,35 +316,33 @@ Swap out the existing config.production.json with something that looks like this
 
 > Note, once you have Ghost up and running, create a redundant
 > backup of this file. Future updates tend to overwrite it:
-> `cp -a config.production.json config.production.json--backup`
+> `sudo cp -a config.production.json config.production.json--backup`
 
-### [16] Start Ghost (initial testing)
+### [15] Start Ghost (initial testing)
 
 ```
-# You are still the ghost user
-cd /var/www/ghost ; NODE_ENV=production node index.js
-#cd /var/www/ghost ; npm start --production
+# Remember, we are doing this as the ghost user
+cd /var/www/ghost ; sudo -u ghost NODE_ENV=production node index.js
+#cd /var/www/ghost ; sudo -u ghost npm start --production
 ```
 
-<!--
+<!---
 ```
-cd /var/www/ghost ; NODE_ENV=production node index.js >> /var/www/ghost/content/logs/ghost.log
-#cd /var/www/ghost ; npm start --production >> /var/www/ghost/content/logs/ghost.log
+cd /var/www/ghost ; sudo -u ghost NODE_ENV=production node index.js >> /var/www/ghost/content/logs/ghost.log
+#cd /var/www/ghost ; sudo -u ghost npm start --production >> /var/www/ghost/content/logs/ghost.log
 ```
 -->
 
 
-### [17] Test that it works
+### [16] Test that it works
 
 Browse to `https://blog.example.com` (or whatever your configured domain is).
 
 Once satisfied, shut it down with `^C` in the window that you are using to run ghost from the commandline.
 
-### [18] Configure a Ghost systemd service
+### [17] Configure a Ghost systemd service
 
-Log in as your normal linux user (not root, not ghost).
-
-Edit the systemd `ghost.service`...
+Edit the systemd `ghost.service` (as root)...
 
 ```
 sudo vim /etc/systemd/system/ghost.service
@@ -367,7 +369,7 @@ SyslogIdentifier=ghost
 WantedBy=multi-user.target
 ```
 
-### [20] Crank up that Ghost service!
+### [18] Crank up that Ghost service!
 
 ```
 # You are still your normal working user
@@ -381,11 +383,11 @@ Test it again.
 
 ## Post install configuration
 
-### [21] Set up your admin credentials
+### [19] Set up your admin credentials
 
 Browse to `https://blog.example.com/ghost` and set your credentials promptly.
 
-### [22] Change your theme (if you like)
+### [20] Change your theme (if you like)
 
 The default is nice, but there are others. Find a theme you like, download and unzip to `/var/www/ghost/content/themes` and configure in the link provided above.
 
@@ -411,7 +413,7 @@ sudo systemctl restart ghost.service
 ```
 Then browse to <https://blog.example.com/ghost> --> Design --> scroll down to "massively" --> activate
 
-### [23] Troubleshooting
+### [21] Troubleshooting
 
 Log in as your normal linux user (not root, not ghost)...
 
@@ -431,14 +433,14 @@ sudo tail -f /var/log/nginx/access.log
 
 Your blog needs to be able to email people. Forgot your password? Invites to admins? Etc.
 
-### [24] Install sSMTP
+### [22] Install sSMTP
 ```
 sudo dnf install ssmtp mailx -y
 ```
 
 mailx is only used to test things more directly. It's not critical for the application. For more discussion on this topic, fee free to visit my related host: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md> (Method 2 is the most apropos).
 
-### [25] Set up an email account with your domain provider
+### [23] Set up an email account with your domain provider
 
 Something like `noreply@example.com` and set a password. I use Lastpass to generate passwords.
 
@@ -446,7 +448,7 @@ Find our what the name of the smtp hostname is for your domain provider. For exa
 
 They should also list the TLS requirements. Probably TLS and port 587.
 
-### [26] Configure sSMTP
+### [24] Configure sSMTP
 
 **Tell the OS which MTA you are going to be using...**
 
@@ -536,7 +538,7 @@ sudo su - ghost
 echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r noreply@example.com someones-email-address@gmail.com
 ```
 
-### [27] Edit config.production.json
+### [25] Edit config.production.json
 
 ```
 sudo -u ghost vim /var/www/ghost/core/server/config/env/config.production.json
@@ -564,7 +566,7 @@ Change the `"mail"` stanza to look something like this:
 > backup of this file. Future updates tend to overwrite it:
 > `cp -a config.production.json config.production.json--backup`
 
-### [28] Restart Ghost and Test
+### [26] Restart Ghost and Test
 
 ```
 sudo systemctl restart ghost.service
@@ -579,7 +581,7 @@ Copy that production config to backup now.
 sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
 ```
 
-### [29] Email subscriptions
+### [27] Email subscriptions
 
 You can use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like it simple, so I just use MailChimp directly, for that...
 
@@ -601,7 +603,7 @@ Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
 
 You should now see an email subscription field at the bottom of each of your blog entries.
 
-### [30] Disqus commenting functionality and other integrations
+### [28] Disqus commenting functionality and other integrations
 
 I leave this to the reader to figure out. I don't currently enable commenting on my blog.
 
@@ -617,10 +619,14 @@ You did all this work! You gotta back everything up now. :)
 
 Log in as your normal working user. Not root. Not ghost. Create a back script and copy to a safe place...
 
-Edit `vim backup-ghost.sh` add this and save it...
+Edit `vim backup-ghost_blog.example.com.sh` add this and save it...
 
 ```
 #!/usr/bin/bash
+
+URL=blog.example.com
+WEBROOT=/var/www/ghost
+SERVICENAME=ghost.service
 
 # This script will
 # - shut down the ghost and nginx systemd services
@@ -631,8 +637,8 @@ Edit `vim backup-ghost.sh` add this and save it...
 
 echo "Shutting down ghost and nginx services..."
 # Shut down ghost and nginx
-sudo systemctl stop ghost.service
 sudo systemctl stop nginx.service
+sudo systemctl stop ${SERVICENAME}
 echo "...done."
 
 # Back everything up
@@ -646,13 +652,13 @@ echo "\
 Critical configuration files (and directories) are...
 
 For Ghost itself:
-/var/www/ghost/core/server/config/env/config.production.json
-/var/www/ghost/content/themes/
-/var/www/ghost/content/data/ghost.db
-/var/www/ghost/content/data/redirects.json
+${WEBROOT}/core/server/config/env/config.production.json
+${WEBROOT}/content/themes/
+${WEBROOT}/content/data/ghost.db
+${WEBROOT}/content/data/redirects.json
 
 For the Ghost systemd service:
-/etc/systemd/system/ghost.service
+/etc/systemd/system/${SERVICENAME}
 
 For mail handling:
 /etc/ssmtp/ssmtp.conf
@@ -671,34 +677,36 @@ For the TLS (SSL) certificates:
 /etc/letsencrypt/live/
 /etc/letsencrypt/archive/
 /etc/letsencrypt/renewal/
-" > $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
+" > ghost-backup-${URL}-${DATE_YMD}-README.md
 echo "...done."
 
 echo "Backing up Ghost, Nginx, and associated configuration..."
-sudo tar -czf ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz \
-  /var/www/ghost /etc/nginx /etc/ssmtp/revaliases \
-  /etc/systemd/system/ghost.service /etc/ssmtp/ssmtp.conf \
+sudo tar -czf ./ghost-backup-${URL}-${DATE_YMD}.tar.gz \
+  ${WEBROOT} /etc/nginx /etc/ssmtp/revaliases \
+  /etc/systemd/system/${SERVICENAME} /etc/ssmtp/ssmtp.conf \
   /etc/letsencrypt /etc/sysconfig/certbot \
   $HOSTNAME-rpm-manifest-${DATE_YMD}.txt \
-  $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
-rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt $HOSTNAME-ghost-on-fedora-${DATE_YMD}-README.md
+  ghost-backup-${URL}-${DATE_YMD}-README.md
+rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt ghost-backup-${URL}-${DATE_YMD}-README.md
 echo "...done."
 
 echo "Starting up ghost and nginx services..."
 # Start ghost and nginx
-sudo systemctl start ghost.service
+sudo systemctl start ${SERVICENAME}
 sudo systemctl start nginx.service
 echo "...done."
 
 echo "Here is your backup tarball, copy it somewhere safe:"
-ls -lh ./$HOSTNAME-ghost-on-fedora-${DATE_YMD}.tar.gz
+ls -lh ./ghost-backup-${URL}-${DATE_YMD}.tar.gz
 ```
 
 Save that script, then run it...
 
 ```
-. ./backup-ghost.sh
+. ./backup-ghost_blog.example.com.sh
 ```
+
+Then save it somewhere. I `scp` the file to my desktop and then save it to my Keybase filesystem (along with all my backups of everything, by the way). But anywhere inaccessible to the public is fine.
 
 ## Congratulations! YOU'RE DONE!
 
@@ -714,22 +722,45 @@ Should just work: `sudo dnf upgrade -y --refresh; sudo reboot`
 
 **Upgrading Ghost**
 
-The process is relatively simple
-1. Backup -- See _"Back Everything Up"_ above
-2. Download the new tarball -- See _"Download Ghost"_ above
-3. Make a convenience backup of your Ghost configuration file: `sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /tmp/`
-4. Shut down services:
-```
-sudo systemctl stop ghost.service
-sudo systemctl stop nginx.service
-```
-5. Install Ghost -- See _"Unzip/Refresh Ghost application"_, _"Navigate to `/var/www/ghost`"_, and _"Install Ghost"_ above
-6. Replace config file with backup: `sudo mv  /tmp/config.production.json /var/www/ghost/core/server/config/env/`
+The process is relatively simple.
+
+1. Backup -- See "[Back Everything Up](#backeverythingup)" above
+
+...Okay. You are all backed up? Good. You can now continue...
+
+2. Make a convenience backup of your Ghost configuration file:  
+   ```
+   sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /tmp/
+   ```
+3. Shut down services:
+   ```
+   sudo systemctl stop ghost.service
+   sudo systemctl stop nginx.service
+   ```
+4. Download the new tarball  
+   For reference, see "[Download Ghost](#11downloadghost)" above. But, for your convenience...
+   ```
+   sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
+   ```
+5. Deploy new Ghost overtop old  
+   For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience...
+   ```
+   # Unzip and refresh Ghost
+   sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
+   sudo rm /tmp/ghost.zip
+   
+   # Navigate to the webroot for Ghost
+   cd /var/www/ghost
+   
+   # Install Ghost overtop the old installation
+   sudo -u ghost npm install --production
+   ```
+6. Replace overwritten config file with your convenience backup: `sudo mv /tmp/config.production.json /var/www/ghost/core/server/config/env/`
 7. Restart services:
-```
-sudo systemctl start ghost.service
-sudo systemctl start nginx.service
-```
+   ```
+   sudo systemctl start ghost.service
+   sudo systemctl start nginx.service
+   ```
 8. Browse to your domain and your domain/ghost and check that everything works correctly.
 
 ---
@@ -749,25 +780,33 @@ sudo systemctl start nginx.service
 
 #### Other resources and inspirations
 
-* Installing the OS: <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>
-* FirewallD: <https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md>
-* Email SMTP setup: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
+Installation and configuration of the operating system
 
-&nbsp;
+* taw00. 2019. "How to Deploy and Configure a \[Minimalistic\] Fedora Linux Server." _Github._ <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>  
+* taw00. 2019. "How to Configure FirewallD and Fail2Ban for Linux." _Github._ <https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md>
+* taw00. 2019. "Configure 'send-only' Email via SMTP Relay." _Github._  <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
 
-* Some dated and incomplete "Ghost on Fedora" guides:
-  * <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
-  * <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
-* Initial configuration guidance and discussion: <https://docs.ghost.org/concepts/config/>
-* MariaDB/MySQL instead of SQLite? &mdash;Not recommended&mdash; SQLite is sufficient, and perhaps even more performant, for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
-* Privacy related things: <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
-* Redirects are useful, learn to use them: <https://docs.ghost.org/tutorials/implementing-redirects/>
-* Email support using Postfix (not tested): <http://blog.benoitblanchon.fr/postfix-and-ghost/>
+Some dated and incomplete "Ghost on Fedora" guides
+* <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
+* <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
 
-&nbsp;
+Ghost configuration guidance and discussion
+* General configuration:  
+  <https://docs.ghost.org/concepts/config/>
+* MariaDB/MySQL instead of SQLite?  
+  \[Not recommended\] SQLite is sufficient, and perhaps even more performant, for a blog, no matter the size and popularity, unless the data and database sit on different servers: <https://docs.ghost.org/install/ubuntu/>
+* Privacy related things:  
+  <https://github.com/TryGhost/Ghost/blob/master/PRIVACY.md>
+* Redirects are useful, learn to use them:  
+  <https://docs.ghost.org/tutorials/implementing-redirects/>
+* Email support using Postfix (not tested):  
+  <http://blog.benoitblanchon.fr/postfix-and-ghost/>
 
-* This article on Github: <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
-* This article on blog.errantruminant.com: <https://blog.errantruminant.com/howto-install-ghost-on-fedora/>
+This article
+* On Github:  
+  <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
+* On blog.errantruminant.com:  
+  <https://blog.errantruminant.com/howto-install-ghost-on-fedora/>
 
 ---
 
