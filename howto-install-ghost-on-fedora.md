@@ -2,7 +2,7 @@
 
 # How to install the Ghost blogging platform on Fedora Linux
 
-> _Published, June 12, 2019 &mdash; Updated, July 27, 2019_
+> _Published June 12, 2019 &mdash; Updated July 27, 2019_
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
