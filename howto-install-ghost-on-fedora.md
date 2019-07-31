@@ -2,7 +2,7 @@
 
 # How to install the Ghost blogging platform on Fedora Linux
 
-> _Published June 12, 2019 &mdash; Updated July 27, 2019_
+> _Published June 12, 2019 &mdash; Updated July 31, 2019_
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -599,8 +599,14 @@ Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
   - Change the form title to something like "Subscribe to the Example.com Blog!"
   - Click "Condensed"
   - Copy the embedded code that mailchimp provides you.
-  - SSH into your blog server and edit the `/var/www/ghost/content/themes/casper/post.hbs` file (your chosen theme should have an equivalent .hbs file).
+* Then, edit the `post.hbs` and the `index.hbs` templates.
+  - SSH into your blog server.
+  - Change directory to `/var/www/ghost/content/themes/casper/` or whatever theme you are editing.
+  - Backup `post.hbs` and `index.hbs` to `post.hbs--original` and `index.hbs--original` respectively.
+  - Edit the `post.hbs` file.
   - Uncomment and edit the section that starts with `<section class="post-full-comments">` and add that embedded code that MailChimp provided you.
+  - Edit the `index.hbs` file.
+  - Copy that whole `<section class="post-full-comments">` from the the `post.hbs` and insert it into the `index.hbs` before the final `</main>` HTML element.
 * Restart Ghost: `sudo systemctl restart ghost.service`
 
 You should now see an email subscription field at the bottom of each of your blog entries.
