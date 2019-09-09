@@ -2,7 +2,8 @@
 
 # How to install the Ghost blogging platform on Fedora Linux
 
-> _Published June 12, 2019 &mdash; Updated July 31, 2019_
+> _Published June 12, 2019 &mdash; Updated September 09, 2019_
+
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -268,8 +269,9 @@ cd /var/www/ghost ; sudo -u ghost npm install --production
 You'll be editing `config.production.json`.
 
 ```
-# Switch the correct directory
+# Navigate to the correct directory
 cd core/server/config/env/
+
 # Make a backup of the original default configuration
 sudo cp -a config.production.json config.production.json--ORIGINAL
 ```
@@ -763,7 +765,10 @@ The process is relatively simple.
    # Install Ghost overtop the old installation
    sudo -u ghost npm install --production
    ```
-6. Replace overwritten config file with your convenience backup: `sudo mv /tmp/config.production.json /var/www/ghost/core/server/config/env/`
+6. Replace overwritten config file with your convenience backup:
+   ```
+   sudo mv /tmp/config.production.json /var/www/ghost/core/server/config/env/
+   ```
 7. Restart services:
    ```
    sudo systemctl start ghost.service
