@@ -2,8 +2,7 @@
 
 # How to install the Ghost blogging platform on Fedora Linux
 
-> _Published June 12, 2019 &mdash; Updated September 09, 2019_
-
+> _Published June 12, 2019 &mdash; Updated October 17, 2019_
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -94,15 +93,22 @@ We'll use the built in systemd services to do this...
 
 _Edit `/etc/sysconfig/certbot`_
 
-Set the service POST_HOOK as such:
+Set the service PRE_HOOK as such:
 ```
-POST_HOOK="--post-hook '/usr/bin/systemctl reload nginx.service'"
+PRE_HOOK="--pre-hook '/usr/bin/systemctl stop nginx.service'"
 ```
 
-_Enable the renewal service_
+Set the service POST_HOOK as such:
+```
+POST_HOOK="--post-hook '/usr/bin/systemctl start nginx.service'"
+```
+
+_Enable and start (--now) the renewal service_
 ```
 sudo systemctl enable --now certbot-renew.timer
 ```
+
+Note: If you edit and change the configuration of `/etc/sysconfig/certbot`, the `certbot-renew.timer` service will have to be restarted for the changes to take effect.
 
 <!--
 Old way...
