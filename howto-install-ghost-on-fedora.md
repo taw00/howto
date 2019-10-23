@@ -85,7 +85,7 @@ sudo certbot certonly --standalone --domains example.com,www.example.com,blog.ex
 
 Note: If you already have nginx or another webserver running on this host, you may have to pause it before running certbot and then start it up again. I.e.,  
 `sudo systemctl stop nginx`  
-..._then execute the above command, and then_...  
+..._execute the above command, and then_...  
 `sudo systemctl start nginx`
 
 Certbot will populate this directory: `/etc/letsencrypt/live/example.com/`
