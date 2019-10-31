@@ -22,9 +22,9 @@ of range (time, numbers, etc.), most often as a replacement for the word "to",
 and indicate the numbers are inclusive: _years 1900—2000, the New York—San
 Francisco route, the score was 27—17._
 
-**Em dashes** are used for two primary purposes: One, they are used to indicate
-a stronger break in a sentence than a comma or a parenthesis. And two, they are
-used similarly to how one would use a colon (but with a smidge more drama).
+**Em dashes** are used for two primary purposes: 1. They are used to indicate
+a stronger break in a sentence than commas or parentheses. 2. They are
+used similarly to colons, but with a smidge more drama.
 
 Em dashes in place of commas or parenthesis:  
 _The 30th anniversary of the eruption of Mount St. Helens—May 18, 1980—brought
@@ -44,32 +44,34 @@ more&mdash;here:
 
 ### The Problem
 
-If you write more substantially than a short social-media post or informal
-correspondence, you use hyphens and em dashes _all the time_. And sometimes,
-perhaps, you even use en dash occasionally. The problem: There is no key on the
-keyboard for the em or en dash. This can be maddening.
+If you write a piece that is more substantive than a short social-media post or
+informal correspondence, em dashes are used quite frequently. En dashes are less
+common, but used occasionally. The problem: There is no key on the keyboard for
+the em or en dash. This can be maddening.
 
 Inputting the hyphen on your keyboard is easy. The _minus-sign_ key on your
 keyboard doubles as a hyphen key.
 
 It should be noted that most people will just use hyphens in the place of en
-dashes. Most editors will overlook this, but if you are writing more formally,
-consider using the en dash instead.
+dashes as well. Most editors will overlook this, but if you are writing more
+formally, consider using the en dash instead.
 
 ### Dashes in Word Processors
 
 Inputting the em dash in a word processor _can be_ relatively easy. Most will
-replace any [-][-][space] with —. If your's doesn't, look for it in the settings
-somewhere and enable it if you like. I personally like to input these characters
-more directly from the keyboard. More on that in a second.
+replace any `[-][-][space]` with `—`. If a particular word processor does not
+enable this feature by default, look for it in the settings somewhere and enable
+it if you like. I personally like to input these characters more directly from
+the keyboard. More on that in a second.
 
 ### Dashes in HTML- or Markdown-Formatted Documents
 
-If you are creating an HTML- or markdown-formatted document, a common method to
-input an em or en dash is to include `&mdash;` or `&ndash;` in the source text.
-For example, this document was originally written in the Markdown format. I
+If you are creating an HTML- or markdown-formatted document, a common method is
+to use HTML ASCII escape codes in the text: `&mdash;` and `&ndash;`. For
+example, this document was originally written in the Markdown format. I
 generally prefer to input the dashes directly from the keyboard, but it is also
-very common to input them as HTML `&` escape codes. It's very useful to know.
+very common to input them as HTML `&` escape codes. It's a very useful technique
+to know.
 
 More about Markdown can be found
 [here](https://en.wikipedia.org/wiki/Markdown),
@@ -97,10 +99,10 @@ Fedora, RHEL, and Ubuntu.
 
 ###### Compose Key Method
 
-For these a _Compose Key_ is used. In Fedora's GNOME environment it is not
-enabled by default. Or, at least, it was not on my desktop. To enable it, you
-need to install the GNOME Tweak tool (it gives you more power over configuration
-of the desktop).
+For these, a _Compose Key_ is used. In Fedora's GNOME environment it is not
+enabled by default. Or, at least, it was not in my desktop settings. To enable
+it, you need to install the "GNOME Tweak Tool", a package that gives you more
+power over configuration of the desktop.
 
 **Install GNOME Tweak Tool**
 
@@ -109,7 +111,7 @@ Install from the UI:
 - Search for "GNOME Tweaks"
 - Install
 
-Install from the commandline
+Install from the commandline:
 - Fedora and EL8, RHEL8/CentOS8): `sudo dnf install gnome-tweaks -y`
 - Ubuntu (I _believe_ this is correct): `sudo apt install gnome-tweak-tool`
 
@@ -119,7 +121,7 @@ Now do this:
 1. Open "Tweaks"
 2. Select "Keyboard & Mouse"
 3. Look for "Compose Key" and click on "Disabled"
-4. Flip it from "OFF" to "ON"
+4. Flip the switch from "OFF" to "ON"
 5. Choose what you use for your compose key. I use "Caps Lock"  
    <span style="font-size: 75%;">_Note: whatever you choose, this setting will
    override any other use for that key._</span>
@@ -134,7 +136,7 @@ For an em dash (`[compose]`, then `---`), or
 - `[hyphen key]`
 - `[hyphen key]`
 
-  _You should now see an em dash (&mdash;)._
+  _You should now see an em dash character (&mdash;)._
 
 For an en dash (`[compose]`, then `--.`), or
 - `[compose key]`
@@ -142,13 +144,13 @@ For an en dash (`[compose]`, then `--.`), or
 - `[hyphen key]`
 - `[period key]`
 
-  _You should now see an en dash (&ndash;)._
+  _You should now see an en dash character (&ndash;)._
 
 ###### Unicode Input Method
 
 You can use the Unicode input method instead of using the compose key. It's a
-bigger PITA and hard to remember, but, it is useful to know so you can input
-other Unicode characters when necessary:
+bigger PITA and hard to remember, but useful to know so you can input other
+Unicode characters when necessary:
 
 - `[CTRL][SHIFT][U]`
 
@@ -165,10 +167,10 @@ For example:
 - En dash (–): `[CTRL][SHIFT][U]`, then `2013[ENTER]`
 - Em dash (—): `[CTRL][SHIFT][U]`, then `2014[ENTER]`
 
-A great summary of most if now all of the `[CTRL][SHIFT][U]` Unicode input codes
-can be found in the "Diacritics and punctuation" section of this article: [Linux
-keyboard text symbols: Compose key
-shortcuts](https://fsymbols.com/keyboard/linux/compose/)
+A great summary of most, if not all, of the `[CTRL][SHIFT][U]` Unicode input
+codes can be found in the "Diacritics and punctuation" section of this article:
+[Linux keyboard text symbols: Compose key
+shortcuts](https://fsymbols.com/keyboard/linux/compose/).
 
 ### How to Enable and Input Dashes in Other Environments
 
