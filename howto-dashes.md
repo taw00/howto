@@ -1,6 +1,6 @@
-# How-To Input Dashes in the GNOME Desktop Environment
+# Hyphens and En Dashes and Em Dashes. Oh, my!
 
-_Hyphens and En Dashes and Em Dashes. Oh, my!_
+_or, How-To Input Dashes in the GNOME Desktop Environment_
 
 ### TL;DR (the cheat sheet)
 
