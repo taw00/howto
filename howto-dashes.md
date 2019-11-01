@@ -31,14 +31,14 @@ The Cheat Sheet (TL;DR)
 
 |         | html<br/>&code  | compose<br /><span style="font-size: 55%;">`[compose key]`, then ...</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`, then ...</span> |
 | ------- | --------------- | ------- | --------|
-| minus   | `&minus;`       | n/a     | `2` `2` `1` `2` |
-| hyphen<br /><span style="font-size: 75%;">(use `-` on the keyboard)</span> | `&hyphen;` | n/a | `2` `0` `1` `0` |
-| en dash | `&ndash;`       | `-` `-` `.`   | `2` `0` `1` `3` |
-| em dash | `&mdash;`       | `-` `-` `-`   | `2` `0` `1` `4` |
+| &minus;<br />minus   | `&minus;`       | n/a     | `2` `2` `1` `2` |
+| &hyphen;<br />hyphen<br /><span style="font-size: 75%;">(use `-` on the keyboard)</span> | `&hyphen;` | n/a | `2` `0` `1` `0` |
+| &ndash;<br />en dash | `&ndash;`       | `-` `-` `.`   | `2` `0` `1` `3` |
+| &mdash;<br />em dash | `&mdash;`       | `-` `-` `-`   | `2` `0` `1` `4` |
 |   |   |   |   |
-| hyphen,<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
-| figure dash | `&#x2012;`  | n/a     | `2` `0` `1` `2` |
-| quotation dash<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a     | `2` `0` `1` `5` |
+| &#x2011;<br />hyphen,<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
+| &#x2012;<br />figure dash | `&#x2012;`  | n/a     | `2` `0` `1` `2` |
+| &horbar;<br />quotation dash<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a     | `2` `0` `1` `5` |
 
 
 
