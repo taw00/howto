@@ -6,7 +6,7 @@ https://github.com/taw00/howto/blob/master/howto-dashes.md
 Minuses, Hyphens and Dashes. Oh, my!
 ====================================
 
-<!--Excerpt-->The dash-family of punctuation and the linux GNOME desktop environment—minus, hyphen, en dash, em dash, and more.
+<!--Excerpt-->The dash family of punctuation—minus, hyphen, en dash, em dash, and more.
 
 ![dashes.png](appurtenances/dashes.png)
 
@@ -152,15 +152,29 @@ Markdown is widely used in many MANY applications now. Most note-taking applicat
   [a7500213]: https://wordpress.org "Wordpress Web Publishing Platform"
 
 
+----
 
-The GNOME Desktop Environment
------------------------------
+The Various Methods of Inserting Special Characters
+---------------------------------------------------
 
-All of the various operating systems and their respective desktop environments give you a couple ways to enable special character input that allows uniform behavior no matter what application you are using. For the purposes of this how-to, I am going to describe how to do it in GNOME, the default desktop environment for many favors of Linux, to include Fedora, RHEL, and Ubuntu.
+1. Googling it and then cut-n-pasting from Wikipedia or some such. Not recommended but it works in a pinch.
+2. Using your application's "Insert Special Character" functionality (usually in some menu). Works okay for one-off needs, but (a) many applications don't have this capability, (b) the selection is limited, (c) it works differently for each application.
+3. Typing `&` codes in a document that is HTML- or Markdown-formatted. Or in any text field that supports Markdown. It's a hack unless you are "coding" that document. When I am entering a comment in some forum, I want to insert these characters in a more natural way.
+4. Unicode Input Method (using `[CRTL][SHIFT]U`, then `the code`). This is almost universal and is well worth learning, but the codes are hard to remember, even for the most basic characters. So, learn this, but the next method is more constructive for writers in an everyday setting.
+5. Compose Key Method (using '[compose key]', then 'key combination'). This is the easiest and most natural method to "compose" the most common characters used for every day writing.
 
-> For other environments (Apple, Microsoft, or Linux running KDE or very old GNOME) take a look at the article referenced at the end of this article.
+All of these methods will be discussed to some degree, but the two methods we will be focusing on are the Unicode Input Method and the Compose Key Method. The Compose Key Method needs to be enabled for every operating system a bit differently, here we will focus on the Linux GNOME Desktop Environment. There are links to instructions for other operating systems at the end of the article.
 
-### Compose Key Method
+----
+
+Enabling the Compose Key for Your Environment
+---------------------------------------------
+
+All of the various operating systems and their respective desktop environments give you a couple ways to enable special character input that allows uniform behavior no matter what application you are using. **For now,** for the purposes of this how-to, I am going to only describe how to enable the compose key in Linux's GNOME Desktop Environment, the default desktop environment for many favors of Linux, to include Fedora, RHEL, and Ubuntu.
+
+> For other environments (Apple, Microsoft, or Linux running KDE or very old GNOME) take a look at the articles and links referenced after this next section.
+
+### Enabling the Compose Key for the GNOME Desktop Environment
 
 For these, a _Compose Key_ is used. In Fedora's GNOME environment it is not enabled by default. Or, at least, it was not in my desktop settings. To enable it, you need to install the "GNOME Tweak Tool", a package that gives you more power over configuration of the desktop.
 
@@ -185,11 +199,20 @@ Install from the command line:
    <span style="font-size: 75%;">_Note: whatever you choose, this setting will
    override any other use for that key._</span>
 
-**Using the Compose Key**
+### Enabling the Compose Key for Other Environments
 
-Now open up a text editor (`gedit` will work, but any will do) and give it a test drive. Heck, this will even work in any social-media message field if you'd like to try it there.
+Are you a Microsoft or Apple user? That's beyond the scope of this document (currently), but here's a good starting point: [5 Ways to Type a Dash](https://www.wikihow.com/Type-a-Dash).
 
-> <span style="font-size: 75%;">The `[compose]` key is my `[caps lock]` key, and `[hyphen]` refers to the key to the right of the `[0]` key on the keyboard.</span>
+Are you a Chromebook user? The Unicode Input Method works, but there is also a way to enable a Compose Key. Check out this extension: <https://chrome.google.com/webstore/detail/composekey/iijdllfdmhbmlmnbcohgbfagfibpbgba>. Good luck!
+
+----
+
+The Compose Key Method
+----------------------
+
+Now that you have enabled and mapped a designated Compose Key on your keyboard, open up a text editor (`gedit` on linux will work, but any will do) and let's give it a test drive. Heck, this will even work in any social-media message field if you'd like to try it there.
+
+> <span style="font-size: 75%;">On my laptop, I mapped the `[compose]` key to my `[caps lock]` key. The `[hyphen]` listed here refers to the key to the right of the `[0]` key on the keyboard.</span>
 
 For an en dash: `[compose]`, then `-` `-` `.`  
 &emsp;i.e. `[compose]`, then `[hyphen]` `[hyphen]` `[period]`  
@@ -199,9 +222,10 @@ For an em dash: `[compose]`, then `-` `-` `-`
 &emsp;i.e. `[compose]`, then `[hyphen]` `[hyphen]` `[hyphen]`  
 &emsp;_You should now see an em dash character (&mdash;)._
 
-### Unicode Input Method
+The Unicode Input Method
+------------------------
 
-You can use the Unicode input method instead of using the compose key. It's a bigger PITA and hard to remember, but useful to know if you ever need to insert other special characters not found on the keyboard:
+You can use the Unicode input method instead of using the compose key. It's a bigger PITA and hard to remember, but useful to know if you ever need to insert other special characters not found on the keyboard. **And it works with most operating systems, to include Chromebooks**.
 
 > <span style="font-size: 75%;">A <span style="text-decoration: underline">`u`</span> (underlined, lowercase U) chararacter should appear upon the first key combination. And the `[ENTER]` at the end may or may not be necessary, depending on the environment and application.</span>
 
@@ -219,12 +243,9 @@ A great summary of some of the most used `[CTRL][SHIFT][U]` Unicode input codes 
 
 An exhaustively comprehensive Unicode reference can be found [here](https://unicode-table.com/).
 
-Other Environments
-------------------
-
-Are you a Microsoft or Apple user? That's beyond the scope of this document, but here's a good starting point: [5 Ways to Type a Dash](https://www.wikihow.com/Type-a-Dash).
+----
 
 Happy Writing!
 --------------
 
-That's it! Good luck and enjoy your writing. Writing that aims to be more exacting in its selection of punctuation.
+That's it! You should not be able to rather easily insert minuses, dashes, and more into your documents like a pro. Good luck and enjoy your writing. Writing that aims to be more exacting in its selection of punctuation.
