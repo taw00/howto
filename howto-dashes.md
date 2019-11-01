@@ -1,11 +1,26 @@
 ![dashes.png](appurtenances/dashes.png)
 
+<!--
+
+https://blog.errantruminant.com/dashes/
+https://github.com/taw00/howto/blob/master/howto-dashes.md
+
+Excerpt: How to Input the Dash-family of Punctuation—Minus, Hyphen, En Dash, Em Dash, and more—in the Linux GNOME Desktop Environment.
+-->
+
 Minuses, Hyphens and Dashes. Oh, my!
 ====================================
 
-_or, How-To: Punctuating Dash in the GNOME Desktop Environment_
+_Published November 1, 2019 <!--&mdash; Updated November 1, 2019-->_
 
-The first part of this article maps out the various dash-like punctuation characters, and why and how they are used when writing. The second part is a technical how-to for those wanting to make inserting such characters a bit more trouble free.
+The Problem
+-----------
+
+If you write anything that is more substantive than a short social-media post or informal correspondence, em dashes are used quite frequently. En dashes are less common, but used occasionally. The problem: There is no key on the keyboard for the em, en dash, or minus sign. This can be maddening.
+
+The first part of this article maps out the various dash-like punctuation characters, and why and how they are used when writing. The second part is a technical how-to for those wanting to make inserting such characters a bit more trouble free, particularly in the Linux GNOME Desktop Environment.
+
+
 
 The Cheat Sheet (TL;DR)
 -----------------------
@@ -94,14 +109,6 @@ For more information about figure and quotation dashes (out of scope), read thes
 
 
 
-The Problem
------------
-
-
-If you write a piece that is more substantive than a short social-media post or informal correspondence, em dashes are used quite frequently. En dashes are less common, but used occasionally. The problem: There is no key on the keyboard for the em, en dash, or minus sign (unless you have a numeric keypad). This can be maddening.
-
-
-
 The Hyphen
 ----------
 
@@ -113,10 +120,12 @@ It should be noted that many people will just use hyphens in the place of en and
 
 
 
-Em Dashes in Word Processors
-----------------------------
+Dashes in Word Processors
+-------------------------
 
-Inputting the em dash in a word processor _can be_ relatively easy. Most will replace any `[-][-][space]` with `—`. If a particular word processor does not enable this feature by default, look for the setting in the preferences menu somewhere and enable it if you like. I personally like to input these characters more directly from the keyboard. More on that in a second. For the other characters, there is usually a "Insert special character" selection in one of the menus.
+Inputting an em dash in a word processor _can be_ relatively easy. Most will replace any `[-][-][space]` with `—`. If a particular word processor does not enable this feature by default, look for the setting in the preferences menu somewhere and enable it if you like. I personally like to input these characters more directly from the keyboard. More on that in a second. For other characters, there is usually a "Insert special character" selection in one of the menus.
+
+
 
 HTML- and Markdown-Formatted Documents
 --------------------------------------

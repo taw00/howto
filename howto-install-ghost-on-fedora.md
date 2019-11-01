@@ -1,6 +1,7 @@
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-# How to install the Ghost blogging platform on Fedora Linux
+How to Install the Ghost Blogging Platform on Fedora Linux
+==========================================================
 
 > _Published June 12, 2019 &mdash; Updated October 23, 2019_
 
@@ -225,7 +226,7 @@ sudo systemctl reload nginx.service
 
 ```
 # This will be a non-priviledged "normal" user specific for this use.
-sudo useradd -c "Ghost Application" ghost 
+sudo useradd -c "Ghost Application" ghost
 ```
 
 ### [10] Create Ghost's document root and set permissions
@@ -767,10 +768,10 @@ The process is relatively simple.
    # Unzip and refresh Ghost
    sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
    sudo rm /tmp/ghost.zip
-   
+
    # Navigate to the webroot for Ghost
    cd /var/www/ghost
-   
+
    # Install Ghost overtop the old installation
    sudo -u ghost npm install --production
    ```
