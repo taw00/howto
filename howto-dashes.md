@@ -24,21 +24,21 @@ The first part of this article maps out the various dash-like punctuation charac
 The Cheat Sheet (TL;DR)
 -----------------------
 
-- Minus (&minus;): `[CTRL][SHIFT][U]`, then `2` `0` `1` `2` `[ENTER]`
+- Minus (&minus;): `[CTRL][SHIFT][U]`, then `2 0 1 2 [ENTER]`
 - Hyphen (-): typed directly from keyboard  
 - En dash (–): `[compose]`, then `-` `-` `-`
 - Em dash (—): `[compose]`, then `-` `-` `.`
 
-|         | html<br/>&code  | compose<br /><span style="font-size: 55%;">`[compose key]`, then ...</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`, then ...</span> |
+|         | html<br/>&code  | compose<br /><span style="font-size: 45%;">`[compose_key]`, then ...</span> | unicode<br /><span style="font-size: 45%;">`[SHIFT][CTRL]U`, then ...</span> |
 | ------- | --------------- | ------- | --------|
-| &minus;<br />minus   | `&minus;`       | n/a     | `2` `2` `1` `2` |
-| &hyphen;<br />hyphen<br /><span style="font-size: 75%;">(use `-` on the keyboard)</span> | `&hyphen;` | n/a | `2` `0` `1` `0` |
-| &ndash;<br />en dash | `&ndash;`       | `-` `-` `.`   | `2` `0` `1` `3` |
-| &mdash;<br />em dash | `&mdash;`       | `-` `-` `-`   | `2` `0` `1` `4` |
+| minus&nbsp;&minus; | `&minus;`       | n/a     | `2`&nbsp;`2`&nbsp;`1`&nbsp;`2` |
+| hyphen&nbsp;&hyphen;<br /><span style="font-size: 75%;">(- on the keyboard)</span> | `&hyphen;` | n/a | `2` `0` `1` `0` |
+| en&nbsp;dash&nbsp;&ndash; | `&ndash;`       | `-`&nbsp;`-`&nbsp;`.`   | `2` `0` `1` `3` |
+| em&nbsp;dash&nbsp;&mdash; | `&mdash;`       | `-` `-` `-`   | `2` `0` `1` `4` |
 |   |   |   |   |
-| &#x2011;<br />hyphen,<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
-| &#x2012;<br />figure dash | `&#x2012;`  | n/a     | `2` `0` `1` `2` |
-| &horbar;<br />quotation dash<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a     | `2` `0` `1` `5` |
+| hyphen,&nbsp;&#x2011;<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
+| figure&nbsp;dash&nbsp;&#x2012; | `&#x2012;`  | n/a     | `2` `0` `1` `2` |
+| quotation&nbsp;dash&nbsp;&horbar;<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a     | `2` `0` `1` `5` |
 
 
 
@@ -186,8 +186,10 @@ Install from the desktop UI:
 3. Install
 
 Install from the command line:
-- For Fedora and EL8, RHEL8/CentOS8): `sudo dnf install gnome-tweaks -y`
-- For Ubuntu (I _believe_ this is correct): `sudo apt install gnome-tweak-tool`
+- For Fedora and EL8, RHEL8/CentOS8):  
+  `sudo dnf install gnome-tweaks -y`
+- For Ubuntu (I _believe_ this is correct):  
+  `sudo apt install gnome-tweak-tool`
 
 **Enabling and Mapping the Compose Key**
 
@@ -232,12 +234,12 @@ You can use the Unicode input method instead of using the compose key. It's a bi
 &emsp;`[CTRL][SHIFT][U]`, then `[unicode]` `[ENTER]`  
 
 For example:
-- Minus sign: (&minus;): `[CTRL][SHIFT][U]`, then `2` `2` `1` `2` `[ENTER]`
+- Minus sign: (&minus;): `[CTRL][SHIFT][U]`, then `2 2 1 2 [ENTER]`
 - Hyphen (&hyphen;): use the keyboard's native `-` key.  
-- En dash (&ndash;): `[CTRL][SHIFT][U]`, then `2` `0` `1` `3` `[ENTER]`
-- Em dash (&mdash;): `[CTRL][SHIFT][U]`, then `2` `0` `1` `4` `[ENTER]`
-- Figure dash (&#x2012;): `[CTRL][SHIFT][U]`, then `2` `0` `1` `2` `[ENTER]`
-- Quotation dash (&horbar;): `[CTRL][SHIFT][U]`, then `2` `0` `1` `5` `[ENTER]`
+- En dash (&ndash;): `[CTRL][SHIFT][U]`, then `2 0 1 3 [ENTER]`
+- Em dash (&mdash;): `[CTRL][SHIFT][U]`, then `2 0 1 4 [ENTER]`
+- Figure dash (&#x2012;): `[CTRL][SHIFT][U]`, then `2 0 1 2 [ENTER]`
+- Quotation dash (&horbar;): `[CTRL][SHIFT][U]`, then `2 0 1 5 [ENTER]`
 
 A great summary of some of the most used `[CTRL][SHIFT][U]` Unicode input codes can be found in the "Diacritics and punctuation" section of this article: [Linux keyboard text symbols: Compose key shortcuts](https://fsymbols.com/keyboard/linux/compose/).
 
