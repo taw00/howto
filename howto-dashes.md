@@ -129,7 +129,7 @@ Inputting an em dash in a word processor _can be_ relatively easy. Most will rep
 HTML- and Markdown-Formatted Documents
 --------------------------------------
 
-If you are creating an HTML- or Markdown-formatted document, a common method for inserting a special character is through the use of HTML ASCII or Unicode escape codes in the text. A few of these even have human-readable entity names: `&minus;`, `&ndash;`, and `&mdash;`. And even `&horbar;`.
+If you are creating an HTML- or Markdown-formatted document, a common method for inserting a special character is through the use of HTML ASCII or Unicode escape codes in the text. A few of these even have human-readable-ish entity names: `&minus;`, `&ndash;`, and `&mdash;`. And even `&horbar;`.
 
 For example, this document was originally written in the Markdown format. It is very common to input these characters as HTML `&` escape codes, but I generally prefer to input the hyphen and em dashes directly from the keyboard. One great advantage of the escape codes, though, is that they eliminate ambiguity (the minus, hyphen, and en dash can look very similar).
 
@@ -153,18 +153,18 @@ All of the various operating systems and their respective desktop environments g
 
 For these, a _Compose Key_ is used. In Fedora's GNOME environment it is not enabled by default. Or, at least, it was not in my desktop settings. To enable it, you need to install the "GNOME Tweak Tool", a package that gives you more power over configuration of the desktop.
 
-**Install GNOME Tweak Tool**
+**Installing the GNOME Tweak Tool**
 
 Install from the desktop UI:
-- Open the "Software" application
-- Search for "GNOME Tweaks"
-- Install
+1. Open the "Software" application
+2. Search for "GNOME Tweaks"
+3. Install
 
 Install from the command line:
-- Fedora and EL8, RHEL8/CentOS8): `sudo dnf install gnome-tweaks -y`
-- Ubuntu (I _believe_ this is correct): `sudo apt install gnome-tweak-tool`
+- For Fedora and EL8, RHEL8/CentOS8): `sudo dnf install gnome-tweaks -y`
+- For Ubuntu (I _believe_ this is correct): `sudo apt install gnome-tweak-tool`
 
-**Enable and Map the Compose Key**
+**Enabling and Mapping the Compose Key**
 
 1. Open "Tweaks"
 2. Select "Keyboard & Mouse"
@@ -174,37 +174,27 @@ Install from the command line:
    <span style="font-size: 75%;">_Note: whatever you choose, this setting will
    override any other use for that key._</span>
 
-**Use the Compose Key**
+**Using the Compose Key**
 
 Now open up a text editor (`gedit` will work, but any will do) and give it a test drive. Heck, this will even work in any social-media message field if you'd like to try it there.
 
-For an en dash (`[compose]`, then `-` `-` `.`), or
-- `[compose key]`
-- `[hyphen key]`
-- `[hyphen key]`
-- `[period key]`
+> <span style="font-size: 75%;">The `[compose]` key is my `[caps lock]` key, and `[hyphen]` refers to the key to the right of the `[0]` key on the keyboard.</span>
 
-  _You should now see an en dash character (&ndash;)._
+For an en dash: `[compose]`, then `-` `-` `.`  
+&emsp;i.e. `[compose]`, then `[hyphen]` `[hyphen]` `[period]`  
+&emsp;_You should now see an en dash character (&ndash;)._
 
-For an em dash (`[compose]`, then `-` `-` `-`), or
-- `[compose key]` (in my case, the `[CAPS]` key)
-- `[hyphen key]` (i.e., the hyphen key on the keyboard)
-- `[hyphen key]`
-- `[hyphen key]`
-
-  _You should now see an em dash character (&mdash;)._
+For an em dash: `[compose]`, then `-` `-` `-`  
+&emsp;i.e. `[compose]`, then `[hyphen]` `[hyphen]` `[hyphen]`  
+&emsp;_You should now see an em dash character (&mdash;)._
 
 ### Unicode Input Method
 
-You can use the Unicode input method instead of using the compose key. It's a bigger PITA and hard to remember, but useful to know so you can input other Unicode characters when necessary:
+You can use the Unicode input method instead of using the compose key. It's a bigger PITA and hard to remember, but useful to know if you ever need to insert other special characters not found on the keyboard:
 
-- `[CTRL][SHIFT][U]`
+> <span style="font-size: 75%;">A <span style="text-decoration: underline">`u`</span> (underlined, lowercase U) chararacter should appear upon the first key combination. And the `[ENTER]` at the end may or may not be necessary, depending on the environment and application.</span>
 
-  _An underlined "<span style="text-decoration: underline">u</span>" should appear._
-
-- The Unicode for the character needed
-- `[ENTER]`  
-  <span style="font-size: 75%;">_Note: the `[ENTER]` at the end may or may not be necessary, depending on the environment and application._</span>
+&emsp;`[CTRL][SHIFT][U]`, then `[unicode]` `[ENTER]`  
 
 For example:
 - Minus sign: (&minus;): `[CTRL][SHIFT][U]`, then `2` `2` `1` `2` `[ENTER]`
@@ -226,4 +216,4 @@ Are you a Microsoft or Apple user? That's beyond the scope of this document, but
 Happy Writing!
 --------------
 
-That's it! Good luck and enjoy your writing. Writing that aims to be more exacting in its selection of dash-like punctuation.
+That's it! Good luck and enjoy your writing. Writing that aims to be more exacting in its selection of punctuation.

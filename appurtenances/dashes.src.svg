@@ -16,7 +16,7 @@
    id="svg8"
    inkscape:version="0.92.4 (unknown)"
    sodipodi:docname="dashes.src.svg"
-   inkscape:export-filename="/home/todd/Work/Websites/blog.errantruminate.com/08-dashes/dashes.png"
+   inkscape:export-filename="dashes.png"
    inkscape:export-xdpi="171.32001"
    inkscape:export-ydpi="171.32001">
   <defs
@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.6175675"
-     inkscape:cx="307.84251"
-     inkscape:cy="17.312961"
+     inkscape:cx="249.10498"
+     inkscape:cy="16.548893"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -291,29 +291,27 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4a4a4a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="134.76974"
+       x="123.32101"
        y="22.446802"
        id="text964"><tspan
          sodipodi:role="line"
-         x="134.76974"
+         x="123.32101"
          y="22.446802"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#4a4a4a;fill-opacity:1;stroke-width:0.26458332"
-         id="tspan988"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-anchor:middle;fill:#4a4a4a;fill-opacity:1"
-   id="tspan1044">[compose key]</tspan>,</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#4a4a4a;fill-opacity:1;stroke-width:0.26458332"
+         id="tspan988">[compose key]</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4a4a4a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="163.15984"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4a4a4a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="150.86499"
        y="22.446802"
        id="text964-6"><tspan
          sodipodi:role="line"
-         x="163.15984"
+         x="150.86499"
          y="22.446802"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#4a4a4a;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#4a4a4a;fill-opacity:1;stroke-width:0.26458332"
          id="tspan988-8"><tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-anchor:middle;fill:#4a4a4a;fill-opacity:1"
-   id="tspan1046">[CTRL][SHIFT]U</tspan>,</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#4a4a4a;fill-opacity:1"
+           id="tspan1046">[CTRL][SHIFT]U</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4a4a4a;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -408,7 +406,7 @@
            height="228.45638"
            x="366.3707"
            y="55.880531" /></flowRegion><flowPara
-         id="flowPara1120"></flowPara></flowRoot>    <flowRoot
+         id="flowPara1120" /></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot1122"
        style="font-style:normal;font-weight:normal;font-size:21.33333397px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
@@ -419,5 +417,5 @@
            height="224.63605"
            x="367.89883"
            y="65.431381" /></flowRegion><flowPara
-         id="flowPara1128"></flowPara></flowRoot>  </g>
+         id="flowPara1128" /></flowRoot>  </g>
 </svg>
