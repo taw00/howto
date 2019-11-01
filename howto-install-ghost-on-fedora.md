@@ -1,7 +1,14 @@
-![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
+<!--
+https://blog.errantruminant.com/howto-install-ghost-on-fedora/
+https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md
+-->
 
 How to Install the Ghost Blogging Platform on Fedora Linux
 ==========================================================
+
+<!--Excerpt-->The combination of Ghost and Fedora Linux gives you a powerful, and relatively simple, platform for blogging. Let me show you how to deploy this popular application stack.
+
+![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
 > _Published June 12, 2019 &mdash; Updated October 23, 2019_
 

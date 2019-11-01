@@ -1,15 +1,14 @@
-![dashes.png](appurtenances/dashes.png)
-
 <!--
-
 https://blog.errantruminant.com/dashes/
 https://github.com/taw00/howto/blob/master/howto-dashes.md
-
-Excerpt: How to Input the Dash-family of Punctuation—Minus, Hyphen, En Dash, Em Dash, and more—in the Linux GNOME Desktop Environment.
 -->
 
 Minuses, Hyphens and Dashes. Oh, my!
 ====================================
+
+<!--Excerpt-->The dash-family of punctuation and the linux GNOME desktop environment—minus, hyphen, en dash, em dash, and more.
+
+![dashes.png](appurtenances/dashes.png)
 
 _Published November 1, 2019 <!--&mdash; Updated November 1, 2019-->_
 
