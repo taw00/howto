@@ -70,7 +70,7 @@ Em dash in place of a colon:
 
 Em dashes are also used in citations, to indicate interruptions, to indicate blotted out text, and more. But that won't be discussed here.
 
-Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;` or `&#11835;`) is utilized in citations:  
+Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;` or `&#11835;`), is utilized in citations:
 
 <div style="font-size: 75%; padding: 0 0 0 3em;">
 
