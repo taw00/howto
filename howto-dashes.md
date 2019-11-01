@@ -70,22 +70,24 @@ Em dash in place of a colon:
 
 Em dashes are also used in citations, to indicate interruptions, to indicate blotted out text, and more. But that won't be discussed here.
 
-Read more about when to use hyphens, dashes, colons, parentheses, and more:
-- [Dashes, Colons, and Commas](https://www.quickanddirtytips.com/education/grammar/dashes-colons-and-commas)
-- [Dashes, Parentheses, and Commas](https://www.quickanddirtytips.com/education/grammar/dashes-parentheses-and-commas)
-- [Hyphens](https://www.quickanddirtytips.com/education/grammar/hyphens)
-- [En Dash](https://www.thepunctuationguide.com/en-dash.html)
-- [Em Dash](https://www.thepunctuationguide.com/em-dash.html)
-- [Em Dash(—) vs. En Dash(–)](https://7esl.com/em-dash-en-dash/)
+Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;` or `&#11835;`) is utilized in citations:  
+&emsp;<span style="font-size: 75%;">Fogarty, Mignon (GrammarGirl). "Dashes, Colons, and Commas." Episode \#318. _Quick and Dirty Tips_, April 19, 2012, <https://www.quickanddirtytips.com/education/grammar/dashes-colons-and-commas>.</span>  
+&emsp;<span style="font-size: 75%;">&#x2E3B;. "Dashes, Parentheses, and Commas: Sometimes they're interchangeable, sometimes they're not." Episode \#222. _Quick and Dirty Tips_, May 21, 2010, <https://www.quickanddirtytips.com/education/grammar/dashes-parentheses-and-commas>.</span>  
+&emsp;<span style="font-size: 75%;">&#x2E3B;. "Hyphens: Is the glass half full or half-empty?" Episode \#093. _Quick and Dirty Tips_, February 1, 2008, <https://www.quickanddirtytips.com/education/grammar/hyphens>.</span>  
+&emsp;<span style="font-size: 75%;">The Punctuation Guide. "En Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/en-dash.html>.</span>  
+&emsp;<span style="font-size: 75%;">&#x2E3B;. "Em Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/em-dash.html>.</span>  
+&emsp;<span style="font-size: 75%;">Emma. "Em Dash (—) vs En Dash (–): When to Use Dashes with Examples." _ESL: English as a Second Language for Teachers & Students_, April 12, 2019, <https://7esl.com/em-dash-en-dash/>.</span>
 
-**Figure Dashes** are used in things like phone numbers: _1&#x2012;800&#x2012;867&#x2012;5309_
+
+**Figure Dashes** are used in things like phone numbers:     
+&emsp;_1&#x2012;800&#x2012;867&#x2012;5309_
 
 **Quotation Dashes** are used for things like dialogue in certain styles of writing (Charles Frazier, James Joyce), though often em dashes are used instead:  
   &emsp;_&horbar;Oh, my! Dashes can be complicated, said the young journalist._  
   &emsp;. . . another example:  
   &emsp;_&horbar;I'm thinking on it, Inman said. How did you get in this fix?_
 
-For more information about figure and quotation dashes (out of scope), read these: [Figure Dash](https://en.wikipedia.org/wiki/Dash#Figure_dash), [Quotation Dash](https://en.wikipedia.org/wiki/Quotation_mark#Quotation_dash).
+For more information about figure and quotation dashes (out of scope), read these: [Figure Dash](https://en.wikipedia.org/wiki/Dash#Figure_dash), [Quotation Dash](https://en.wikipedia.org/wiki/Quotation_mark#Quotation_dash). 2-em dashes and 3-em dashes are way outside the scope of this document. Refer to a [style guide](https://en.wikipedia.org/wiki/The_Chicago_Manual_of_Style) for guidance.
 
 ###### A Visual Comparison
 
@@ -115,7 +117,7 @@ Inputting the hyphen on your keyboard is easy. The _hyphen key_ is just to right
 
 For most cases, the hyphen can be used in place of a minus sign, or even a figure dash. If you are displaying some light arithmetic equations though, you probably want to use the more precise character (the minus). Phone numbers generally use figure dashes. And if you want to ensure a word is not word-wrapped (like in a heading) the non-breaking hyphen is useful.
 
-It should be noted that many people will just use hyphens in the place of en and em dashes as well (one hyphen for an en dash and two for an em dash), and many editors will overlook this, but if you are writing more formally, consider using the correct symbol instead. We no longer live in the days of typewriters.
+It should be noted that many people will just use hyphens in the place of en and em dashes as well (one or two hyphens for an en dash and two or three for an em dash), and many editors will overlook this, but if you are writing more formally, consider using the correct symbol instead. We no longer live in the days of typewriters.
 
 
 
