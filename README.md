@@ -40,7 +40,7 @@ Other
 * [HowTo do Miscellaneous Things (a grabbag)](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
 
 Other other!
-* [Minuses, Hyphens and Dashes. Oh, my!](https://github.com/taw00/howto/blob/master/howto-dashes.md)
+* [Minuses, Hyphens and Dashes. Oh, My!](https://github.com/taw00/howto/blob/master/howto-dashes.md)
 
 ---
 

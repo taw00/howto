@@ -3,7 +3,7 @@ https://blog.errantruminant.com/dashes/
 https://github.com/taw00/howto/blob/master/howto-dashes.md
 -->
 
-Minuses, Hyphens and Dashes. Oh, my!
+Minuses, Hyphens and Dashes. Oh, My!
 ====================================
 
 <!--Excerpt-->The dash family of punctuation—minus, hyphen, en dash, em dash, and more.
