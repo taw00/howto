@@ -71,13 +71,22 @@ Em dash in place of a colon:
 Em dashes are also used in citations, to indicate interruptions, to indicate blotted out text, and more. But that won't be discussed here.
 
 Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;` or `&#11835;`) is utilized in citations:  
-&emsp;<span style="font-size: 75%;">Fogarty, Mignon (GrammarGirl). "Dashes, Colons, and Commas." Episode \#318. _Quick and Dirty Tips_, April 19, 2012, <https://www.quickanddirtytips.com/education/grammar/dashes-colons-and-commas>.</span>  
-&emsp;<span style="font-size: 75%;">&#x2E3B;. "Dashes, Parentheses, and Commas: Sometimes they're interchangeable, sometimes they're not." Episode \#222. _Quick and Dirty Tips_, May 21, 2010, <https://www.quickanddirtytips.com/education/grammar/dashes-parentheses-and-commas>.</span>  
-&emsp;<span style="font-size: 75%;">&#x2E3B;. "Hyphens: Is the glass half full or half-empty?" Episode \#093. _Quick and Dirty Tips_, February 1, 2008, <https://www.quickanddirtytips.com/education/grammar/hyphens>.</span>  
-&emsp;<span style="font-size: 75%;">The Punctuation Guide. "En Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/en-dash.html>.</span>  
-&emsp;<span style="font-size: 75%;">&#x2E3B;. "Em Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/em-dash.html>.</span>  
-&emsp;<span style="font-size: 75%;">Emma. "Em Dash (—) vs En Dash (–): When to Use Dashes with Examples." _ESL: English as a Second Language for Teachers & Students_, April 12, 2019, <https://7esl.com/em-dash-en-dash/>.</span>
 
+<div style="font-size: 75%; padding: 0 0 0 3em;">
+
+Fogarty, Mignon (GrammarGirl). "Dashes, Colons, and Commas." Episode \#318. _Quick and Dirty Tips_, April 19, 2012, <https://www.quickanddirtytips.com/education/grammar/dashes-colons-and-commas>.
+
+&#x2E3B;. "Dashes, Parentheses, and Commas: Sometimes they're interchangeable, sometimes they're not." Episode \#222. _Quick and Dirty Tips_, May 21, 2010, <https://www.quickanddirtytips.com/education/grammar/dashes-parentheses-and-commas>.
+
+&#x2E3B;. "Hyphens: Is the glass half full or half-empty?" Episode \#093. _Quick and Dirty Tips_, February 1, 2008, <https://www.quickanddirtytips.com/education/grammar/hyphens>.
+
+The Punctuation Guide. "En Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/en-dash.html>.
+
+&#x2E3B;. "Em Dash." Accessed November 1, 2019, <https://www.thepunctuationguide.com/em-dash.html>.
+
+Emma. "Em Dash (—) vs En Dash (–): When to Use Dashes with Examples." _ESL: English as a Second Language for Teachers & Students_, April 12, 2019, <https://7esl.com/em-dash-en-dash/>.
+
+</div>
 
 **Figure Dashes** are used in things like phone numbers:     
 &emsp;_1&#x2012;800&#x2012;867&#x2012;5309_
