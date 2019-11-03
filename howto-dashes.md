@@ -6,11 +6,12 @@ https://github.com/taw00/howto/blob/master/howto-dashes.md
 Minuses, Hyphens and Dashes. Oh, My!
 ====================================
 
-<!--Excerpt-->The dash family of punctuation—minus, hyphen, en dash, em dash, and more.
+<!--Excerpt-->
+The dash family of punctuation—minus, hyphen, en dash, em dash, and more.
 
 ![dashes.png](appurtenances/dashes.png)
 
-_Published November 1, 2019 — Updated November 2, 2019_
+_Published November 1, 2019 — Updated November 3, 2019_
 
 The Problem
 -----------
@@ -39,11 +40,17 @@ The Cheat Sheet (TL;DR)
 | em&nbsp;dash&nbsp;&mdash; | `&mdash;` | `-` `-` `-` | `2` `0` `1` `4` |
 &nbsp;
 
+| **specialized**<br />&nbsp;<br />&nbsp; | html<br/>&code<br />&nbsp; | compose<br /><span style="font-size: 65%;">`[compose_key]`<br />&nbsp;</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`<br />`[code][ENTER]`</span> |
+| - | :-: | :-: | :-: |
+| 2-em dash&nbsp;&#x2E3A; | `&#x2E3A;` | n/a | `2` `E` `3` `A` |
+| 3-em dash&nbsp;&#x2E3B; | `&#x2E3A;`  | n/a | `2` `E` `3` `B` |
+&nbsp;
+
 | **specialized<br />rarely used**<br />&nbsp; | html<br/>&code<br />&nbsp; | compose<br /><span style="font-size: 65%;">`[compose_key]`<br />&nbsp;</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`<br />`[code][ENTER]`</span> |
 | - | :-: | :-: | :-: |
 | hyphen,&nbsp;&#x2011;<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
 | figure&nbsp;dash&nbsp;&#x2012; | `&#x2012;`  | n/a | `2` `0` `1` `2` |
-| quotation&nbsp;<br />dash&nbsp;&horbar;<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a | `2` `0` `1` `5` |
+| quotation&nbsp;<br />dash&nbsp;&horbar; | `&horbar;` | n/a | `2` `0` `1` `5` |
 
 
 
@@ -61,12 +68,12 @@ Minuses equal the width of other arithmetic symbols and are vertically aligned. 
   &emsp;_merry&hyphen;go&hyphen;round_  
   &emsp;978&hyphen;0&hyphen;226&hyphen;15906&hyphen;5&nbsp;(ISBN)
 
-**En dashes** are not used as often, but are intended to be used for expressions of range (time, numbers, etc.), most often as a replacement for the word "to", and indicate that the values are inclusive:  
+**En dashes** are not used as often as hyphens and em dashes, but are intended to be used for expressions of range (time, numbers, etc.), most often as a replacement for the word "to" or "through" in that context, and indicate that the values are inclusive. Authors will often simply use a hyphen in place of an en dash:  
   &emsp;_Years 1900&ndash;2000._  
   &emsp;_The New York&ndash;San Francisco route._  
   &emsp;_The score was 27&ndash;17._
 
-**Em dashes** are used for two primary purposes: 1. They are used to indicate a stronger break in a sentence than commas or parentheses. 2. They are used similarly to colons, but with a smidge more drama.
+**Em dashes** are used for three primary purposes: 1. to indicate a stronger break in a sentence than commas or parentheses, 2. to be used similarly to colons, but with a smidge more drama, and 3. to indicate interruptions in dialogue.
 
 Em dashes in place of commas or parenthesis:  
   &emsp;_The anniversary of the eruption of Mount St. Helens&mdash;May 18, 1980&mdash;brought_  
@@ -75,9 +82,16 @@ Em dashes in place of commas or parenthesis:
 Em dash in place of a colon:  
   &emsp;_There was only one thing missing from the pirate ship—pirates._
 
-Em dashes are also used in citations, to indicate interruptions, to indicate blotted out text, and more. But that won't be discussed here.
+Em dash indicating an interruption in dialogue:  
+  &emsp;_"Well, I thought I might&mdash;"_  
+  &emsp;_"Might what?" she demanded._
 
-Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;` or `&#11835;`), is utilized in citations:
+**2-Em dashes** are used to indicate a partial word, or missing or blotted out text (for example, when quoting material from an illegible document).  
+  &emsp;_David H&#x2E3A;h [Hirsch?] voted aye._
+
+**3-Em dashes** are used primarily by manuscript editors to reference repeated listings of author(s) or editor(s) in a bibliography. See example below.
+
+Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;`), is utilized in citations:
 
 <div style="font-size: 75%; padding: 0 0 0 3em;">
 
@@ -95,65 +109,72 @@ Emma. "Em Dash (—) vs En Dash (–): When to Use Dashes with Examples." _ESL: 
 
 </div>
 
-**Figure Dashes** are essentially en dashes, but more specifically used in things like phone numbers:     
-&emsp;_1&#x2012;800&#x2012;867&#x2012;5309_
+**Figure Dashes** are en dashes but more specifically used for separating numbers, for example a phone number. Authors often use a hyphen or en dash instead:  
+  &emsp;_1&#x2012;800&#x2012;867&#x2012;5309_
 
-**Quotation Dashes** are used for things like dialogue in certain styles of writing (Charles Frazier, James Joyce), though often em dashes are used instead:  
+**Quotation Dashes** (also called horizontal bars) are em dashes used to indicate dialogue instead of quotation marks in certain styles of writing (Charles Frazier, James Joyce). Often the em dash is used instead:  
   &emsp;_&horbar;Oh, my! Dashes can be complicated, said the young journalist._  
-  &emsp;. . . another example:  
-  &emsp;_&horbar;I'm thinking on it, Inman said. How did you get in this fix?_
+  &emsp;_&#x2015;I'm thinking on it, Inman said. How did you get in this fix?_
 
-For more information about figure and quotation dashes (out of scope), read these: [Figure Dash](https://en.wikipedia.org/wiki/Dash#Figure_dash), [Quotation Dash](https://en.wikipedia.org/wiki/Quotation_mark#Quotation_dash). 2-em dashes and 3-em dashes are way outside the scope of this document. Refer to a [style guide](https://en.wikipedia.org/wiki/The_Chicago_Manual_of_Style) for guidance.
+Figure and quotation dashes are specialized and rarely used by everyday writers. For more information, read: [Figure Dash](https://en.wikipedia.org/wiki/Dash#Figure_dash), [Quotation Dash](https://en.wikipedia.org/wiki/Quotation_mark#Quotation_dash).
 
+Refer to a [style guide](https://en.wikipedia.org/wiki/The_Chicago_Manual_of_Style) for more nuanced guidance on use of the dash for your particular context.
+
+<!--
 ###### A Visual Comparison
 
-  &emsp;minus **hyphen** en dash **em dash** figure dash **quotation dash**  
-  &emsp;&minus; **&hyphen;** &ndash; **&mdash;** &#x2012; **&horbar;**  
+  &emsp;minus **hyphen** en **em**  
+  &emsp;&minus; **&hyphen;** &ndash; **&mdash;**    
+  &emsp;figure **quotation** 2-em **3-em**  
+  &emsp;&#x2012; **&horbar;** &#x2E3A; **&#x2E3B;**  
   &emsp;&minus;minus&minus;  
   &emsp;&hyphen;hyphen&hyphen;  
   &emsp;&ndash;en dash&ndash;  
   &emsp;&mdash;em dash&mdash;  
+  &emsp;&#x2E3A;2-em dash&#x2E3A;  
+  &emsp;&#x2E3B;3-em dash&#x2E3B;  
   &emsp;&#x2012;figure dash&#x2012;  
   &emsp;&horbar;quotation dash&horbar;
+-->
 
-
+&nbsp;
 
 > ----
 >
-> Note: For the remainder of this document, we are going to focus primarily on hyphens, en dashes, and em dashes. The discussion will also get a bit more technical in places. But if you are a writer in any capacity—especially if you are using Linux—you should know some of these techniques.
+> Note: For the remainder of this document, we are going to focus primarily on hyphens, en dashes, and em dashes. The discussion will also get a bit more technical in places. But if you are a writer in any capacity, you should know some of these techniques.
 >
 > ---
 
-
+&nbsp;
 
 The Hyphen
 ----------
 
-Inputting the hyphen on your keyboard is easy. The _hyphen key_ is just to right of the _0 key_ (zero-key) on most keyboards.
+Of all the dash-like characters, inserting a hyphen into your document is trivial. The _hyphen key_ is just to right of the _0 key_ (zero-key) on most keyboards.
 
-For most cases, the hyphen can be used in place of a minus sign, or even a figure dash. If you are displaying some light arithmetic equations though, you probably want to use the more precise character (the minus). Phone numbers generally use figure dashes. And if you want to ensure a word is not word-wrapped (like in a heading) the non-breaking hyphen is useful.
+The hyphen is also fairly versatile. In most cases, a single hyphen _can_ be used in place of a minus sign, en dash, or even a figure dash. Though, if you are displaying a few arithmetic equations, you probably want to use the more precise character (the minus sign character). And if you want to ensure a word is not word-wrapped (like in a heading) the non-breaking hyphen is useful.
 
-It should be noted that many people will just use hyphens in the place of en and em dashes as well (one or two hyphens for an en dash and two or three for an em dash), and many editors will overlook this, but if you are writing more formally, consider using the correct symbol instead. We no longer live in the days of typewriters.
+Many writers will just use hyphens in place of of the longer dashes as well (one or two hyphens for an en dash and two or three for an em dash). Many editors will overlook this, but if you are writing more formally, consider using the correct symbol instead. We no longer live in the days of typewriters.
 
 
 
 Dashes in Word Processors
 -------------------------
 
-Inputting an em dash in a word processor _can be_ relatively easy. Most will replace any `[-][-][space]` with `—`. If a particular word processor does not enable this feature by default, look for the setting in the preferences menu somewhere and enable it if you like. I personally like to input these characters more directly from the keyboard. More on that in a second. For other characters, there is usually a "Insert special character" selection in one of the menus.
+Inputting an em dash in a modern word processor _can be_ relatively easy. Most will replace any `[-][-][space]` with `—`. If a particular word processor does not enable this feature by default, look for the setting in the preferences menu somewhere and enable it. I personally like to input these characters more directly from the keyboard (discussed shortly). For other characters, there is usually a "Insert special character" selection in one of the menus.
 
 
 
 HTML- and Markdown-Formatted Documents
 --------------------------------------
 
-If you are creating an HTML- or Markdown-formatted document, a common method for inserting a special character is through the use of HTML ASCII or Unicode escape codes in the text. A few of these even have human-readable-ish entity names: `&minus;`, `&ndash;`, and `&mdash;`. And even `&horbar;`.
+If you are creating an HTML- or Markdown-formatted document, a common method for inserting a special character is through the use of HTML ASCII or Unicode escape codes in the text. A few of these even have human-readable-ish entity names: `&minus;`, `&ndash;`, and `&mdash;`.
 
-For example, this document was originally written in the Markdown format. It is very common to input these characters as HTML `&` escape codes, but I generally prefer to input the hyphen and em dashes directly from the keyboard. One great advantage of the escape codes, though, is that they eliminate ambiguity (the minus, hyphen, and en dash can look very similar).
+This document was originally written in the Markdown format. And for such documents, it is very common to input these characters as HTML-style `&` escape codes, but I generally prefer to input the required character directly from the keyboard. One great advantage of the escape codes, though, is that they eliminate ambiguity (the rendered minus, hyphen, and en dash can look very similar).
 
 More about Markdown can be found [here](https://en.wikipedia.org/wiki/Markdown), [here](https://commonmark.org/help/), and [here](https://www.markdownguide.org/extended-syntax). And more about HTML ASCII escape codes can be found [here](https://ascii.cl/htmlcodes.htm). You can use HTML escape codes in Markdown documents, not just HTML-formatted files.
 
-Markdown is widely used in many MANY applications now. Most note-taking applications support it, some by default, or even nearly exclusively (example [Joplin](https://joplinapp.org), my personal favorite). But also forum software ([Discourse](https://www.discourse.org/)), blogging and website interfaces ([Ghost][919ee899] and [Wordpress][a7500213]), and many other applications.
+Markdown is widely used by many MANY applications now as the native format of their inputted text. Most note-taking applications support it, some by default, or even nearly exclusively (example [Joplin](https://joplinapp.org), my personal favorite). But also forum software ([Discourse](https://www.discourse.org/)), blogging and website interfaces ([Ghost][919ee899] and [Wordpress][a7500213]), and many other applications.
 
   [919ee899]: https://ghost.org "Ghost Blogging Platform"
   [a7500213]: https://wordpress.org "Wordpress Web Publishing Platform"
@@ -164,7 +185,7 @@ Markdown is widely used in many MANY applications now. Most note-taking applicat
 The Various Methods of Inserting Special Characters
 ---------------------------------------------------
 
-1. Googling it and then cut-n-pasting from Wikipedia or some such. Not recommended but it works in a pinch.
+1. Googling the character and then cut-n-pasting it from Wikipedia or some such. Not recommended but it works in a pinch.
 2. Using your application's "Insert Special Character" functionality (usually in some menu). Works okay for one-off needs, but (a) many applications don't have this capability, (b) the selection is limited, (c) it works differently for each application.
 3. Typing `&` codes in a document that is HTML- or Markdown-formatted. Or in any text field that supports Markdown. It's a hack unless you are "coding" that document. When I am entering a comment in some forum, I want to insert these characters in a more natural way.
 4. Unicode Input Method (using `[CRTL][SHIFT]U`, then `the code`). This is almost universal and is well worth learning, but the codes are hard to remember, even for the most basic characters. So, learn this, but the next method is more constructive for writers in an everyday setting.
@@ -245,8 +266,6 @@ For example:
 - Hyphen (&hyphen;): use the keyboard's native `-` key.  
 - En dash (&ndash;): `[CTRL][SHIFT][U]`, then `2 0 1 3 [ENTER]`
 - Em dash (&mdash;): `[CTRL][SHIFT][U]`, then `2 0 1 4 [ENTER]`
-- Figure dash (&#x2012;): `[CTRL][SHIFT][U]`, then `2 0 1 2 [ENTER]`
-- Quotation dash (&horbar;): `[CTRL][SHIFT][U]`, then `2 0 1 5 [ENTER]`
 
 A great summary of some of the most used `[CTRL][SHIFT][U]` Unicode input codes can be found in the "Diacritics and punctuation" section of this article: [Linux keyboard text symbols: Compose key shortcuts](https://fsymbols.com/keyboard/linux/compose/).
 
