@@ -10,7 +10,7 @@ Minuses, Hyphens and Dashes. Oh, My!
 
 ![dashes.png](appurtenances/dashes.png)
 
-_Published November 1, 2019 <!--&mdash; Updated November 1, 2019-->_
+_Published November 1, 2019 — Updated November 2, 2019_
 
 The Problem
 -----------
@@ -24,21 +24,26 @@ The first part of this article maps out the various dash-like punctuation charac
 The Cheat Sheet (TL;DR)
 -----------------------
 
+<!--
 - Minus (&minus;): `[CTRL][SHIFT][U]`, then `2 0 1 2 [ENTER]`
 - Hyphen (-): typed directly from keyboard  
 - En dash (–): `[compose]`, then `-` `-` `-`
 - Em dash (—): `[compose]`, then `-` `-` `.`
+-->
 
-|         | html<br/>&code  | compose<br /><span style="font-size: 45%;">`[compose_key]`, then ...</span> | unicode<br /><span style="font-size: 45%;">`[SHIFT][CTRL]U`, then ...</span> |
-| ------- | --------------- | ------- | --------|
-| minus&nbsp;&minus; | `&minus;`       | n/a     | `2`&nbsp;`2`&nbsp;`1`&nbsp;`2` |
+|   | html<br/>&code<br />&nbsp; | compose<br /><span style="font-size: 65%;">`[compose_key]`<br />&nbsp;</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`<br />`[code][ENTER]`<br />&nbsp;</span> |
+| - | :-: | :-: | :-: |
+| minus&nbsp;&minus; | `&minus;` | &emsp; n/a &emsp; | `2`&nbsp;`2`&nbsp;`1`&nbsp;`2` |
 | hyphen&nbsp;&hyphen;<br /><span style="font-size: 75%;">(- on the keyboard)</span> | `&hyphen;` | n/a | `2` `0` `1` `0` |
-| en&nbsp;dash&nbsp;&ndash; | `&ndash;`       | `-`&nbsp;`-`&nbsp;`.`   | `2` `0` `1` `3` |
-| em&nbsp;dash&nbsp;&mdash; | `&mdash;`       | `-` `-` `-`   | `2` `0` `1` `4` |
-|   |   |   |   |
+| en&nbsp;dash&nbsp;&ndash; | `&ndash;` | `-`&nbsp;`-`&nbsp;`.` | `2` `0` `1` `3` |
+| em&nbsp;dash&nbsp;&mdash; | `&mdash;` | `-` `-` `-` | `2` `0` `1` `4` |
+&nbsp;
+
+| **specialized<br />rarely used**<br />&nbsp; | html<br/>&code<br />&nbsp; | compose<br /><span style="font-size: 65%;">`[compose_key]`<br />&nbsp;</span> | unicode<br /><span style="font-size: 55%;">`[SHIFT][CTRL]U`<br />`[code][ENTER]`</span> |
+| - | :-: | :-: | :-: |
 | hyphen,&nbsp;&#x2011;<br />non-breaking | `&#x2011;` | n/a | `2` `0` `1` `1` |
-| figure&nbsp;dash&nbsp;&#x2012; | `&#x2012;`  | n/a     | `2` `0` `1` `2` |
-| quotation&nbsp;dash&nbsp;&horbar;<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a     | `2` `0` `1` `5` |
+| figure&nbsp;dash&nbsp;&#x2012; | `&#x2012;`  | n/a | `2` `0` `1` `2` |
+| quotation&nbsp;<br />dash&nbsp;&horbar;<br /><span style="font-size: 75%;">(aka horizontal bar)</span> | `&horbar;` | n/a | `2` `0` `1` `5` |
 
 
 
@@ -52,7 +57,9 @@ Minuses equal the width of other arithmetic symbols and are vertically aligned. 
 &emsp;. . . if a hyphen is used instead, the difference can be subtle, but noticable:  
 &emsp;_5&hyphen;4&plus;1&equals;2_
 
-**Hyphens** are used to hyphenate a compound word: _merry&hyphen;go&hyphen;round_.
+**Hyphens** are used to hyphenate a compound word and often non-inclusive numbers (example, telephone, social security, ISBN, etc.):  
+  &emsp;_merry&hyphen;go&hyphen;round_  
+  &emsp;978&hyphen;0&hyphen;226&hyphen;15906&hyphen;5&nbsp;(ISBN)
 
 **En dashes** are not used as often, but are intended to be used for expressions of range (time, numbers, etc.), most often as a replacement for the word "to", and indicate that the values are inclusive:  
   &emsp;_Years 1900&ndash;2000._  
@@ -88,7 +95,7 @@ Emma. "Em Dash (—) vs En Dash (–): When to Use Dashes with Examples." _ESL: 
 
 </div>
 
-**Figure Dashes** are used in things like phone numbers:     
+**Figure Dashes** are essentially en dashes, but more specifically used in things like phone numbers:     
 &emsp;_1&#x2012;800&#x2012;867&#x2012;5309_
 
 **Quotation Dashes** are used for things like dialogue in certain styles of writing (Charles Frazier, James Joyce), though often em dashes are used instead:  
