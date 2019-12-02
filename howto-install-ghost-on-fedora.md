@@ -1,16 +1,27 @@
 <!--
-https://blog.errantruminant.com/howto-install-ghost-on-fedora/
+https://blog.errantruminant.com/ghost-on-fedora/
 https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md
 -->
 
-How to Install the Ghost Blogging Platform on Fedora Linux
-==========================================================
+<style type="text/css">
+    .reference {
+        font-size: 75%;
+    }
+    .pubdate {
+        font-style: italic;
+        font-size: 75%;
+    }
+</style>
+
+
+Deploying Ghost on Fedora Linux
+===============================
 
 <!--Excerpt-->The combination of Ghost and Fedora Linux gives you a powerful, and relatively simple, platform for blogging. Let me show you how to deploy this popular application stack.
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-> _Published June 12, 2019 &mdash; Updated October 23, 2019_
+<span class="pubdate">Published June 12, 2019 || Updated December 2, 2019</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -795,7 +806,12 @@ The process is relatively simple.
 
 ---
 
+<div class="reference">
+
+
 ## Reference
+
+<div style="float: left; width: 43%;">
 
 #### Getting help
 
@@ -810,17 +826,23 @@ The process is relatively simple.
 
 #### Other resources and inspirations
 
-Installation and configuration of the operating system
+Supporting How-Tos
 
 * taw00. 2019. "How to Deploy and Configure a \[Minimalistic\] Fedora Linux Server." _Github._ <https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md>  
 * taw00. 2019. "How to Configure FirewallD and Fail2Ban for Linux." _Github._ <https://github.com/taw00/howto/blob/master/howto-configure-firewalld-and-fail2ban-for-linux.md>
 * taw00. 2019. "Configure 'send-only' Email via SMTP Relay." _Github._  <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md>
 
+</div>
+<div style="float: left; width: 10%;">&nbsp;</div>
+<div style="float: left; width: 43%;">
+
 Some dated and incomplete "Ghost on Fedora" guides
+
 * <https://www.vultr.com/docs/how-to-deploy-ghost-on-fedora-25>
 * <https://blog.ljdelight.com/installing-ghost-blog-on-fedora/>
 
 Ghost configuration guidance and discussion
+
 * General configuration:  
   <https://docs.ghost.org/concepts/config/>
 * MariaDB/MySQL instead of SQLite?  
@@ -833,10 +855,14 @@ Ghost configuration guidance and discussion
   <http://blog.benoitblanchon.fr/postfix-and-ghost/>
 
 This article
+
 * On Github:  
   <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
 * On blog.errantruminant.com:  
-  <https://blog.errantruminant.com/howto-install-ghost-on-fedora/>
+  <https://blog.errantruminant.com/ghost-on-fedora/>
+
+</div><div style="clear: both;"></div>
+</div>
 
 ---
 
