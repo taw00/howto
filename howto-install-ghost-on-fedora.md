@@ -789,10 +789,9 @@ The process is relatively simple.
    ```
    sudo mv /tmp/config.production.json /var/www/ghost/core/server/config/env/
    ```
-7. Restart services:
+7. Restart the ghost service:
    ```
    sudo systemctl start ghost.service
-   sudo systemctl start nginx.service
    ```
 8. Browse to your domain and your domain/ghost and check that everything works correctly.
 
