@@ -235,7 +235,7 @@ sudo systemctl reload nginx.service
 
 ```
 # This will be a non-priviledged "normal" user specific for this use.
-sudo useradd -c "Ghost Application" ghost 
+sudo useradd -c "Ghost Application" ghost
 ```
 
 ### [10] Create Ghost's document root and set permissions
@@ -280,7 +280,8 @@ sudo rm /tmp/ghost.zip
 
 ```
 # Navigate to the webroot and install
-cd /var/www/ghost ; sudo -u ghost npm install --production
+cd /var/www/ghost
+sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
 ```
 
 ### [14] Configure Ghost to use your domain and sqlite3
@@ -759,41 +760,42 @@ The process is relatively simple.
 
 . . . Okay. You are all backed up? Good. You can now continue . . .
 
-2. Make a convenience backup of your Ghost configuration file:  
+2. Navigate to the webroot for your Ghost deployment
    ```
-   sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /tmp/
+   cd /var/www/ghost
    ```
-3. Shut down the ghost service:
+3. Make a convenience backup of your Ghost configuration file:  
+   ```
+   sudo cp -a ./core/server/config/env/config.production.json /tmp/
+   ```
+4. Shut down the ghost service:
    ```
    sudo systemctl stop ghost.service
    ```
-4. Download the new tarball (to `/tmp/ghost.zip`)  
+5. Download the new tarball (to `/tmp/ghost.zip`)  
    For reference, see "[Download Ghost](#11downloadghost)" above. But, for your convenience:
    ```
    sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
    ```
-5. Deploy new Ghost over top old  
+6. Deploy new Ghost over top old  
    For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience:
    ```
-   # Unzip and refresh Ghost
-   sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
+   # Unzip and refresh Ghost into the webroot
+   sudo -u ghost unzip -uo /tmp/ghost.zip -d .
    sudo rm /tmp/ghost.zip
    
-   # Navigate to the webroot for Ghost
-   cd /var/www/ghost
-   
    # Install Ghost over top the old installation
-   sudo -u ghost npm install --production
+   sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
    ```
-6. Replace overwritten config file with your convenience backup:
+7. Replace overwritten config file with your convenience backup:
    ```
-   sudo mv /tmp/config.production.json /var/www/ghost/core/server/config/env/
+   sudo mv /tmp/config.production.json ./core/server/config/env/
    ```
-7. Restart the ghost service:
+8. Restart the ghost service:
    ```
    sudo systemctl start ghost.service
    ```
-8. Browse to your domain and your domain/ghost and check that everything works correctly.
+9. Browse to your domain and your domain/ghost and check that everything works correctly.
 
 ---
 
