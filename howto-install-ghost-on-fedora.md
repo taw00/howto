@@ -735,11 +735,15 @@ Save that script, then run it...
 
 Then save it somewhere. I `scp` the file to my desktop and then save it to my Keybase filesystem (along with all my backups of everything, by the way). But anywhere inaccessible to the public is fine.
 
+---
+
 ## Congratulations! YOU'RE DONE!
 
 Or you  at least done with the initial setup. You now have an end-to-end functioning Ghost blogging platform installed.
 
 Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
+
+---
 
 ## Addendum: Updates and Upgrades
 
@@ -792,6 +796,25 @@ The process is relatively simple.
    sudo systemctl start nginx.service
    ```
 8. Browse to your domain and your domain/ghost and check that everything works correctly.
+
+---
+
+## Addendum: Multiple Blogs on One Server
+
+These are not step-by-step instructions but this plus the generalized instructions above should give you enough to figure out how it's done.
+
+- Configure you DNS (via your domain manager, GoDaddy, Gandi, whomever) to point each domain name to the same IP address. For this example, `blog1.example.com` and `blog2.example.com`
+- Decide on a port paring. For this example, 2368 for blog1 and 2369 for blog2.
+- Instead of `/var/www/ghost` for your webroot, create one for each blog. For example: `/var/www/ghost_blog1` and `/var/www/ghost_blog2` and repeat installation of the Ghost application to each.
+- Similarly, `/etc/nginx/conf.d/example.com.ghost.conf` becomes something like `blog1.example.com.ghost.conf` and `blog2.example.com.ghost.conf`
+- Similarly, `/etc/systemd/system/ghost.service` becomes `ghost_blog1.service` and `ghost_blog2.service`
+- Ensure the hostnames, webroots, and ports for each are reflected everywhere they are referenced:
+  - Hostname (URL), Webroot and port: `config.production.json` in each of those `/var/www/ghost_*` trees
+  - Webroot only: `ghost_blog1.service` and `ghost_blog2.service`
+  - Hostname, Webroot, and port: `blog1.example.com.ghost.conf` and `blog2.example.com.ghost.conf`
+- The mail stuff will change a bit. I leave that to you to figure out. :)
+
+I believe that is all. Good luck. For reference, I have three ghost blogs that I host on one machine with no noticeable degradation in performance (small-time blogs, mind you).
 
 ---
 
