@@ -3,17 +3,6 @@ https://blog.errantruminant.com/ghost-on-fedora/
 https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md
 -->
 
-<style type="text/css">
-    .reference {
-        font-size: 75%;
-    }
-    .pubdate {
-        font-style: italic;
-        font-size: 75%;
-    }
-</style>
-
-
 Deploying Ghost on Fedora Linux
 ===============================
 
@@ -21,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">Published June 12, 2019 || Updated December 2, 2019</span>
+<small>_Published June 12, 2019 || Updated December 2, 2019_</small>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -806,7 +795,7 @@ The process is relatively simple.
 
 ---
 
-<div class="reference">
+<small>
 
 
 ## Reference
@@ -862,7 +851,7 @@ This article
   <https://blog.errantruminant.com/ghost-on-fedora/>
 
 </div><div style="clear: both;"></div>
-</div>
+</small>
 
 ---
 

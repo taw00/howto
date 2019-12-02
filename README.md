@@ -12,7 +12,7 @@ General deployment (ties together many of these howtos)
 * [Deploy and Configure a Fedora Linux Server](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
 
 Specific applications
-* [Install the Ghost blogging platform on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md)
+* [Deploying Ghost on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md)
 * [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
 * [Install Turtl Secure Notebook on Fedora Linux (desktop and server)](https://github.com/taw00/turtl-rpm)
 
