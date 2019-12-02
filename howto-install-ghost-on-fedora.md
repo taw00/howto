@@ -763,17 +763,16 @@ The process is relatively simple.
    ```
    sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /tmp/
    ```
-3. Shut down services:
+3. Shut down the ghost service:
    ```
    sudo systemctl stop ghost.service
-   sudo systemctl stop nginx.service
    ```
-4. Download the new tarball  
-   For reference, see "[Download Ghost](#11downloadghost)" above. But, for your convenience...
+4. Download the new tarball (to `/tmp/ghost.zip`)  
+   For reference, see "[Download Ghost](#11downloadghost)" above. But, for your convenience:
    ```
    sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
    ```
-5. Deploy new Ghost overtop old  
+5. Deploy new Ghost over top old  
    For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience...
    ```
    # Unzip and refresh Ghost
@@ -783,7 +782,7 @@ The process is relatively simple.
    # Navigate to the webroot for Ghost
    cd /var/www/ghost
 
-   # Install Ghost overtop the old installation
+   # Install Ghost over top the old installation
    sudo -u ghost npm install --production
    ```
 6. Replace overwritten config file with your convenience backup:
