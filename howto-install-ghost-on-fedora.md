@@ -16,7 +16,9 @@ Deploying Ghost on Fedora Linux
 
 I looked at a whole pile of blogging options when I finally decided to go with Ghost. It checks all the boxes for what I required in a blogging platform: It's well supported, and, by the looks of it, well designed. A platform that embraces [Markdown](https://ghost.org/blog/markdown/) (a critical, must-have feature IMHO) and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. Bonus! Ghost is wildly popular, so it should have some longevity. _But there was a stumbling block for me when first attempting to install the software on my favorite flavor of linux. The installation instructions for Fedora Linux were incomplete and very dated._ I fixed that with this article. Enjoy.
 
-> _If you are reading this [on another platform, like github](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
+<!--
+> _If you are reading this on another platform, [like github](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
+-->
 
 ---
 
@@ -25,20 +27,20 @@ This howto will walk you through:
 * Installation of minimal Fedora Linux OS on a VPS system
 * Configure it to be secure (firewalld, SSH keys, fail2ban, etc.)
 * Generation and installation of your Let's Encrypt SSL cert and keys  
-  _...so that you are using TLS/SSL as you should be_
+  _. . . so that you are using TLS/SSL as you should be_
 * Setting that cert to auto renew  
-  _...via a systemd service, not a hacky crontab or script_
+  _. . . via a systemd service, not a hacky crontab or script_
 * Installation and configuration of Nginx
 * Installation and configuration of Ghost  
-  _...using sqlite3 and not MySQL or MariaDB with is unneeded complexity IMHO_
+  _. . . using sqlite3 and not MySQL or MariaDB with is unneeded complexity IMHO_
 * Setting up Ghost to be managed by systemd  
-  _...and not pm2 or screen or some other less reliable mechanism_
+  _. . . and not pm2 or screen or some other less reliable mechanism_
 * Some troubleshooting guidance
 * Properly setting up email support on the system
 * Setting up subscription management via MailChimp
 * Backing everything up
 
-The technical specs (June 2019) of what was used to develop my blog and write this howto were...
+The technical specs (June 2019) of what was used to develop my blog and write this howto were:
 
 * Vultr.com VPS -- 1G RAM, 25G SSD storage, 1vCore CPU, and a lot of available bandwidth
 * Fedora Linux 30 (and the latest FirewallD, etc.)
@@ -93,14 +95,14 @@ sudo certbot certonly --standalone --domains example.com,www.example.com,blog.ex
 
 Note: If you already have nginx or another webserver running on this host, you may have to pause it before running certbot and then start it up again. I.e.,  
 `sudo systemctl stop nginx`  
-..._execute the above command, and then_...  
+. . . _execute the above command, and then:_  
 `sudo systemctl start nginx`
 
 Certbot will populate this directory: `/etc/letsencrypt/live/example.com/`
 
 **Setup certbot to auto-renew**
 
-We'll use the built in systemd services to do this...
+We'll use the built in systemd services to do this:
 
 _Edit `/etc/sysconfig/certbot`_
 
@@ -122,12 +124,12 @@ sudo systemctl enable --now certbot-renew.timer
 Note: If you edit and change the configuration of `/etc/sysconfig/certbot`, the `certbot-renew.timer` service will have to be restarted for the changes to take effect.
 
 <!--
-Old way...
+Old way:
 ```
 sudo crontab -e
 ```
 
-Add this...
+Add this:
 
 ```
 30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/certbot-auto-renew.log
@@ -150,10 +152,10 @@ I was unsuccessful in getting SELinux to work in enforcing mode. Until I, or som
 sudo setenforce permissive
 ```
 
-To ensure it sticks after reboot...  
+To ensure it sticks after reboot:  
 Edit `/etc/selinux/config` and set `SELINUX=permissive`
 
-> _Extra credit work..._  
+> _Extra credit work:_  
 > If you can figure out how to get SELinux to work with ghost proxying things to port 2368, please email me. I got stuck here:
 > * I examined `/var/log/audit/audit.log` (after full installation)
 > * I even used `audit2why` and `sealert` to analysize things
@@ -233,7 +235,7 @@ sudo systemctl reload nginx.service
 
 ```
 # This will be a non-priviledged "normal" user specific for this use.
-sudo useradd -c "Ghost Application" ghost
+sudo useradd -c "Ghost Application" ghost 
 ```
 
 ### [10] Create Ghost's document root and set permissions
@@ -261,7 +263,7 @@ curl -L https://github.com/TryGhost/Ghost/releases/download/2.23.4/Ghost-2.23.4.
 
 ```
 sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
-# Note: Downloading to /tmp so that any user has permissions to it
+# Note: Downloading to /tmp/ so that any user has permissions to it
 
 # Alternative:
 #curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url' | sudo -u ghost xargs -I GHOST_URL curl -L GHOST_URL -o /tmp/ghost.zip
@@ -298,7 +300,7 @@ sudo cp -a config.production.json config.production.json--ORIGINAL
 sudo -u ghost vim config.production.json
 ```
 
-Replace the contents with something that looks like this (using your specific information). Then save and exit...
+Replace the contents with something that looks like this (using your specific information). Then save and exit:
 
 ```
 {
@@ -363,13 +365,13 @@ Once satisfied, shut it down with `^C` in the window that you are using to run g
 
 ### [17] Configure a Ghost systemd service
 
-Edit the systemd `ghost.service` (as root)...
+Edit the systemd `ghost.service` (as root):
 
 ```
 sudo vim /etc/systemd/system/ghost.service
 ```
 
-Add this, save, and exit...
+Add this, save, and exit:
 
 ```
 [Unit]
@@ -436,7 +438,7 @@ Then browse to <https://blog.example.com/ghost> --> Design --> scroll down to "m
 
 ### [21] Troubleshooting
 
-Log in as your normal linux user (not root, not ghost)...
+Log in as your normal linux user (not root, not ghost):
 
 ```
 sudo systemctl status ghost.service
@@ -471,13 +473,13 @@ They should also list the TLS requirements. Probably TLS and port 587.
 
 ### [24] Configure sSMTP
 
-**Tell the OS which MTA you are going to be using...**
+**Tell the OS which MTA you are going to be using:**
 
 ```
 sudo alternatives --config mta
 ```
 
-It will look something like this, select sSMTP with the right number and exit...
+It will look something like this, select sSMTP with the right number and exit:
 
 ```
 There are 3 programs which provide 'mta'.
@@ -493,7 +495,7 @@ Enter to keep the current selection[+], or type selection number: 3
 
 **Configure sSMTP**
 
-For this example, I am using Gandi.net (my domain provider -- each is different), therefore...
+For this example, I am using Gandi.net (my domain provider -- each is different), therefore:
 
 * Example SMTP Server: mail.gandi.net:587
 * Example username: noreply@example.com
@@ -508,7 +510,7 @@ Configuring sSMTP is pretty easy, and a bit more obvious than ther MTA, like for
 * Edit ssmtp configuration file:    
   `sudo nano /etc/ssmtp/ssmtp.conf`
 
-Change these settings, or add if they are missing...
+Change these settings, or add if they are missing:
 
 ```
 Debug=YES                                    # For now, stick that at the very top of the config file
@@ -527,9 +529,9 @@ AuthPass=kjsadkjbfsfasdfqwfq                 # The password for the mail account
 #Hostname=localhost                          # The name of this host
 ```
 
-**Test that it works "in the raw"...**
+**Test that it works "in the raw"**
 
-This is only needed for testing...  
+This is only needed for testing:  
 The way this works is that for every user on the system, you need to map    
 _username --> email that will work for the --> smtp server_
 
@@ -542,7 +544,7 @@ root:noreply@example.com:mail.gandi.net:587
 ghost:noreply@example.com:mail.gandi.net:587
 ```
 
-**Monitor it...**
+**Monitor it**
 
 ```
 # Either one of these methods should work for you
@@ -550,9 +552,9 @@ sudo tail -f /var/log/maillog
 #sudo journalctl -f | grep -i ssmtp
 ```
 
-**Send a test email...**
+**Send a test email**
 
-Do this as root or ghost user...
+Do this as root or ghost user:
 
 ```
 sudo su - ghost
@@ -604,14 +606,14 @@ sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www
 
 ### [27] Email subscriptions
 
-You can use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like it simple, so I just use MailChimp directly, for that...
+You can use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like it simple, so I just use MailChimp directly, for that:
 
 Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
 * Create a [MailChimp](https://mailchimp.com/) account.
 * Create two email campaigns: Click into "Campaigns" (on the MailChimp website) and
   1. Create a "Single welcome email" for new subscribers
   2. Create a "Weekly blog updates" that sends an RSS feed summary. See also [these instructions](https://mailchimp.com/features/rss-to-email/).
-* Embed an subscribe-by-email widget to the bottom of every entry page by...
+* Embed an subscribe-by-email widget to the bottom of every entry page by:
   - Click into the "Audience" tab on the MailChimp website.
   - Using the "Manage Audience" dropdown menu, choose "Signup Forms"
   - Click "Embedded Forms"
@@ -635,7 +637,7 @@ You should now see an email subscription field at the bottom of each of your blo
 I leave this to the reader to figure out. I don't currently enable commenting on my blog.
 
 * https://docs.ghost.org/integrations/disqus/
-* Integrate stuff. For example...
+* Integrate stuff. For example:
   - https://zapier.com/apps/ghost/integrations
   - https://zapier.com/apps/ghost/integrations/pocket
 * Check out the Ghost Forums: https://forum.ghost.org/c/themes
@@ -644,9 +646,7 @@ I leave this to the reader to figure out. I don't currently enable commenting on
 
 You did all this work! You gotta back everything up now. :)
 
-Log in as your normal working user. Not root. Not ghost. Create a back script and copy to a safe place...
-
-Edit `vim backup-ghost_blog.example.com.sh` add this and save it...
+Log in as your normal working user. Not root. Not ghost. Create a back script and copy to a safe place. Edit `vim backup-ghost_blog.example.com.sh` add this and save it.
 
 ```
 #!/usr/bin/bash
@@ -662,21 +662,21 @@ SERVICENAME=ghost.service
 #   (this does not back up your OS configuration)
 # - restarts the ghost and nginx systemd services
 
-echo "Shutting down ghost and nginx services..."
+echo "Shutting down ghost and nginx services . . ."
 # Shut down ghost and nginx
 sudo systemctl stop nginx.service
 sudo systemctl stop ${SERVICENAME}
-echo "...done."
+echo ". . . done."
 
 # Back everything up
 DATE_YMD=$(date +%Y%m%d)
-echo "Grabbing the RPM manifest of this server..."
+echo "Grabbing the RPM manifest of this server . . ."
 rpm -qa | sort > $HOSTNAME-rpm-manifest-${DATE_YMD}.txt
-echo "...done."
+echo ". . . done."
 
-echo "Creating README file for backup..."
+echo "Creating README file for backup . . ."
 echo "\
-Critical configuration files (and directories) are...
+Critical configuration files (and directories) are:
 
 For Ghost itself:
 ${WEBROOT}/core/server/config/env/config.production.json
@@ -693,21 +693,21 @@ For mail handling:
 
 For the webserver:
 /etc/nginx/
-...but especially...
+. . . but especially:
 /etc/nginx/nginx.conf
 /etc/nginx/conf.d/
 
 For the TLS (SSL) certificates:
 /etc/letsencrypt/
 /etc/sysconfig/certbot
-...but especially...
+. . . but especially:
 /etc/letsencrypt/live/
 /etc/letsencrypt/archive/
 /etc/letsencrypt/renewal/
 " > ghost-backup-${URL}-${DATE_YMD}-README.md
-echo "...done."
+echo ". . . done."
 
-echo "Backing up Ghost, Nginx, and associated configuration..."
+echo "Backing up Ghost, Nginx, and associated configuration . . ."
 sudo tar -czf ./ghost-backup-${URL}-${DATE_YMD}.tar.gz \
   ${WEBROOT} /etc/nginx /etc/ssmtp/revaliases \
   /etc/systemd/system/${SERVICENAME} /etc/ssmtp/ssmtp.conf \
@@ -715,19 +715,19 @@ sudo tar -czf ./ghost-backup-${URL}-${DATE_YMD}.tar.gz \
   $HOSTNAME-rpm-manifest-${DATE_YMD}.txt \
   ghost-backup-${URL}-${DATE_YMD}-README.md
 rm $HOSTNAME-rpm-manifest-${DATE_YMD}.txt ghost-backup-${URL}-${DATE_YMD}-README.md
-echo "...done."
+echo ". . . done."
 
-echo "Starting up ghost and nginx services..."
+echo "Starting up ghost and nginx services . . ."
 # Start ghost and nginx
 sudo systemctl start ${SERVICENAME}
 sudo systemctl start nginx.service
-echo "...done."
+echo ". . . done."
 
 echo "Here is your backup tarball, copy it somewhere safe:"
 ls -lh ./ghost-backup-${URL}-${DATE_YMD}.tar.gz
 ```
 
-Save that script, then run it...
+Save that script, then run it:
 
 ```
 . ./backup-ghost_blog.example.com.sh
@@ -757,7 +757,7 @@ The process is relatively simple.
 
 1. Backup -- See "[Back Everything Up](#backeverythingup)" above
 
-...Okay. You are all backed up? Good. You can now continue...
+. . . Okay. You are all backed up? Good. You can now continue . . .
 
 2. Make a convenience backup of your Ghost configuration file:  
    ```
@@ -773,15 +773,15 @@ The process is relatively simple.
    sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
    ```
 5. Deploy new Ghost over top old  
-   For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience...
+   For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience:
    ```
    # Unzip and refresh Ghost
    sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
    sudo rm /tmp/ghost.zip
-
+   
    # Navigate to the webroot for Ghost
    cd /var/www/ghost
-
+   
    # Install Ghost over top the old installation
    sudo -u ghost npm install --production
    ```
@@ -817,7 +817,6 @@ I believe that is all. Good luck. For reference, I have three ghost blogs that I
 ---
 
 <div class="reference">
-
 
 ## Reference
 
@@ -879,3 +878,4 @@ This article
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
 Copyright © Todd Warner
+
