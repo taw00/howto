@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated December 2, 2019_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated December 3, 2019_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -22,40 +22,52 @@ I looked at a whole pile of blogging options when I finally decided to go with G
 
 ---
 
-This howto will walk you through:
+**This howto will walk you through:**
 
-* Installation of minimal Fedora Linux OS on a VPS system
-* Configure it to be secure (firewalld, SSH keys, fail2ban, etc.)
-* Generation and installation of your Let's Encrypt SSL cert and keys  
-  _. . . so that you are using TLS/SSL as you should be_
-* Setting that cert to auto renew  
-  _. . . via a systemd service, not a hacky crontab or script_
-* Installation and configuration of Nginx
-* Installation and configuration of Ghost  
+* [Installation of the server](#server)
+  - Installation of minimal Fedora Linux OS on a VPS system
+  - Configure it to be secure (firewalld, SSH keys, fail2ban, etc.)
+  - Installation of support packages  
+    _. . . nginx, certbot, nodejs, etc._
+  - Generation and installation of your SSL cert and keys  
+    _. . . via Let's Encrypt and ensure are using TLS/SSL as you should be_
+  - Setting that cert to auto renew  
+    _. . . via a systemd service, not a hacky crontab or script_
+* [Configuration of Nginx](#nginx)
+* [Installation and configuration of Ghost](#ghost)  
   _. . . using sqlite3 and not MySQL or MariaDB with is unneeded complexity IMHO_
-* Setting up Ghost to be managed by systemd  
-  _. . . and not pm2 or screen or some other less reliable mechanism_
-* Some troubleshooting guidance
-* Properly setting up email support on the system
-* Setting up subscription management via MailChimp
-* Backing everything up
+  - Setting up Ghost to be managed by systemd  
+    _. . . and not pm2 or screen or some other less reliable mechanism_
+  - Some troubleshooting guidance
+* [Setting up email support on the system](#postghostemail)
+  - Setting up subscription management via MailChimp
+* [Backing everything up](#postghostbackup)
+* [Addenda](#addenda) include:
+  - [Updates and upgrades](#addendumupgrade)
+  - [Redirect a post URL](#addendumredirects)
+  - [Multiple blogs](#addendummultiple) on the same server
+  - [Structuring your website](#addendumlanding) as landing page + blog
 
-The technical specs (June 2019) of what was used to develop my blog and write this howto were:
+<div class="reference">
 
-* Vultr.com VPS -- 1G RAM, 25G SSD storage, 1vCore CPU, and a lot of available bandwidth
+**The technical specs (updated as of December 2019):**
+
+* Vultr.com VPS -- 1G RAM, 25G SSD storage, 1vCore CPU
 * Fedora Linux 30 (and the latest FirewallD, etc.)
 * OS Supplied:
-  * Web server: Nginx - nginx-1.16.0-3.fc30.x86_64
-  * Database: SQLite - sqlite-3.26.0-5.fc30.x86_64
-  * Development: NodeJS - nodejs-10.16.0-3.fc30.x86_64
+  * Web server: Nginx - nginx-1.16.1-1.fc30.x86_64
+  * Database: SQLite - sqlite-3.26.0-6.fc30.x86_64
+  * Development: NodeJS - nodejs-10.16.3-1.fc30.x86_64
   * Node.js compiler: node-gyp - node-gyp-3.6.0-7.fc30.noarch
   * Email relayer: sSMTP - ssmtp-2.64-22.fc30.x86_64
-  * Let's Encrypt (TLS) commandline frontend: Certbot - certbot-0.34.2-3.fc30.noarch
-* Ghost - the original zip file downloaded was version 2.23.4
+  * Let's Encrypt (TLS) commandline frontend: Certbot - certbot-0.39.0-1.fc30.noarch
+* Ghost: [downloaded source code zip](https://github.com/TryGhost/Ghost/releases) - 3.1.0
+
+</div>
 
 ---
 
-## Install the server
+## <span id="server"></span>Install the server
 
 ### [0] Install the latest Fedora Linux server
 
@@ -85,18 +97,21 @@ If you want the raw domain to route there, then `@ A 1800 123.123.123.12`
 Note: `certbot` is the _Let's Encrypt_ client that is used to generate the appropriate
 TLS certificate for your domain.
 
-**Fetch your SSL keys and install them on the system**
+**Generate, fetch, and install your SSL keys**
+
+Note: running certbot requires any webserver that happens to be running on your system to be stopped. If this is a fresh install of the operating system, it is unlikely that anything is running, but here's an example of stopping Nginx:
 
 ```
-# In this example, example.com, www.example.com, and
-# blog.example.com all will be routable, securely, to this IP
+sudo systemctl status nginx.service
+# If it is running, stop it!
+sudo systemctl stop nginx.service
+```
+
+In this example, we generate, fetch, and install certs for example.com, www.example.com, and blog.example.com:
+
+```
 sudo certbot certonly --standalone --domains example.com,www.example.com,blog.example.com --email john.doe@example.com --agree-tos --rsa-key-size 2048
 ```
-
-Note: If you already have nginx or another webserver running on this host, you may have to pause it before running certbot and then start it up again. I.e.,  
-`sudo systemctl stop nginx`  
-. . . _execute the above command, and then:_  
-`sudo systemctl start nginx`
 
 Certbot will populate this directory: `/etc/letsencrypt/live/example.com/`
 
@@ -139,7 +154,9 @@ Add this:
 Save that and exit.
 -->
 
-## Configure Nginx
+---
+
+## <span id="nginx"></span>Configure Nginx
 
 ### [4] Configure SELinux to allow Nginx traffic to flow to Ghost
 
@@ -165,7 +182,7 @@ Edit `/etc/selinux/config` and set `SELINUX=permissive`
 ### [5] Crank up nginx
 
 ```
-sudo systemctl start nginx.service && sudo systemctl enable nginx.service
+sudo systemctl start --now nginx.service
 ```
 
 ### [6] Configure `/etc/nginx/conf.d/ghost.conf`
@@ -217,7 +234,7 @@ server {
 }
 ```
 
-### [7] Check Nginx syntax:
+### [7] Check Nginx configuration syntax:
 
 ```
 sudo nginx -t
@@ -229,12 +246,14 @@ sudo nginx -t
 sudo systemctl reload nginx.service
 ```
 
-## Install Ghost
+---
+
+## <span id="ghost"></span>Install Ghost
 
 ### [9] Create a ghost user
 
 ```
-# This will be a non-priviledged "normal" user specific for this use.
+# A non-priviledged "normal" user specific for this use.
 sudo useradd -c "Ghost Application" ghost
 ```
 
@@ -256,7 +275,7 @@ sudo chmod 775 /var/www/ghost
 
 <!--
 ```
-# Note, this example will invariably be an old version
+# For a specific version, do something like this:
 curl -L https://github.com/TryGhost/Ghost/releases/download/2.23.4/Ghost-2.23.4.zip -o ghost.zip
 ```
 -->
@@ -405,7 +424,9 @@ sudo systemctl enable ghost.service
 
 Test it again.
 
-## Post install configuration
+---
+
+## <span id="postghost"></span>Post install configuration of Ghost
 
 ### [19] Set up your admin credentials
 
@@ -453,7 +474,9 @@ sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 ```
 
-## Configured email support
+---
+
+## <span id="postghostemail"></span>Configured email support
 
 Your blog needs to be able to email people. Forgot your password? Invites to admins? Etc.
 
@@ -643,7 +666,9 @@ I leave this to the reader to figure out. I don't currently enable commenting on
   - https://zapier.com/apps/ghost/integrations/pocket
 * Check out the Ghost Forums: https://forum.ghost.org/c/themes
 
-## Back everything up
+---
+
+## <span id="postghostbackup"></span>Back everything up
 
 You did all this work! You gotta back everything up now. :)
 
@@ -745,8 +770,11 @@ Or you  at least done with the initial setup. You now have an end-to-end functio
 Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
 ---
+---
 
-## Addendum: Updates and Upgrades
+<span id="addenda"></span>
+
+## <span id="addendumupgrade"></span>Addendum: Updates and Upgrades
 
 **Updating the operating system**
 
@@ -773,7 +801,7 @@ The process is relatively simple.
    sudo systemctl stop ghost.service
    ```
 5. Download the new tarball (to `/tmp/ghost.zip`)  
-   For reference, see "[Download Ghost](#11downloadghost)" above. But, for your convenience:
+   For reference, see "[11] Download Ghost" above. But, for your convenience:
    ```
    sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
    ```
@@ -799,7 +827,53 @@ The process is relatively simple.
 
 ---
 
-## Addendum: Multiple Blogs on One Server
+## <span id="addendumredirects"></span>Addendum: Redirect a Post URL
+
+Situation: Let's say you wrote a blog post about cats and dogs and the URL to get to it is "https://yourdomain/cats-and-dogs" and you shared it out to social media, but what you really want it to be is "https://yourdomain/pets", because soon you are going to update it to contain information about all kinds of pets.
+
+Problem: Changing the _slug_ or _Post URL_ to "pets" instead of "cats-and-dogs" is easy enough in the post editor in the settings widget to the right but then if you shared that post out to anyone, they have the old URL which is now no good.
+
+Solution: Tell Ghost to redirect those old URLs to the new URL
+- Edit Ghost's `redirects.json` file:
+
+```
+# Assumptions:
+# - webroot is /var/www/ghost and
+# - the editor is vim (nano or any other editor works fine too)
+cd /var/www/ghost/content/data
+sudo cp -a redirects.json redirects.json--ORIGINAL
+sudo -u ghost vim redirects.json
+```
+
+- Add the mappings to that file ("fanfiction" redirect is just another example):  
+  (_Warning: watch those commas, one too many or too few leads to failure._)
+
+
+```
+[
+
+{
+    "from": "/cats-and-dogs/",
+    "to": "/pets/",
+    "permanent": true
+},
+
+{
+    "from": "/fanfiction/",
+    "to": "/my-fanfiction-sucks/",
+    "permanent": true
+}
+
+]
+```
+
+- Restart the Ghost service: `sudo systemctl restart ghost.service`
+- Test it: browse to the old and new URLs, they should go to the same place.
+- You're done!
+
+---
+
+## <span id="addendummultiple"></span>Addendum: Multiple Blogs on One Server
 
 These are not step-by-step instructions but this plus the generalized instructions above should give you enough to figure out how it's done.
 
@@ -816,6 +890,62 @@ These are not step-by-step instructions but this plus the generalized instructio
 
 I believe that is all. Good luck. For reference, I have three ghost blogs that I host on one machine with no noticeable degradation in performance (small-time blogs, mind you).
 
+---
+
+## <span id="addendumlanding"></span>Addendum: Structure Your Site as a Landing Page + Blog
+
+Ghost natively likes to be a blog with all the articles listed on the front page, but what if you want to lead with a landing page that houses the blog in a separate tab? For example, maybe I am an author and I want the reader to land on a single page that then if they want to read the blog, they navigate to a separate tab and _then_ see the list of articles. You can do that with a bit of routing magic.
+
+As of this writing, [tandemfarms.ag](https://tandemfarms.ag) does just that. If you navigate to the site, it takes you to a short landing page and "Makin' Hay" the blog portion is a tab at the top that then shows you all the blog posts.
+
+The steps:
+- Create your landing page as a one of the "Pages" in the admin interface (yourdomain/ghost). For my example, the _slug_ or _Post URL_ for the page is set to "home". You can set it to whatever "welcome" or "landing-page", etc.
+- Decide the sub-folder you want your blog to live in, I decided "blog" so that the blog exists at [tandemfarms.ag/blog](https://tandemfarms.ag/blog/)
+- Log into your server and edit ghost's `routes.yaml` file:
+
+```
+# Assumptions:
+# - webroot is /var/www/ghost and
+# - the editor is vim (nano or any other editor works fine too)
+cd /var/www/ghost/content/settings
+sudo cp -a routes.yaml routes.yaml--ORIGINAL
+sudo -u ghost vim routes.yaml
+```
+- Change the contents of that file to tell ghost to use the landing page as the default thing to present to the user and that 'blog' is for the blog:
+
+```
+routes:
+  /:
+    controller: channel
+    data: page.home
+    template:
+      - home
+
+collections:
+  /blog/:
+    permalink: /blog/{slug}/
+    template:
+      - index
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/
+```
+
+- Restart the Ghost service: `sudo systemctl restart ghost.service`
+- Test:
+  - Browse to yourdomain, you should see your landing page and not your blog.
+  - Browse to yourdomain/blog and you should see your blog.
+- Finally, give your users a tab at the top to go to your blog
+  - Browse to your admin interface: yourdomain/ghost
+  - In the "Settings" section, click on "Design" and add a tab in the "Navigation" section called "Blog" with a URL of "https://yourdomain/blog" and Save.
+- Warning, any links you previously shared to your posts will be broken. To fix that you will need to remap all the old posts to the new "/blog/slug" format by editing the `redirects.json` file in your ghost webroot. See [Addendum: Redirect a Post URL](#addendumredirects) abover. You DO NOT need to change their _slug_ or _Post URL_ setting in each post setting.
+
+You're done! If you notice I reconfigured our _Tandem Farms_ website to have everything point to _tandemfarms.ag_ instead of _blog.tandemfarms.ag_. I leave it to the reader to figure out how to do that, but it will require changing several files, to include `config.production.json` (a Ghost configuration file) and `yourdomain.ghost.conf` (an Nginx configuration file). But I believe that is it! If you change those, you need to `sudo systemctl restart nginx.service ; sudo systemctl restart ghost.service`.
+
+Good luck.
+
+---
 ---
 
 <div class="reference">
