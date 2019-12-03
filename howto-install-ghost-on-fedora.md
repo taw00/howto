@@ -16,10 +16,6 @@ Deploying Ghost on Fedora Linux
 
 I looked at a whole pile of blogging options when I finally decided to go with Ghost. It checks all the boxes for what I required in a blogging platform: It's well supported, and, by the looks of it, well designed. A platform that embraces [Markdown](https://ghost.org/blog/markdown/) (a critical, must-have feature IMHO) and is easy to use and maintain. All on Linux, of course. And 100% had to be open source. Bonus! Ghost is wildly popular, so it should have some longevity. _But there was a stumbling block for me when first attempting to install the software on my favorite flavor of linux. The installation instructions for Fedora Linux were incomplete and very dated._ I fixed that with this article. Enjoy.
 
-<!--
-> _If you are reading this on another platform, [like github](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md), the catalyst for this endeavor was <https://blog.errantruminant.com>._
--->
-
 ---
 
 **This howto will walk you through:**
@@ -644,14 +640,22 @@ Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
   - Change the form title to something like "Subscribe to the Example.com Blog!"
   - Click "Condensed"
   - Copy the embedded code that mailchimp provides you.
+* Create a "partial" template in `/var/www/ghost/content/themes/casper/partials/` (or whatever theme you use)  
+  Create a file called `mailchimp.hbs` and do this:
+```
+<section class="mailchimp_stanza">
+    Stick the embedded code that MailChimp provides you here.
+</section>
+```
 * Then, edit the `post.hbs` and the `index.hbs` templates.
   - SSH into your blog server.
   - Change directory to `/var/www/ghost/content/themes/casper/` or whatever theme you are editing.
   - Backup `post.hbs` and `index.hbs` to `post.hbs--original` and `index.hbs--original` respectively.
-  - Edit the `post.hbs` file.
-  - Uncomment and edit the section that starts with `<section class="post-full-comments">` and add that embedded code that MailChimp provided you.
-  - Edit the `index.hbs` file.
-  - Copy that whole `<section class="post-full-comments">` from the the `post.hbs` and insert it into the `index.hbs` before the final `</main>` HTML element.
+  - Edit the `post.hbs` file and,  
+    Insert `{{> mailchimp_stanza }}` in right before `{{!-- <section class="post-full-comments">`
+  - Edit the `index.hbs` file and,  
+    Insert `{{> mailchimp_stanza }}` in right before `{{!-- <section class="post-full-comments">`
+  - If you use customized `index.hbs` and `post.hbs` files, of course edit those instead (customized hbs files is beyond the scope of this document).
 * Restart Ghost: `sudo systemctl restart ghost.service`
 
 You should now see an email subscription field at the bottom of each of your blog entries.
@@ -919,7 +923,7 @@ routes:
     controller: channel
     data: page.home
     template:
-      - home
+      - page
 
 collections:
   /blog/:
@@ -994,12 +998,17 @@ Ghost configuration guidance and discussion
   <https://docs.ghost.org/tutorials/implementing-redirects/>
 * Email support using Postfix (not tested):  
   <http://blog.benoitblanchon.fr/postfix-and-ghost/>
+* Understanding URLs and Dynamic Routing (`routes.yaml` and more):  
+  <https://ghost.org/docs/api/v3/handlebars-themes/routing/>
+* Understanding the theme structure and customization:  
+  <https://ghost.org/docs/api/v3/handlebars-themes/structure/>  
+  <https://ghost.org/tutorials/custom-page-templates/>
 
 This article
 
 * On Github:  
   <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
-* On blog.errantruminant.com:  
+* On blog.errantruminant.com (a Ghost-based website):  
   <https://blog.errantruminant.com/ghost-on-fedora/>
 
 </div><div style="clear: both;"></div>
