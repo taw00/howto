@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated December 3, 2019_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated December 12, 2019_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -915,6 +915,9 @@ cd /var/www/ghost/content/settings
 sudo cp -a routes.yaml routes.yaml--ORIGINAL
 sudo -u ghost vim routes.yaml
 ```
+
+> _<small>Note for the next instruction: for whatever reason, the template for that `page.home` has to be a template with `{{#post}}` and `{{/post}}` encapsulating the contents. Some `page.hbs` templates in some themes use `{{#page}}` instead (the error will present as a page with no content). Use the post template (as indicated below) or do what I did and copy the `page.hbs` to `custom-landing-page-template.hbs`, ensure everything is wrapped in `{{#post}}` and `{{/post}}`, and then indicate the change in `routes.yaml`.</small>_
+
 - Change the contents of that file to tell ghost to use the landing page as the default thing to present to the user and that 'blog' is for the blog:
 
 ```
@@ -923,7 +926,7 @@ routes:
     controller: channel
     data: page.home
     template:
-      - page
+      - post
 
 collections:
   /blog/:
