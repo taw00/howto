@@ -1,5 +1,5 @@
 <!--
-https://blog.errantruminant.com/ghost-on-fedora/
+https://errantruminant.com/ghost-on-fedora/
 https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md
 -->
 
@@ -1011,8 +1011,8 @@ This article
 
 * On Github:  
   <https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md>
-* On blog.errantruminant.com (a Ghost-based website):  
-  <https://blog.errantruminant.com/ghost-on-fedora/>
+* On errantruminant.com (a Ghost-based website):  
+  <https://errantruminant.com/ghost-on-fedora/>
 
 </div><div style="clear: both;"></div>
 </div>
