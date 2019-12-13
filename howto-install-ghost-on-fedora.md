@@ -902,23 +902,34 @@ Ghost natively likes to be a blog with all the articles listed on the front page
 
 As of this writing, [tandemfarms.ag](https://tandemfarms.ag) does just that. If you navigate to the site, it takes you to a short landing page and "Makin' Hay" the blog portion is a tab at the top that then shows you all the blog posts.
 
-The steps:
-- Create your landing page as a one of the "Pages" in the admin interface (yourdomain/ghost). For my example, the _slug_ or _Post URL_ for the page is set to "home". You can set it to whatever "welcome" or "landing-page", etc.
-- Decide the sub-folder you want your blog to live in, I decided "blog" so that the blog exists at [tandemfarms.ag/blog](https://tandemfarms.ag/blog/)
-- Log into your server and edit ghost's `routes.yaml` file:
+**The steps:**
+
+> Assumption for this example: webroot is `/var/www/ghost` and your theme is in `/var/www/ghost/content/themes/Massively_custom/`
+
+1. Create the landing page in the admin interface (yourdomain/ghost) just like you create any other post or page.
+   _For my example, the _slug_ or _Post URL_ for the page is set to "home". You can set it to whatever: "welcome" or "landing-page", etc._
+
+2. Decide the sub-folder you want your blog to live in.  
+   _yourdomain/blog/? yourdomain/journal/? (I chose /blog/ for [tandemfarms.ag/blog](https://tandemfarms.ag/blog/))._
+
+3. Log in (ssh) and create a `custom-landing-page-template.hbs`, something like this:
+```
+cd /var/www/ghost/content/themes/Massively_custom/
+sudo cp -a page.hbs custom-landing-page-template.hbs
+```
+
+4. Edit that file and change `{{#post}}` to `{{#page}}` and `{{/post}}` to `{{/page}}`  
+   _I do not know why the `page.hbs` template uses "post" context, nor do I know why it matters seemingly only in this context._
+
+5. Log into (ssh) your server and edit ghost's `routes.yaml` file:
 
 ```
-# Assumptions:
-# - webroot is /var/www/ghost and
-# - the editor is vim (nano or any other editor works fine too)
 cd /var/www/ghost/content/settings
 sudo cp -a routes.yaml routes.yaml--ORIGINAL
 sudo -u ghost vim routes.yaml
 ```
 
-> _<small>Note for the next instruction: for whatever reason, the template for that `page.home` has to be a template with `{{#post}}` and `{{/post}}` encapsulating the contents. Some `page.hbs` templates in some themes use `{{#page}}` instead (the error will present as a page with no content). Use the post template (as indicated below) or do what I did and copy the `page.hbs` to `custom-landing-page-template.hbs`, ensure everything is wrapped in `{{#post}}` and `{{/post}}`, and then indicate the change in `routes.yaml`.</small>_
-
-- Change the contents of that file to tell ghost to use the landing page as the default thing to present to the user and that 'blog' is for the blog:
+6. Configure `routes.yaml` as such, mapping your Ghost page act as a landing page and your `/blog/` becomes the blog collection of entries.
 
 ```
 routes:
@@ -926,7 +937,7 @@ routes:
     controller: channel
     data: page.home
     template:
-      - post
+      - custom-landing-page-template
 
 collections:
   /blog/:
@@ -939,18 +950,21 @@ taxonomies:
   author: /author/{slug}/
 ```
 
-- Restart the Ghost service: `sudo systemctl restart ghost.service`
-- Test:
-  - Browse to yourdomain, you should see your landing page and not your blog.
-  - Browse to yourdomain/blog and you should see your blog.
-- Finally, give your users a tab at the top to go to your blog
-  - Browse to your admin interface: yourdomain/ghost
-  - In the "Settings" section, click on "Design" and add a tab in the "Navigation" section called "Blog" with a URL of "https://yourdomain/blog" and Save.
-- Warning, any links you previously shared to your posts will be broken. To fix that you will need to remap all the old posts to the new "/blog/slug" format by editing the `redirects.json` file in your ghost webroot. See [Addendum: Redirect a Post URL](#addendumredirects) abover. You DO NOT need to change their _slug_ or _Post URL_ setting in each post setting.
+7. Restart the Ghost service: `sudo systemctl restart ghost.service`
 
-You're done! If you notice I reconfigured our _Tandem Farms_ website to have everything point to _tandemfarms.ag_ instead of _blog.tandemfarms.ag_. I leave it to the reader to figure out how to do that, but it will require changing several files, to include `config.production.json` (a Ghost configuration file) and `yourdomain.ghost.conf` (an Nginx configuration file). But I believe that is it! If you change those, you need to `sudo systemctl restart nginx.service ; sudo systemctl restart ghost.service`.
+8. Test:
+   - Browse to yourdomain, you should see your landing page and not your blog.
+   - Browse to `yourdomain/blog` and you should see your blog.
 
-Good luck.
+9. Give your users a tab at the top to go to your blog
+   - Browse to your admin interface: `yourdomain/ghost`
+   - In the "Settings" section, click on "Design" and add a tab in the "Navigation" section called "Blog" with a URL of "https://yourdomain/blog" and Save.
+
+> Warning, previously shared links to your posts (not your pages) will be broken. You can fix links with the `redirects.json` file but they have to be the same topology (see [Addendum: Redirect a Post URL](#addendumredirects) above). If the topology wildly changes, you will need to correct things in ways this writer does not yet comprehend.
+
+> You DO NOT need to change their _slug_ or _Post URL_ setting in each post setting.
+
+**You're done! Good luck.**
 
 ---
 ---
