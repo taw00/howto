@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated December 12, 2019_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated January 13, 2020_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -186,13 +186,17 @@ sudo systemctl start --now nginx.service
 Or better yet, `/etc/nginx/conf.d/example.com.ghost.conf`
 
 ```
+
+###
+### blog.example.com (SSL/TLS)
+###
+
 server {
-  # This manages blog.DOMAIN
-  listen 80;
-  listen [::]:80;
+  server_name blog.example.com;
+  #listen 80;
+  #listen [::]:80;
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
-  server_name blog.example.com;
 
   # You could set this in ../nginx.conf, but I prefer only editing
   # configuration files under the conf.d/ directory if possible.
@@ -214,8 +218,32 @@ server {
   }
 }
 
+###
+### blog.example.com (non-SSL/TLS)
+###
+
 server {
-  # This redirects www.DOMAIN and the bare DOMAIN to blog.DOMAIN
+  server_name blog.example.com;
+  listen 80;
+  listen [::]:80;
+
+  # You could set this in ../nginx.conf, but I prefer only editing
+  # configuration files under the conf.d/ directory if possible.
+  types_hash_max_size 4096;
+
+  # Set this to whatever you want
+  # But remember, smaller file sizes are generally better
+  client_max_body_size 10M;
+
+  # Send non-security calls to the secure protocol
+  return 301 https://blog.example.com$request_uri;
+}
+
+###
+### all other .example.com calls
+###
+
+server {
   listen 80;
   listen [::]:80;
   listen 443 ssl http2;
@@ -229,6 +257,8 @@ server {
   return 301 $scheme://blog.example.com$request_uri;
 }
 ```
+
+Note: If you have issues with SSL/TLS (i.e., https calls are not working), troubleshoot away, but if you need to get the site up and https is not an immediate concern, this is how you switch back: Uncomment the `listen` lines associated to port 80 and set `blog.example.com` in the server stanza that services non-ssl to something like `broken.example.com` and then restart the `nginx.service`.
 
 ### [7] Check Nginx configuration syntax:
 
@@ -788,10 +818,15 @@ Should just work: `sudo dnf upgrade -y --refresh; sudo reboot`
 
 The process is relatively simple.
 
-1. Backup -- See "[Back Everything Up](#backeverythingup)" above
+0. Backup -- See "[Back Everything Up](#backeverythingup)" above
 
 . . . Okay. You are all backed up? Good. You can now continue . . .
 
+1. Download the new tarball (to `/tmp/ghost.zip`)  
+   For reference, see "[11] Download Ghost" above. But, for your convenience:
+   ```
+   sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
+   ```
 2. Navigate to the webroot for your Ghost deployment
    ```
    cd /var/www/ghost
@@ -804,30 +839,28 @@ The process is relatively simple.
    ```
    sudo systemctl stop ghost.service
    ```
-5. Download the new tarball (to `/tmp/ghost.zip`)  
-   For reference, see "[11] Download Ghost" above. But, for your convenience:
-   ```
-   sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
-   ```
-6. Deploy new Ghost over top old  
+5. Deploy new Ghost over top old  
    For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience:
    ```
    # Unzip and refresh Ghost into the webroot
    sudo -u ghost unzip -uo /tmp/ghost.zip -d .
-   sudo rm /tmp/ghost.zip
-   
+
    # Install Ghost over top the old installation
    sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
    ```
-7. Replace overwritten config file with your convenience backup:
+6. Replace overwritten config file with your convenience backup:
    ```
    sudo mv /tmp/config.production.json ./core/server/config/env/
    ```
-8. Restart the ghost service:
+7. Restart the ghost service:
    ```
    sudo systemctl start ghost.service
    ```
-9. Browse to your domain and your domain/ghost and check that everything works correctly.
+8. Browse to your domain and your domain/ghost and check that everything works correctly.
+9. Remove the downloaded Ghost zipfile
+   ```
+   sudo rm /tmp/ghost.zip
+   ```
 
 ---
 
@@ -905,6 +938,14 @@ As of this writing, [tandemfarms.ag](https://tandemfarms.ag) does just that. If 
 **The steps:**
 
 > Assumption for this example: webroot is `/var/www/ghost` and your theme is in `/var/www/ghost/content/themes/Massively_custom/`
+
+0. Make the nginx `.conf` file manage the bare URL instead of the `blog.` URL
+
+   Create an nginx configuration file similar to the one in the above article, but instead of `blog.example.com` being the lead/default domain managed by nginx, change it to what works for you.
+
+   In my case, I switched to the bare domain. I.e., the equivalent of `example.com`. And then I handled `blog.example.com` just like any other `whatever.example.com` calls. Most subdomains you'll want to redirect to `example.com`. If you are converting a website that was a `blog.example.com`-styled website to one that is now `example.com`-styled (like I did), just create a server stanza that redirects all `blog.example.com` calls to `example.com/blog$request_uri`
+
+   This will probably take a bit of experimenting if you are new to this, but it's not that hard.
 
 1. Create the landing page in the admin interface (yourdomain/ghost) just like you create any other post or page.
    _For my example, the _slug_ or _Post URL_ for the page is set to "home". You can set it to whatever: "welcome" or "landing-page", etc._
