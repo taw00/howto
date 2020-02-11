@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated January 13, 2020_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated February 10, 2020_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -71,7 +71,7 @@ Follow the instructions for "HowTo Deploy and Configure a Minimalistic Fedora Li
 
 ### [1] Install additional packages
 
-```
+```sh
 # Stuff I like to add to most any installation of linux
 sudo dnf install vim-enhanced screen -y
 # Development-ish and app-related stuff required by Ghost
@@ -97,7 +97,7 @@ TLS certificate for your domain.
 
 Note: running certbot requires any webserver that happens to be running on your system to be stopped. If this is a fresh install of the operating system, it is unlikely that anything is running, but here's an example of stopping Nginx:
 
-```
+```sh
 sudo systemctl status nginx.service
 # If it is running, stop it!
 sudo systemctl stop nginx.service
@@ -105,7 +105,7 @@ sudo systemctl stop nginx.service
 
 In this example, we generate, fetch, and install certs for example.com, www.example.com, and blog.example.com:
 
-```
+```sh
 sudo certbot certonly --standalone --domains example.com,www.example.com,blog.example.com --email john.doe@example.com --agree-tos --rsa-key-size 2048
 ```
 
@@ -118,17 +118,17 @@ We'll use the built in systemd services to do this:
 _Edit `/etc/sysconfig/certbot`_
 
 Set the service PRE_HOOK as such:
-```
+```sh
 PRE_HOOK="--pre-hook '/usr/bin/systemctl stop nginx.service'"
 ```
 
 Set the service POST_HOOK as such:
-```
+```sh
 POST_HOOK="--post-hook '/usr/bin/systemctl start nginx.service'"
 ```
 
 _Enable and start (--now) the renewal service_
-```
+```sh
 sudo systemctl enable --now certbot-renew.timer
 ```
 
@@ -136,13 +136,13 @@ Note: If you edit and change the configuration of `/etc/sysconfig/certbot`, the 
 
 <!--
 Old way:
-```
+```sh
 sudo crontab -e
 ```
 
 Add this:
 
-```
+```sh
 30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/certbot-auto-renew.log
 35 2 * * 1 /usr/bin/systemctl reload nginx.service
 ```
@@ -160,7 +160,7 @@ Nginx relays traffic through port 2368 (in our configuration) which is the port 
 
 I was unsuccessful in getting SELinux to work in enforcing mode. Until I, or someone else, figures it out, set SELinux to permissive:
 
-```
+```sh
 # This will take immediate effect, but not survive reboot
 sudo setenforce permissive
 ```
@@ -177,7 +177,7 @@ Edit `/etc/selinux/config` and set `SELINUX=permissive`
 
 ### [5] Crank up nginx
 
-```
+```sh
 sudo systemctl start --now nginx.service
 ```
 
@@ -185,7 +185,7 @@ sudo systemctl start --now nginx.service
 
 Or better yet, `/etc/nginx/conf.d/example.com.ghost.conf`
 
-```
+```nginx
 
 ###
 ### blog.example.com (SSL/TLS)
@@ -262,23 +262,27 @@ Note: If you have issues with SSL/TLS (i.e., https calls are not working), troub
 
 ### [7] Check Nginx configuration syntax:
 
-```
+```sh
 sudo nginx -t
 ```
 
 ### [8] Reload Nginx configuration:
 
-```
+```sh
 sudo systemctl reload nginx.service
 ```
 
+&nbsp;
+
 ---
+
+&nbsp;
 
 ## <span id="ghost"></span>Install Ghost
 
 ### [9] Create a ghost user
 
-```
+```sh
 # A non-priviledged "normal" user specific for this use.
 sudo useradd -c "Ghost Application" ghost
 ```
@@ -290,7 +294,7 @@ Default webroot for Nginx is `/usr/share/nginx/html`. Note that
 to create and use our own webroot for Ghost. For this we create
 and use `/var/www/ghost`
 
-```
+```sh
 # Create docroot/webroot and set permissions
 sudo mkdir -p /var/www/ghost
 sudo chown -R ghost:ghost /var/www/ghost
@@ -300,13 +304,13 @@ sudo chmod 775 /var/www/ghost
 ### [11] Download Ghost
 
 <!--
-```
+```sh
 # For a specific version, do something like this:
 curl -L https://github.com/TryGhost/Ghost/releases/download/2.23.4/Ghost-2.23.4.zip -o ghost.zip
 ```
 -->
 
-```
+```sh
 sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
 # Note: Downloading to /tmp/ so that any user has permissions to it
 
@@ -316,14 +320,14 @@ sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/rel
 
 ### [12] Unzip/Refresh Ghost application
 
-```
+```sh
 sudo -u ghost unzip -uo /tmp/ghost.zip -d /var/www/ghost
 sudo rm /tmp/ghost.zip
 ```
 
 ### [13] Install Ghost
 
-```
+```sh
 # Navigate to the webroot and install
 cd /var/www/ghost
 sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
@@ -333,7 +337,7 @@ sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
 
 You'll be editing `config.production.json`.
 
-```
+```sh
 # Navigate to the correct directory
 cd core/server/config/env/
 
@@ -341,14 +345,14 @@ cd core/server/config/env/
 sudo cp -a config.production.json config.production.json--ORIGINAL
 ```
 
-```
+```sh
 # Edit the configation file
 sudo -u ghost vim config.production.json
 ```
 
 Replace the contents with something that looks like this (using your specific information). Then save and exit:
 
-```
+```json
 {
   "url" : "https://blog.example.com",
   "server": {
@@ -389,14 +393,14 @@ Replace the contents with something that looks like this (using your specific in
 
 ### [15] Start Ghost (initial testing)
 
-```
+```sh
 # Remember, we are doing this as the ghost user
 cd /var/www/ghost ; sudo -u ghost NODE_ENV=production node index.js
 #cd /var/www/ghost ; sudo -u ghost npm start --production
 ```
 
 <!---
-```
+```sh
 cd /var/www/ghost ; sudo -u ghost NODE_ENV=production node index.js >> /var/www/ghost/content/logs/ghost.log
 #cd /var/www/ghost ; sudo -u ghost npm start --production >> /var/www/ghost/content/logs/ghost.log
 ```
@@ -413,13 +417,13 @@ Once satisfied, shut it down with `^C` in the window that you are using to run g
 
 Edit the systemd `ghost.service` (as root):
 
-```
+```sh
 sudo vim /etc/systemd/system/ghost.service
 ```
 
 Add this, save, and exit:
 
-```
+```ini
 [Unit]
 Description=ghost
 After=network.target
@@ -440,7 +444,7 @@ WantedBy=multi-user.target
 
 ### [18] Crank up that Ghost service!
 
-```
+```sh
 # You are still your normal working user
 sudo systemctl daemon-reload
 sudo systemctl start ghost.service
@@ -475,7 +479,7 @@ More themes, but none of which are free:
 * https://themeix.com/product-category/ghost-themes/
 
 **Example:**
-```
+```sh
 sudo su - ghost
 cd /var/www/ghost/content/themes
 git clone https://github.com/TryGhost/Massively
@@ -488,7 +492,7 @@ Then browse to <https://blog.example.com/ghost> --> Design --> scroll down to "m
 
 Log in as your normal linux user (not root, not ghost):
 
-```
+```sh
 sudo systemctl status ghost.service
 sudo journalctl -u ghost.service -f
 sudo -u ghost tail -f /var/www/ghost/content/logs/https___blog_example_com.production.log
@@ -507,7 +511,7 @@ sudo tail -f /var/log/nginx/access.log
 Your blog needs to be able to email people. Forgot your password? Invites to admins? Etc.
 
 ### [22] Install sSMTP
-```
+```sh
 sudo dnf install ssmtp mailx -y
 ```
 
@@ -525,13 +529,13 @@ They should also list the TLS requirements. Probably TLS and port 587.
 
 **Tell the OS which MTA you are going to be using:**
 
-```
+```sh
 sudo alternatives --config mta
 ```
 
 It will look something like this, select sSMTP with the right number and exit:
 
-```
+```text
 There are 3 programs which provide 'mta'.
 
   Selection    Command
@@ -562,7 +566,7 @@ Configuring sSMTP is pretty easy, and a bit more obvious than ther MTA, like for
 
 Change these settings, or add if they are missing:
 
-```
+```ini
 Debug=YES                                    # For now, stick that at the very top of the config file
 MailHub=mail.gandi.net:587                   # SMTP server hostname and port
 RewriteDomain=example.com                    # The host the mail appears to be coming from
@@ -596,7 +600,7 @@ ghost:noreply@example.com:mail.gandi.net:587
 
 **Monitor it**
 
-```
+```sh
 # Either one of these methods should work for you
 sudo tail -f /var/log/maillog
 #sudo journalctl -f | grep -i ssmtp
@@ -606,20 +610,20 @@ sudo tail -f /var/log/maillog
 
 Do this as root or ghost user:
 
-```
+```sh
 sudo su - ghost
 echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r noreply@example.com someones-email-address@gmail.com
 ```
 
 ### [25] Edit config.production.json
 
-```
+```sh
 sudo -u ghost vim /var/www/ghost/core/server/config/env/config.production.json
 ```
 
 Change the `"mail"` stanza to look something like this:
 
-```
+```json
   "mail": {
     "from": "'Example Blog' <noreply@example.com>",
     "transport": "sendmail",
@@ -641,7 +645,7 @@ Change the `"mail"` stanza to look something like this:
 
 ### [26] Restart Ghost and Test
 
-```
+```sh
 sudo systemctl restart ghost.service
 sudo systemctl status ghost.service
 ```
@@ -650,7 +654,7 @@ Navigate to the admin screens, click Staff, and invite someone (I invited myself
 
 Copy that production config to backup now.
 
-```
+```sh
 sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
 ```
 
@@ -672,7 +676,7 @@ Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
   - Copy the embedded code that mailchimp provides you.
 * Create a "partial" template in `/var/www/ghost/content/themes/casper/partials/` (or whatever theme you use)  
   Create a file called `mailchimp.hbs` and do this:
-```
+```xml
 <section class="mailchimp_stanza">
     Stick the embedded code that MailChimp provides you here.
 </section>
@@ -708,7 +712,7 @@ You did all this work! You gotta back everything up now. :)
 
 Log in as your normal working user. Not root. Not ghost. Create a back script and copy to a safe place. Edit `vim backup-ghost_blog.example.com.sh` add this and save it.
 
-```
+```sh
 #!/usr/bin/bash
 
 URL=blog.example.com
@@ -789,7 +793,7 @@ ls -lh ./ghost-backup-${URL}-${DATE_YMD}.tar.gz
 
 Save that script, then run it:
 
-```
+```sh
 . ./backup-ghost_blog.example.com.sh
 ```
 
@@ -824,24 +828,24 @@ The process is relatively simple.
 
 1. Download the new tarball (to `/tmp/ghost.zip`)  
    For reference, see "[11] Download Ghost" above. But, for your convenience:
-   ```
+   ```sh
    sudo -u ghost curl -L $(curl -sL https://api.github.com/repos/TryGhost/Ghost/releases/latest | jq -r '.assets[].browser_download_url') -o /tmp/ghost.zip
    ```
 2. Navigate to the webroot for your Ghost deployment
-   ```
+   ```sh
    cd /var/www/ghost
    ```
 3. Make a convenience backup of your Ghost configuration file:  
-   ```
+   ```sh
    sudo cp -a ./core/server/config/env/config.production.json /tmp/
    ```
 4. Shut down the ghost service:
-   ```
+   ```sh
    sudo systemctl stop ghost.service
    ```
 5. Deploy new Ghost over top old  
    For reference, see "[Unzip/Refresh Ghost application](#12unziprefreshghostapplication)" and "[Install Ghost](#13installghost)" above. But, for your convenience:
-   ```
+   ```sh
    # Unzip and refresh Ghost into the webroot
    sudo -u ghost unzip -uo /tmp/ghost.zip -d .
 
@@ -849,16 +853,16 @@ The process is relatively simple.
    sudo -u ghost npm install --production ; sudo -u ghost npm audit fix
    ```
 6. Replace overwritten config file with your convenience backup:
-   ```
+   ```sh
    sudo mv /tmp/config.production.json ./core/server/config/env/
    ```
 7. Restart the ghost service:
-   ```
+   ```sh
    sudo systemctl start ghost.service
    ```
 8. Browse to your domain and your domain/ghost and check that everything works correctly.
 9. Remove the downloaded Ghost zipfile
-   ```
+   ```sh
    sudo rm /tmp/ghost.zip
    ```
 
@@ -873,7 +877,7 @@ Problem: Changing the _slug_ or _Post URL_ to "pets" instead of "cats-and-dogs" 
 Solution: Tell Ghost to redirect those old URLs to the new URL
 - Edit Ghost's `redirects.json` file:
 
-```
+```sh
 # Assumptions:
 # - webroot is /var/www/ghost and
 # - the editor is vim (nano or any other editor works fine too)
@@ -886,7 +890,7 @@ sudo -u ghost vim redirects.json
   (_Warning: watch those commas, one too many or too few leads to failure._)
 
 
-```
+```json
 [
 
 {
@@ -954,42 +958,42 @@ As of this writing, [tandemfarms.ag](https://tandemfarms.ag) does just that. If 
    _yourdomain/blog/? yourdomain/journal/? (I chose /blog/ for [tandemfarms.ag/blog](https://tandemfarms.ag/blog/))._
 
 3. Log in (ssh) and create a `custom-landing-page-template.hbs`, something like this:
-```
-cd /var/www/ghost/content/themes/Massively_custom/
-sudo cp -a page.hbs custom-landing-page-template.hbs
-```
+   ```sh
+   cd /var/www/ghost/content/themes/Massively_custom/
+   sudo cp -a page.hbs custom-landing-page-template.hbs
+   ```
 
 4. Edit that file and change `{{#post}}` to `{{#page}}` and `{{/post}}` to `{{/page}}`  
    _I do not know why the `page.hbs` template uses "post" context, nor do I know why it matters seemingly only in this context._
 
 5. Log into (ssh) your server and edit ghost's `routes.yaml` file:
 
-```
-cd /var/www/ghost/content/settings
-sudo cp -a routes.yaml routes.yaml--ORIGINAL
-sudo -u ghost vim routes.yaml
-```
+   ```sh
+   cd /var/www/ghost/content/settings
+   sudo cp -a routes.yaml routes.yaml--ORIGINAL
+   sudo -u ghost vim routes.yaml
+   ```
 
 6. Configure `routes.yaml` as such, mapping your Ghost page act as a landing page and your `/blog/` becomes the blog collection of entries.
 
-```
-routes:
-  /:
-    controller: channel
-    data: page.home
-    template:
-      - custom-landing-page-template
+   ```yaml
+   routes:
+     /:
+       controller: channel
+       data: page.home
+       template:
+         - custom-landing-page-template
 
-collections:
-  /blog/:
-    permalink: /blog/{slug}/
-    template:
-      - index
+   collections:
+     /blog/:
+       permalink: /blog/{slug}/
+       template:
+         - index
 
-taxonomies:
-  tag: /tag/{slug}/
-  author: /author/{slug}/
-```
+   taxonomies:
+     tag: /tag/{slug}/
+     author: /author/{slug}/
+   ```
 
 7. Restart the Ghost service: `sudo systemctl restart ghost.service`
 
