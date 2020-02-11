@@ -61,11 +61,7 @@ I looked at a whole pile of blogging options when I finally decided to go with G
 
 </div>
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="server"></span>Install the server
 
@@ -154,11 +150,7 @@ Add this:
 Save that and exit.
 -->
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="nginx"></span>Configure Nginx
 
@@ -280,11 +272,7 @@ sudo nginx -t
 sudo systemctl reload nginx.service
 ```
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="ghost"></span>Install Ghost
 
@@ -462,11 +450,7 @@ sudo systemctl enable ghost.service
 
 Test it again.
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="postghost"></span>Post install configuration of Ghost
 
@@ -516,11 +500,7 @@ sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/nginx/access.log
 ```
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="postghostemail"></span>Configured email support
 
@@ -720,11 +700,7 @@ I leave this to the reader to figure out. I don't currently enable commenting on
   - https://zapier.com/apps/ghost/integrations/pocket
 * Check out the Ghost Forums: https://forum.ghost.org/c/themes
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="postghostbackup"></span>Back everything up
 
@@ -819,11 +795,7 @@ Save that script, then run it:
 
 Then save it somewhere. I `scp` the file to my desktop and then save it to my Keybase filesystem (along with all my backups of everything, by the way). But anywhere inaccessible to the public is fine.
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## Congratulations! YOU'RE DONE!
 
@@ -831,12 +803,8 @@ Or you  at least done with the initial setup. You now have an end-to-end functio
 
 Any questions or commentary, you can find me at <https://keybase.io/toddwarner>
 
-&nbsp;
-
 ---
 ---
-
-&nbsp;
 
 <span id="addenda"></span>
 
@@ -894,11 +862,7 @@ The process is relatively simple.
    sudo rm /tmp/ghost.zip
    ```
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="addendumredirects"></span>Addendum: Redirect a Post URL
 
@@ -944,11 +908,7 @@ sudo -u ghost vim redirects.json
 - Test it: browse to the old and new URLs, they should go to the same place.
 - You're done!
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="addendummultiple"></span>Addendum: Multiple Blogs on One Server
 
@@ -967,11 +927,7 @@ These are not step-by-step instructions but this plus the generalized instructio
 
 I believe that is all. Good luck. For reference, I have three ghost blogs that I host on one machine with no noticeable degradation in performance (small-time blogs, mind you).
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 ## <span id="addendumlanding"></span>Addendum: Structure Your Site as a Landing Page + Blog
 
@@ -1051,12 +1007,8 @@ As of this writing, [tandemfarms.ag](https://tandemfarms.ag) does just that. If 
 
 **You're done! Good luck.**
 
-&nbsp;
-
 ---
 ---
-
-&nbsp;
 
 <div class="reference">
 
@@ -1120,11 +1072,7 @@ This article
 </div><div style="clear: both;"></div>
 </div>
 
-&nbsp;
-
 ---
-
-&nbsp;
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
