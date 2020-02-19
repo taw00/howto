@@ -43,7 +43,6 @@ Other
   - What's my network device name?
   - Port Introspection
   - Checking a GnuPG public key file for it's signature
-  - 
 
 Other other!
 * [Minuses, Hyphens and Dashes. Oh, My!](https://github.com/taw00/howto/blob/master/howto-dashes.md)
