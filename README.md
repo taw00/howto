@@ -37,7 +37,13 @@ Other
 * [Configure "send-only" Email via SMTP Relay](https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md)
 * [Run an Application from a USB drive on Linux](https://github.com/taw00/howto/blob/master/howto-run-an-application-from-a-usb-drive-on-linux.md)
 * [Enforce a base script is "sourced" or "executed"](https://github.com/taw00/howto/blob/master/howto-enforce-bash-script-is-sourced-or-executed.md)
-* [HowTo do Miscellaneous Things (a grabbag)](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
+* [How to do Miscellaneous Things (a grabbag)](https://github.com/taw00/howto/blob/master/howto-miscellaneous-useful-things.md)
+  - What's my external IP address?
+  - What's my MAC address?
+  - What's my network device name?
+  - Port Introspection
+  - Checking a GnuPG public key file for it's signature
+  - 
 
 Other other!
 * [Minuses, Hyphens and Dashes. Oh, My!](https://github.com/taw00/howto/blob/master/howto-dashes.md)

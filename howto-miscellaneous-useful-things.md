@@ -68,7 +68,7 @@ ip addr show | grep -w inet6 | grep -v ::1 | awk '{print $2}' | cut -d"/" -f1
 ---
 
 
-## What's my MAC address?
+## HowTo: What's my MAC address?
 
 ```
 ifconfig | grep -w ether | awk '{print $2}'
@@ -78,7 +78,7 @@ ip addr show | grep -w ether | awk '{print $2}'
 ---
 
 
-## What's my network device name?
+## HowTo: What's my network device name?
 
 ```
 ip addr show | grep -w inet | grep -v 127.0.0.1 | awk '{print $NF}'
@@ -119,7 +119,7 @@ Note, that is particularly useful for just about any port number. Remove the "wa
 netstat -ntu | grep :443 | grep -v LISTEN | awk '{print $5}' | cut -d: -f1 | grep -v 127.0.0.1 | wc -l
 ```
 
-## Checking a GnuPG public key file for it's signature
+## HowTo: Checking a GnuPG public key file for it's signature
 
 If you are delivered a public key and someone says _"It's signature should be `F4ED 2CDD 2BB3 A9DD BEAA DE73 4D01 7B90 4F38 BDE2`"_ you want to be able to check. Ideally before importing it.
 
