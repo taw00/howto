@@ -14,7 +14,9 @@ General deployment (ties together many of these howtos)
 Specific applications
 * [Deploying Ghost on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md)
 * [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
-* [Install Turtl Secure Notebook on Fedora Linux (desktop and server)](https://github.com/taw00/turtl-rpm)
+* [Install the Joplin secure notebook management application](https://github.com/taw00/joplin-rpm) on the Fedora, OpenSUSE, and CentOS Linux Desktop
+* [Install the Element secure group chat application](https://github.com/taw00/element-rpm) on the Fedora, OpenSUSE, and CentOS Linux Desktop
+* Backup your linux machine using the [Rsync Time Backup (rtb)](https://github.com/taw00/rtb-rpm) command line utility
 
 Networking and Access
 * [Configure FirewallD for Linux (laptop and server)](https://github.com/taw00/howto/blob/master/howto-configure-firewalld.md)
