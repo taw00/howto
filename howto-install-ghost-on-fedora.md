@@ -517,7 +517,7 @@ mailx is only used to test things more directly. It's not critical for the appli
 
 Something like `noreply@example.com` and set a password. I use Lastpass to generate passwords.
 
-Find our what the name of the smtp hostname is for your domain provider. For example, with gandi.net, it's mail.gandi.net.
+Find out what the name of the smtp hostname is for your domain provider. For example, with gandi.net, it's mail.gandi.net.
 
 They should also list the TLS requirements. Probably TLS and port 587.
 
