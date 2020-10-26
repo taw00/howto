@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated February 10, 2020_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated October 25, 2020_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -35,8 +35,9 @@ I looked at a whole pile of blogging options when I finally decided to go with G
   - Setting up Ghost to be managed by systemd  
     _. . . and not pm2 or screen or some other less reliable mechanism_
   - Some troubleshooting guidance
-* [Setting up email support on the system](#postghostemail)
-  - Setting up subscription management via MailChimp
+* [Email support configuration](#postghostemail)
+  - Set up system-level email support
+  - Set up email subscriptions via MailChimp
 * [Backing everything up](#postghostbackup)
 * [Addenda](#addenda) include:
   - [Updates and upgrades](#addendumupgrade)
@@ -502,18 +503,22 @@ sudo tail -f /var/log/nginx/access.log
 
 ---
 
-## <span id="postghostemail"></span>Configured email support
+## <span id="postghostemail"></span>Configure email support
 
-Your blog needs to be able to email people. Forgot your password? Invites to admins? Etc.
+Your blog needs to be able to email people in two different ways.
+1. At the system level: admins, editors, etc. Forgotten passwords. Invites. Etc.
+2. A managed mailing list: Subscription feed service (MailChimp) for readers of your website and blog.
 
-### [22] Install sSMTP
+First, let's tackle things at the system level . . .
+
+### [22] System-level email: Install sSMTP
 ```sh
 sudo dnf install ssmtp mailx -y
 ```
 
 mailx is only used to test things more directly. It's not critical for the application. For more discussion on this topic, fee free to visit my related host: <https://github.com/taw00/howto/blob/master/howto-configure-send-only-email-via-smtp-relay.md> (Method 2 is the most apropos).
 
-### [23] Set up an email account with your domain provider
+### [23] System-level email: Set up an email account with your domain provider
 
 Something like `noreply@example.com` and set a password. I use Lastpass to generate passwords.
 
@@ -521,7 +526,7 @@ Find out what the name of the smtp hostname is for your domain provider. For exa
 
 They should also list the TLS requirements. Probably TLS and port 587.
 
-### [24] Configure sSMTP
+### [24] System-level email: Configure sSMTP
 
 **Tell the OS which MTA you are going to be using:**
 
@@ -611,7 +616,7 @@ sudo su - ghost
 echo "This is the body of the email. Test. Test. Test." | mail -s "Direct email test 01" -r noreply@example.com someones-email-address@gmail.com
 ```
 
-### [25] Edit config.production.json
+### [25] System-level email: Edit config.production.json
 
 ```sh
 sudo -u ghost vim /var/www/ghost/core/server/config/env/config.production.json
@@ -639,7 +644,7 @@ Change the `"mail"` stanza to look something like this:
 > backup of this file. Future updates tend to overwrite it:
 > `cp -a config.production.json config.production.json--backup`
 
-### [26] Restart Ghost and Test
+### [26] System-level email: Restart Ghost and Test
 
 ```sh
 sudo systemctl restart ghost.service
@@ -654,9 +659,9 @@ Copy that production config to backup now.
 sudo cp -a /var/www/ghost/core/server/config/env/config.production.json /var/www/ghost/core/server/config/env/config.production.json--BACKUP
 ```
 
-### [27] Email subscriptions
+### [27] Mailing list services: Email subscriptions via MailChimp
 
-You can use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like it simple, so I just use MailChimp directly, for that:
+Automate sending notifications to a mailing list of subscribers for every blog post you write. Integrating Ghost with MailChimp makes this relatively easy. You could use [Ghost's built in email subscriptions](https://docs.ghost.org/faq/enable-subscribers-feature/) + Zapier + Mailchimp, but I like to keep things simple. I just use MailChimp directly:
 
 Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
 * Create a [MailChimp](https://mailchimp.com/) account.
@@ -670,29 +675,29 @@ Direct [Mailchimp integration](https://docs.ghost.org/integrations/mailchimp/)
   - Change the form title to something like "Subscribe to the Example.com Blog!"
   - Click "Condensed"
   - Copy the embedded code that mailchimp provides you.
-* Create a "partial" template in `/var/www/ghost/content/themes/casper/partials/` (or whatever theme you use)  
-  Create a file called `mailchimp.hbs` and do this:
+* Create a "partial" template in `/var/www/ghost/content/themes/casper/partials/` (or for whatever theme you use, I prefer Massively over Casper)  
+  Create a file called `custom_mailchimp.hbs` and do this:
 ```xml
-<section class="mailchimp_stanza">
+<section class="post-mailchimp">
     Stick the embedded code that MailChimp provides you here.
 </section>
 ```
 * Then, edit the `post.hbs` and the `index.hbs` templates.
   - SSH into your blog server.
-  - Change directory to `/var/www/ghost/content/themes/casper/` or whatever theme you are editing.
+  - Change directory to `/var/www/ghost/content/themes/casper/` or whatever directory your them lives is.
   - Backup `post.hbs` and `index.hbs` to `post.hbs--original` and `index.hbs--original` respectively.
   - Edit the `post.hbs` file and,  
-    Insert `{{> mailchimp_stanza }}` in right before `{{!-- <section class="post-full-comments">`
+    Insert `{{> custom_mailchimp }}` right before `{{!-- <section class="post-full-comments">`
   - Edit the `index.hbs` file and,  
-    Insert `{{> mailchimp_stanza }}` in right before `{{!-- <section class="post-full-comments">`
+    Insert `{{> custom_mailchimp }}` right before `{{!-- <section class="post-full-comments">`
   - If you use customized `index.hbs` and `post.hbs` files, of course edit those instead (customized hbs files is beyond the scope of this document).
 * Restart Ghost: `sudo systemctl restart ghost.service`
 
 You should now see an email subscription field at the bottom of each of your blog entries.
 
-### [28] Disqus commenting functionality and other integrations
+### [28] Commenting services: Disqus commenting functionality and other integrations
 
-I leave this to the reader to figure out. I don't currently enable commenting on my blog.
+This isn't really "email" but it is a communication pathway for the consumers of your blog and website. I leave this to the reader to figure out. I don't currently enable commenting on my blog, and thus I haven't really researched this.
 
 * https://docs.ghost.org/integrations/disqus/
 * Integrate stuff. For example:
