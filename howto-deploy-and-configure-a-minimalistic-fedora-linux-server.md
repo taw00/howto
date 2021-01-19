@@ -106,15 +106,18 @@ Install a few vitals and then update everything
 As `root`...
 
 ```
-# If Fedora...
+# If Fedora or CentOS8+...
 dnf install -y vim-enhanced findutils screen
 dnf upgrade -y
-
+```
+<!--
+```
 # If CentOS7 or RHEL7...
 #yum install -y epel-release
 #yum install -y vim-enhanced findutils screen
 #yum update -y
 ```
+-->
 
 ## [2] Add swap space to give your system memory some elbow room...
 
@@ -206,12 +209,16 @@ As root...
 **Install**
 
 ```
-# If Fedora...
+# If Fedora or CentOS8+...
 dnf install -y firewalld
+```
 
+<!--
+```
 # If CentOS7 or RHEL7...
 #yum install -y firewalld
 ```
+-->
 
 
 **Configure**
@@ -281,13 +288,18 @@ See also: <https://github.com/taw00/howto/blob/master/howto-configure-fail2ban.m
 As root...
 
 ```
-# If Fedora...
+# If Fedora or CentOS8+...
 dnf install -y fail2ban fail2ban-systemd
+```
 
+<!--
+```
 # If CentOS or RHEL
 #yum install epel-release # if not already installed
 #yum install -y fail2ban fail2ban-systemd
+-->
 
+```
 # If Debian or Ubuntu
 #apt install -y fail2ban
 ```
@@ -296,12 +308,17 @@ If you are not using FirewallD, and instead are using IPTables for your
 firewall, uninstall fail2ban-firewalld (for the Red Hat-based systems only).
 
 ```
-# If Fedora...
+# If Fedora or CentOS8+...
 dnf remove -y fail2ban-firewalld
+```
+
+<!--
+```
 
 # If CentOS or RHEL
 #yum remove -y fail2ban-firewalld
 ```
+-->
 
 **Configure `fail2ban`...**
 
