@@ -10,7 +10,7 @@ Deploying Ghost on Fedora Linux
 
 ![ghost-fedora-logo.png](appurtenances/ghost-fedora-logo.png)
 
-<span class="pubdate">_Published June 12, 2019 || Updated October 25, 2020_</span>
+<span class="pubdate">_Published June 12, 2019 || Updated May 3, 2021_</span>
 
 [Ghost](https://ghost.org/) is a blogging platform. One of the most popular and widely deployed. It's open source (MIT License) and written in JavaScript. It's designed to be beautiful, modern, and relatively simple to use by individual bloggers as well as online publications.
 
@@ -77,7 +77,7 @@ Follow the instructions for "HowTo Deploy and Configure a Minimalistic Fedora Li
 sudo dnf install vim-enhanced screen -y
 # Development-ish and app-related stuff required by Ghost
 # and this installation process
-sudo dnf install nginx nodejs node-gyp make certbot git curl -y
+sudo dnf install nginx nodejs node-gyp gcc-c++ make certbot git curl -y
 ```
 
 ### [2] Purchase a domain name and configure DNS at your registrar
