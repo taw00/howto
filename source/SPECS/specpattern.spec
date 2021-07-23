@@ -373,15 +373,15 @@ cd %{sourcetree}
 #   _sharedstatedir is /var/lib
 #   _prefix or _usr = /usr
 #   _libdir = /usr/lib or /usr/lib64 (depending on system)
-# This is used to quiet rpmlint who can't seem to understand that /usr/lib is
-# still used for certain things.
+# The _rawlib define is used to quiet rpmlint who can't seem to understand
+# that /usr/lib is still used for certain things.
 %define _rawlib lib
 %define _usr_lib /usr/%{_rawlib}
-# These three are already defined in newer versions of RPM, but not in el7
-%if 0%{?rhel} && 0%{?rhel} < 8
-%define _tmpfilesdir %{_usr_lib}/tmpfiles.d
 %define _unitdir %{_usr_lib}/systemd/system
-%define _metainfodir %{_datadir}/metainfo
+# These two are already defined in newer versions of RPM, but not in el7
+%if 0%{?rhel} && 0%{?rhel} < 8
+  %define _tmpfilesdir %{_usr_lib}/tmpfiles.d
+  %define _metainfodir %{_datadir}/metainfo
 %endif
 
 
