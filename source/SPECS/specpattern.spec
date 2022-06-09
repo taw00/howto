@@ -114,7 +114,7 @@ Version: %{vermajor}.%{verminor}
 %if %{targetIsProduction}
   %define _pkgrel 1
 %else
-  %define _pkgrel 0.13
+  %define _pkgrel 0.14
 %endif
 
 # MINORBUMP - can edit
@@ -377,10 +377,14 @@ cd %{sourcetree}
 # that /usr/lib is still used for certain things.
 %define _rawlib lib
 %define _usr_lib /usr/%{_rawlib}
-%define _unitdir %{_usr_lib}/systemd/system
-# These two are already defined in newer versions of RPM, but not in el7
-%if 0%{?rhel} && 0%{?rhel} < 8
+# These three are defined in some versions of RPM and not in others.
+%if ! 0%{?_unitdir:1}
+  %define _unitdir %{_usr_lib}/systemd/system
+%endif
+%if ! 0%{?_tmpfilesdir:1}
   %define _tmpfilesdir %{_usr_lib}/tmpfiles.d
+%endif
+%if ! 0%{?_metainfodir:1}
   %define _metainfodir %{_datadir}/metainfo
 %endif
 
@@ -660,6 +664,9 @@ umask 007
 
 
 %changelog
+* Fri Jul 23 2021 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.14.testing.taw
+  - genericized the rpm-version-specific macros
+
 * Wed Mar 27 2019 Todd Warner <t0dd_at_protonmail.com> 1.0.1-0.13.testing.taw
   - added os versioning examples
   - cleaned up some things in the specfile as well
