@@ -3,6 +3,8 @@ https://errantruminant.com/ghost-on-fedora/
 https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md
 -->
 
+> UPDATE 2022-06-08: As of Ghost v5, these instructions will fail. If and until I update this document, all I can do is suggest to work with everything but the Ghost installation part here and then try to work with these (incomplete, IMHO) documents: https://ghost.org/docs/install/local/
+
 Deploying Ghost on Fedora Linux
 ===============================
 
