@@ -16,13 +16,13 @@ Working with cron is this process:<br />
 Changes do not take effect until after you exit the editor.
 
 You edit your personal crontab configuration file with a specially built
-workflow process. To edit with, open up a terminal and type `contab -e`. Then you make your changes and
+workflow process. To edit with, open up a terminal and type `crontab -e`. Then you make your changes and
 save+exit.
 
 > Note: crontab usually uses `vi` as its editor, or whatever the EDITOR
 > environment variable is set to. If you don't like the default choice, use a
 > different one with, for example, `EDITOR=vim crontab -e` or `EDITOR=gedit crontab -e` or
-> `EDITOR=nano crontab -e` or whatever.
+> `EDITOR=nano crontab -e` or `EDITOR=micro crontab -e` or whatever.
 
 ## The basics of each line (scheduled job) in crontab
 
