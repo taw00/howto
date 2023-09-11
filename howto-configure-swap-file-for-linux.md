@@ -72,14 +72,14 @@ I will show you how to implement a couple options...
 # As root...
 sudo su -
 
-# Full path to your swapfile.
+# Full path to your swap file.
 swapfile=/swapfile
 
 # Multiple (how many times the size of RAM?)...
 m=2
 ```
 
-### Now, we prep the swapfile - BTRFS version
+### Prep the swap file - BTRFS version
 
 There's a different process if the root filesystem is BTRFS or if it is EXT4. Check with `cat /etc/fstab`
 
@@ -88,7 +88,8 @@ Read more about that here:
 <https://superuser.com/questions/1067150/how-to-create-swapfile-on-ssd-disk-with-btrfs>
 
 ```
-# Create the file, soon to become a swapfile
+# BTRFS version of swap file prep
+# Create the file, soon to become a swap file
 rm $swapfile
 touch $swapfile
 
@@ -113,25 +114,27 @@ nice -n 19 dd if=/dev/zero of=$swapfile bs=$bs count=$count
 ls -lh $swapfile
 ```
 
-### Now, we prep the swapfile - EXT4 version
+### Prep the swap file - EXT4 version
 
 Things are simpler and way faster with an ext4 filesystem.
 
 ```
+# EXT4 version of swap file prep
 # Size, in bytes
 size=$(free -b|grep Mem|awk '{print $2}')
 size=$(($size*$m))
 size=$(printf "%.0f\n" $size)
 
-# Create the swapfile...
+# Create the swap file...
 fallocate -l $size $swapfile
 ls -lh $swapfile
 ```
 
-### Make it a swap file, turn it on, and add it to /etc/fstab
+### All filesystems<br />Make it a swap file, turn it on, and add it to /etc/fstab
 
 ```
-# Make it a swapfile (has to have 0600 perms):
+# All filesystem types
+# Make it a swap file (has to have 0600 perms):
 chmod 0600 $swapfile
 mkswap $swapfile
 ls -lh $swapfile
@@ -161,7 +164,7 @@ size=$(free -b|grep Mem|awk '{print $2}')
 size=$(echo "$size * $m" | bc)
 size=$(printf "%.0f\n" $size)
 
-# Create the swapfile...
+# Create the swap file...
 fallocate -l $size /swapfile
 chmod 0600 /swapfile
 mkswap /swapfile
@@ -188,7 +191,7 @@ sudo su -
 #bs=1536 # 1.5 times the size of RAM (1024   * 1.5)
 bs=2048 # Twice the size of RAM (1024 * 2) - recommended if in doubt
 
-# Create a swapfile - it can take a bit to finish - be patient
+# Create a swap file - it can take a bit to finish - be patient
 TOTAL_MEM=$(free -k|grep Mem|awk '{print $2}')
 dd if=/dev/zero of=/swapfile bs=$bs count=$TOTAL_MEM
 chmod 0600 /swapfile
