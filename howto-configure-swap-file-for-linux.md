@@ -56,7 +56,7 @@ I.e., how big of a swap file to I create?
 
 Here's the general advice:
 
-* Do you have far too little RAM? Buy more RAM
+* Do you have far too little RAM? Buy more RAM (challenging if a laptop, I know)
 * Do you have a relative small amount of RAM? A swap file sized 2x RAM should
   be sufficient.
 * Do you have an overwelming large amount of RAM? 1x RAM or even less is
@@ -67,8 +67,94 @@ I will show you how to implement a couple options...
 
 ## Creating a swap file and enabling it is easy:
 
-<!-- NEW WAY -->
+<!-- NEW NEW WAY -->
 ```
+# As root...
+sudo su -
+
+# Full path to your swapfile.
+swapfile=/swapfile
+
+# Multiple (how many times the size of RAM?)...
+m=2
+
+##
+######## Prep the swapfile ########
+##
+
+###
+### STEPS IF / IS A BTRFS FILE SYSTEM
+### (can check via by looking at your /etc/fstab file)
+###
+### You have to jump through some hoops to set up a swapfile
+### on a BTRFS filesystem. This also takes some time.
+###
+### Read more here: https://superuser.com/questions/1067150/how-to-create-swapfile-on-ssd-disk-with-btrfs
+###
+
+# Create the file, soon to become a swapfile
+rm $swapfile
+touch $swapfile
+
+# To satisfy BTRFS's demand that it NOT be copy-on-write
+lsattr $swapfile
+# ... should look something like:
+#     ---------------------- /swapfile
+chattr +C $swapfile
+lsattr $swapfile
+# ... should now look something like:
+#     ---------------C------ /swapfile
+
+# Do some math and fill that file with nothing but zeros ...
+bs=1024
+size=$(free -b|grep Mem|awk '{print $2}')
+size=$(($size*$m))
+count=$(($size/$bs))
+# ... now fill it (this *will* take some time and bog down your computer)
+#     (that nice setting of 19 will *help* not thrash your machine, but this
+#      is a heavy I/O process, so go take a nap or something)
+nice -n 19 dd if=/dev/zero of=$swapfile bs=$bs count=$count
+ls -lh $swapfile
+
+###
+### STEPS IF / IS A EXT4 FILE SYSTEM
+### (can check via by looking at your /etc/fstab file)
+###
+### Things are simpler and way faster with an ext4 filesystem.
+###
+
+# Size, in bytes
+size=$(free -b|grep Mem|awk '{print $2}')
+size=$(($size*$m))
+size=$(printf "%.0f\n" $size)
+
+# Create the swapfile...
+fallocate -l $size $swapfile
+ls -lh $swapfile
+
+##
+######## Make it a swapfile, and turn it on ########
+##
+
+# Make it a swapfile (has to have 0600 perms):
+chmod 0600 $swapfile
+mkswap $swapfile
+ls -lh $swapfile
+
+# Turn it on and check that it is running
+swapon $swapfile
+swapon --show
+free -h
+
+# Enable even after reboot
+cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
+echo "$swapfile none swap defaults 0 0" >> /etc/fstab
+
+# check that it wrote and that it is correct
+cat /etc/fstab
+```
+
+<!-- OLD NEW WAY```
 # As root...
 sudo su -
 
@@ -93,10 +179,9 @@ free -h
 
 # Enable even after reboot
 cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
-echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 cat /etc/fstab # double check your fstab file looks fine
-```
-
+```-->
 <!-- OLD WAY```
 # As root...
 sudo su -
@@ -124,7 +209,7 @@ free -h
 
 # Enable even after reboot
 cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
-echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 cat /etc/fstab # double check your fstab file looks fine
 ```-->
 
