@@ -56,7 +56,7 @@ I.e., how big of a swap file to I create?
 
 Here's the general advice:
 
-* Do you have far too little RPM? Buy more RAM
+* Do you have far too little RAM? Buy more RAM
 * Do you have a relative small amount of RAM? A swap file sized 2x RAM should
   be sufficient.
 * Do you have an overwelming large amount of RAM? 1x RAM or even less is
