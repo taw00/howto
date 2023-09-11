@@ -77,21 +77,17 @@ swapfile=/swapfile
 
 # Multiple (how many times the size of RAM?)...
 m=2
+```
 
-##
-######## Prep the swapfile ########
-##
+### Now, we prep the swapfile - BTRFS version
 
-###
-### STEPS IF / IS A BTRFS FILE SYSTEM
-### (can check via by looking at your /etc/fstab file)
-###
-### You have to jump through some hoops to set up a swapfile
-### on a BTRFS filesystem. This also takes some time.
-###
-### Read more here: https://superuser.com/questions/1067150/how-to-create-swapfile-on-ssd-disk-with-btrfs
-###
+There's a different process if the root filesystem is BTRFS or if it is EXT4. Check with `cat /etc/fstab`
 
+If BTRFS, the process is MUCH slower and more convoluted. It is what it is …  
+Read more about that here:  
+<https://superuser.com/questions/1067150/how-to-create-swapfile-on-ssd-disk-with-btrfs>
+
+```
 # Create the file, soon to become a swapfile
 rm $swapfile
 touch $swapfile
@@ -115,14 +111,13 @@ count=$(($size/$bs))
 #      is a heavy I/O process, so go take a nap or something)
 nice -n 19 dd if=/dev/zero of=$swapfile bs=$bs count=$count
 ls -lh $swapfile
+```
 
-###
-### STEPS IF / IS A EXT4 FILE SYSTEM
-### (can check via by looking at your /etc/fstab file)
-###
-### Things are simpler and way faster with an ext4 filesystem.
-###
+### Now, we prep the swapfile - EXT4 version
 
+Things are simpler and way faster with an ext4 filesystem.
+
+```
 # Size, in bytes
 size=$(free -b|grep Mem|awk '{print $2}')
 size=$(($size*$m))
@@ -131,11 +126,11 @@ size=$(printf "%.0f\n" $size)
 # Create the swapfile...
 fallocate -l $size $swapfile
 ls -lh $swapfile
+```
 
-##
-######## Make it a swapfile, and turn it on ########
-##
+### Make it a swap file, turn it on, and add it to /etc/fstab
 
+```
 # Make it a swapfile (has to have 0600 perms):
 chmod 0600 $swapfile
 mkswap $swapfile
