@@ -80,8 +80,8 @@ redirect to just $logfile, it will write to $HOME/$logfile._
 
 ```
 logfile=crontab-demo.log
-t0to180secs="RANDOM % 181"
-*/3 * * * * r=$(($t0to180secs)) ; sleep ${r}s ; date >> $logfile 2>&1
+t0to120secs="RANDOM % 121"
+*/3 * * * * r=$(($t0to120secs)) ; sleep ${r}s ; date >> $logfile 2>&1
 ```
 
 
@@ -104,8 +104,8 @@ m1="-- Job started ---- pid:"
 m2="-- Job completed -- pid:"
 # date formatting...
 df="%b %d %T UTC"
-t0to180secs="RANDOM % 181"
-*/3 * * * * { date --utc +"$df $m0 $$" && r=$(($t0to180secs)) ; sleep ${r}s ; date --utc +"$df $m1 $$" && date && echo "Hello there!" --utc +"$df $m2 $$" ; } >> $logfile 2>&1
+t0to120secs="RANDOM % 181"
+*/3 * * * * { date --utc +"$df $m0 $$" && r=$(($t0to120secs)) ; sleep ${r}s ; date --utc +"$df $m1 $$" && date && echo "Hello there!" --utc +"$df $m2 $$" ; } >> $logfile 2>&1
 ```
 
 The result would looks something like this...
