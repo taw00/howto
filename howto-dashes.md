@@ -89,7 +89,7 @@ Em dash indicating an interruption in dialogue:
 **2-Em dashes** are used to indicate a partial word, or missing or blotted out text (for example, when quoting material from an illegible document).  
   &emsp;_David H&#x2E3A;h [Hirsch?] voted aye._
 
-**3-Em dashes** are used primarily by manuscript editors to reference repeated listings of author(s) or editor(s) in a bibliography. See example below.
+**3-Em dashes** are used primarily by authors to reference repeated listings of author(s) or editor(s) in a bibliography. See example below.
 
 Read more about when to use hyphens, dashes, colons, parentheses, etc. from this mini-bibliograpy. It also demonstrates how the special character, the 3-em dash (`&#x2E3B;`), is utilized in citations:
 
