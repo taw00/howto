@@ -29,7 +29,7 @@ so that you are not always typing a password every time you log into a remote
 machine. 
 
 But before we begin, you really need to create SSH keys to access a remote
-system. Do that first and them come back to this howto: [HowTo Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-sshkeys.md).
+system. Do that first and them come back to this howto: [HowTo Create and Use SSH Keys](https://github.com/taw00/howto/blob/master/howto-ssh-keys.md).
 
 On to some examples...
 
