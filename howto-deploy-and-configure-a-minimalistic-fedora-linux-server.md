@@ -183,9 +183,8 @@ usermod -a -G wheel todd
 #usermod -a -G sudoers todd
 ```
 
-**IMPORTANT:** Work through the SSH instructions (see the Vultr example above) and set
-it up so you can ssh into the system as your normal user without a password from your
-desktop system. Read more about setting up SSH keys here:  
+**IMPORTANT:** Work through the SSH instructions (see the Vultr example above)
+and set it up so you can ssh into the system as your normal user without a password from your desktop system. Read more about setting up SSH keys here:  
 <https://github.com/taw00/howto/blob/master/howto-ssh-keys.md>
 
 
@@ -195,9 +194,10 @@ desktop system. Read more about setting up SSH keys here:
 > to type passwords.
 
 > ***Recommendation2:***
-> Edit the `/etc/sudoers` configuration file and uncomment the `%wheel` line
-> that includes the `NOPASSWD` qualifier. This will allow you to `sudo` as the
-> `todd` user without having to cut-n-paste a password all the time.
+> Edit the `/etc/sudoers` configuration file (`sudo visudo`) and uncomment
+> the `%wheel` line that includes the `NOPASSWD` qualifier. This will allow
+> you to `sudo` as the `todd` user without having to cut-n-paste a password
+> all the time. (_Note: `sudo visudo` is a safer way to edit the sudoers file._)
 
 
 ## [4] Install and Configure FirewallD
@@ -441,7 +441,7 @@ Once rebooted...
 If all went well, you have an efficient, working, and secure system prepared to
 run most general-purpose applications. I hope this was helpful.
 
-Got a dash of feedback? Send it my way <https://keybase.io/toddwarner>    
+Got a dash of feedback? Send it my way <https://keybase.io/toddwarner>
 
 &nbsp;
 
