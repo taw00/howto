@@ -92,6 +92,17 @@ cat ~/.ssh/xyzkey.pub | ssh todd@x.y.z 'cat - >> ~/.ssh/authorized_keys'
 ```
 
 
+* Ensure selinux permissions are updated for these changes  
+  If you do a `sudo journalctl -f` will trying to remotely log in and you see
+  an error that says something like  
+  `Could not open authorized keys […]: Permission denied`  
+  This selinux is likely fighting you over your configuration
+
+```
+# Sometimes selinux takes issue … Fix it!
+sudo restorecon -FRvv ~/.ssh
+```
+
 * Log out of the remote machine and test your SSH key...
 
 ```
