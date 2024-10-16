@@ -193,8 +193,6 @@ In our example, the normal user username is "todd".
 PermitRootLogin no
 AllowUsers todd
 PasswordAuthentication no
-# Probably already set to no...
-ChallengeResponseAuthentication no
 ```
 
 _Note: `AllowUsers` can be set to multiple users._
