@@ -39,7 +39,7 @@ By default, this will create two keys in `/home/USERNAME/.ssh/`: `id_rsa` and
 one without is the private key.
 
 You can keep the default, but I usually change the name of the key-pair to
-indicate a particular purpose. For this example, I am creating this keey-pair
+indicate a particular purpose. For this example, I am creating this key-pair
 to be used to log into machine x.y.z, so I am going to name them `xyzkey` and
 `xyzkey.pub`. You can use the same key-pair for any number of machines, maybe
 you differientiate by type of machine, and so you would name them similarly,
