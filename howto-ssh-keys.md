@@ -185,7 +185,7 @@ usermod -a -G wheel todd
 
 In our example, the normal user username is "todd".
 
-* Edit `/etc/ssh/sshd_config`
+* Edit `/etc/ssh/sshd_config` (and not `/etc/ssh/ssh_config` — common mistake)
 * Either add or edit these lines (add only if the setting does not already
   exist)...      
 
