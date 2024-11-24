@@ -36,11 +36,9 @@ which firewall-config
 
 Install firewalld if necessary
 ```shell
-# If Fedora...
+# If Fedora or CentOS or RHEL . . .
 sudo dnf install -y firewalld
-# If CentOS or RHEL...
-sudo yum install -y firewalld
-# If Debian or Ubuntu
+# If Debian or Ubuntu . . .
 sudo apt install -y firewalld
 ```
 
@@ -48,7 +46,7 @@ If you really want to, go ahead and add `firewall-config` to that install.
 
 **Mask iptables**
 
-iptables and firewalld don't mix. Make sure they don't — "mask" iptables (assuming it is installed)...
+iptables and firewalld don't mix, per ce. Make sure they don't — "mask" iptables (assuming it is installed)...
 
 ```shell
 sudo systemctl disable iptables.service
