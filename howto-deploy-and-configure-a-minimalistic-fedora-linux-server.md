@@ -289,36 +289,22 @@ As root...
 
 ```
 # If Fedora or CentOS8+...
-dnf install -y fail2ban fail2ban-systemd
+dnf install -y fail2ban fail2ban-systemd ipset
 ```
-
-<!--
-```
-# If CentOS or RHEL
-#yum install epel-release # if not already installed
-#yum install -y fail2ban fail2ban-systemd
--->
 
 ```
 # If Debian or Ubuntu
-#apt install -y fail2ban
+#apt install -y fail2ban ipset
 ```
 
 If you are not using FirewallD, and instead are using IPTables for your
-firewall, uninstall fail2ban-firewalld (for the Red Hat-based systems only).
+firewall rules management, uninstall `fail2ban-firewalld` (for the Fedora-based
+systems only).
 
 ```
 # If Fedora or CentOS8+...
 dnf remove -y fail2ban-firewalld
 ```
-
-<!--
-```
-
-# If CentOS or RHEL
-#yum remove -y fail2ban-firewalld
-```
--->
 
 **Configure `fail2ban`...**
 

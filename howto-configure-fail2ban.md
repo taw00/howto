@@ -18,22 +18,25 @@ effective, especially against folks poking at SSH.
 
 ```shell
 # If Fedora...
-sudo dnf install -y fail2ban fail2ban-systemd
+sudo dnf install -y fail2ban fail2ban-systemd ipset
+```
+```shell
 # If CentOS or RHEL
-sudo yum install epel-release # if not already installed
-sudo yum install -y fail2ban fail2ban-systemd
+sudo dnf install epel-release # if not already installed
+sudo dnf install -y fail2ban fail2ban-systemd ipset
+```
+```shell
 # If Debian or Ubuntu
-sudo apt install -y fail2ban
+sudo apt install -y fail2ban ipset
 ```
 
 If you are not using FirewallD, and instead are using IPTables (not recommended
-in 2018) for your firewall, uninstall fail2ban-firewalld (for the Red Hat-based
-systems only).
+in 2018) for your firewall rules management, uninstall fail2ban-firewalld (for
+the Red Hat-based systems only).
 
 ```shell
-# For iptable users only -- not recommended for most people
-sudo dnf remove -y fail2ban-firewalld # Fedora
-sudo yum remove -y fail2ban-firewalld # CentOS or RHEL
+# For iptable rules management only -- not recommended for most people
+sudo dnf remove -y fail2ban-firewalld
 ```
 
 #### Configure `fail2ban`...
