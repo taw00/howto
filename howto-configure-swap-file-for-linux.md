@@ -4,9 +4,9 @@ Your applications consume memory. What happens when an application maxes out
 the memory pool available? It could destabilize your application and maybe your
 system.
 
-This situation is resolved by setting aside harddrive space to serve as a "swap
+This situation is resolved by setting aside hard drive space to serve as a "swap
 disk". This allows the operating system to artificially increase the RAM
-avialable to that application. Remember though, that swap space is not a
+available to that application. Remember though, that swap space is not a
 replacement for RAM. If the system continually runs out of RAM, you don't have
 enough RAM (or something else is wrong). Swap is "emergency memory".
 
@@ -17,7 +17,7 @@ ensure you have adequate swap configured as a partition during that process.
 Almost all linuxes come with slick installation wizards now. And many/most
 distributions create a swap partition for you. A partition is a dedicated chunk
 of disk space that does nothing but swap operations. This is the most efficient
-swap type. 
+swap type (for disk-based swap anyway).
 
 The purpose of this document, though, is to configure swap _after_ a system has
 been provisioned or to configure swap after it was determined that the swap you
@@ -29,28 +29,41 @@ You can adjust your partitions after the fact using LVM, but it is much simpler
 to use a swap file instead. What is a swap file? It's a file, on the file
 system, that acts as a dedicated chunk of storage. In the past, swap files were
 terribly inefficient, but now... they approach the performance of normal
-dedicated swap partitions.
+dedicated disk-based swap partitions.
 
 ## Hey wait! Maybe I have swap already?
 
-Open up a terminal and type this...
+Open up a terminal and type this . . .
 
-```
-free -h
-```
-
-This is what I see on one of my systems...
-
-```
-              total        used        free      shared  buff/cache   available
-Mem:           2.0G        485M        113M        276K        1.4G        1.3G
-Swap:          3.9G         11M        3.9G
+```shell
+free
+# and
+swapon -s
 ```
 
-Ah ha! I have swap already, and twice the size of my RAM. I should be good to
-go. But maybe it didn't exist at all or was too small! If so, read on.
+This is what I see on one of my systems . . .
+
+```plaintext
+               total        used        free      shared  buff/cache   available
+Mem:         3733528      675120      143652        1176     3208364     3058408
+Swap:       12122104         256    12121848
+
+Filename                               Type       Size     Used  Priority
+/swapfile                              file       8388604  0     -2
+/dev/zram0                             partition  3733500  256   100
+```
+
+Ah ha! I have swap already, and that lower-priority disk-based swap is more
+than twice the size of my RAM. I should be good to go. But maybe it didn't
+exist at all or was too small! If so, read on.
 
 ## Decision time. How much space to allocate?
+
+First, you really should have RAM-based swap configured as primary. Disk-based
+swap will be your fail-over swap: priority 100 for zram and -2 for disk.
+
+What if I have no zram? You need to configure it. Here's a great article that
+explains just that: <https://github.com/kurushimee/configure-zram>
 
 I.e., how big of a swap file to I create?
 
@@ -59,7 +72,7 @@ Here's the general advice:
 * Do you have far too little RAM? Buy more RAM (challenging if a laptop, I know)
 * Do you have a relative small amount of RAM? A swap file sized 2x RAM should
   be sufficient.
-* Do you have an overwelming large amount of RAM? 1x RAM or even less is
+* Do you have an overwhelming large amount of RAM? 1x RAM or even less is
   adequate. _Note: You need to really test this scenario - YMMV._
 * Are you somewhere in the middle, or aren't sure? 2x RAM
 
@@ -81,7 +94,7 @@ m=2
 
 ### Prep the swap file - BTRFS version
 
-There's a different process if the root filesystem is BTRFS or if it is EXT4. Check with `cat /etc/fstab`
+There's a different process if the root file system is BTRFS or if it is EXT4. Check with `cat /etc/fstab`
 
 If BTRFS, the process is MUCH slower and more convoluted. It is what it is …  
 Read more about that here:  
@@ -116,7 +129,7 @@ ls -lh $swapfile
 
 ### Prep the swap file - EXT4 version
 
-Things are simpler and way faster with an ext4 filesystem.
+Things are simpler and way faster with an ext4 file system.
 
 ```
 # EXT4 version of swap file prep
@@ -130,7 +143,7 @@ fallocate -l $size $swapfile
 ls -lh $swapfile
 ```
 
-### All filesystems<br />Make it a swap file, turn it on, and add it to /etc/fstab
+### All file systems<br />Make it a swap file, turn it on, and add it to /etc/fstab
 
 ```
 # All filesystem types
@@ -142,6 +155,7 @@ ls -lh $swapfile
 # Turn it on and check that it is running
 swapon $swapfile
 swapon --show
+zramctl
 free -h
 
 # Enable even after reboot
@@ -151,6 +165,18 @@ echo "$swapfile none swap defaults 0 0" >> /etc/fstab
 # check that it wrote and that it is correct
 cat /etc/fstab
 ```
+
+Finally, check that the swap priorities are correct. `/swapfile` priority
+should be something like -1 or -2 and the zram priority should be something
+like 100. You want the swap file to be a fallback (lower priority). The `swapon`
+command will display the priority. If need be, you can force `/swapfile` to
+have a negative priority by changing that `defaults` in the `fstab` file to
+`defaults,p=-1` or similar. You should not have to do this though.
+
+```shell
+swapon -s
+```
+
 
 <!-- OLD NEW WAY```
 # As root...

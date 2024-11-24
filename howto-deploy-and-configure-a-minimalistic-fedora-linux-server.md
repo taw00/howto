@@ -121,20 +121,40 @@ dnf upgrade -y
 
 ## [2] Add swap space to give your system memory some elbow room...
 
-Vulr initially boots with no configured swap. A bare-metal install will probably include swap. You can determine if you have swap configured with...
+Vulr will, by default, deploy your server with zram that matches the amount of
+available RAM. You can determine if you have swap configured with...
 
-```
+```shell
 swapon -s
 ```
-
-A reasonable rule of thumb is to configure swap to be twice the size of your RAM.
-Swap-size is more art than science, but your system will be brutalized occassionally...
-2-times your RAM is a good choice. These instructions and more can be found at:   <https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md>
-
+and
+```shell
+zramctl
 ```
+
+A reasonable rule of thumb is to configure total swap to be twice the size of
+your RAM.  Swap-size is more art than science, but your system will be
+occasionally brutalized . . .  2-times your RAM is a good choice.
+
+> Note, these instructions and more can also be found at:
+<https://github.com/taw00/howto/blob/master/howto-configure-swap-file-for-linux.md>
+
+You should have super-quick RAM-based zram swap configured as well as a
+fallback disk-based swap.
+
+To configure zram, check out this article:
+<https://github.com/kurushimee/configure-zram>
+
+To configure disk-based swapfile swap, read on . . .
+
+> STOP! Is your disk formatted as btrfs? If so, don't follow the instructions
+  here. Check out the article mentioned above.
+
+```shell
+# /swapfile configuration (if host filesystem is EXT4 formatted)
 # As root...
 
-# Multiple (how many times the size of RAM?)...
+# Multiple (how many times the size of RAM?)
 m=2
 
 # Size, in bytes...
@@ -157,6 +177,17 @@ free -h
 cp -a /etc/fstab /etc/fstab.mybackup # backup your fstab file
 echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
 cat /etc/fstab # double check that your fstab file looks fine
+```
+
+Finally, check that the swap priorities are correct. `/swapfile` priority
+should be something like -1 or -2 and the zram priority should be something
+like 100. You want the swap file to be a fallback (lower priority). The `swapon`
+command will display the priority. If need be, you can force `/swapfile` to
+have a negative priority by changing that `defaults` in the `fstab` file to
+`defaults,p=-1` or similar. You should not have to do this though.
+
+```shell
+swapon -s
 ```
 
 
