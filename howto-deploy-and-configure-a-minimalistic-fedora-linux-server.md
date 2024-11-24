@@ -486,15 +486,34 @@ To learn more, follow this link:
 ### Cap the size of the system journal
 
 The system journal -- `sudo du -skh /var/log/journal` -- can get out of hand (a
-couple gig). Let's cap it to something more reasonable. Like say, 500M:
+couple gig). Let's cap it to something more reasonable. Like say, 100M:
 
-1. Edit root's crontab: `sudo crontab -e`
-2. Add this to the cron configutions, save and exit:
-```
-# At 2:30 in the morning, cap it!
-30 2 * * * /usr/bin/journalctl --vacuum-size=500M
+If you need to nuke it down to size RIGHT NOW, do this . . .
+```shell
+sudo journalctl --vacuum-size=100M
 ```
 
-Note, you can read more about a more nuanced approached to managing resources
-and how journald consumes diskspace via `man journald.conf`, but I like the
-quick and dirty method of the cronjob.
+But for on-going size management, I like to set a size limit in journald's
+configuration . . .
+
+```shell
+# Copy the default journald.conf to the /etc/ tree if it doesn't exist yet
+cp /usr/lib/systemd/journald.conf /etc/systemd/journald.conf -vi
+```
+
+Now edit `/etc/systemd/journald.conf` and . . .
+
+Change
+```shell
+#SystemMaxUse=
+```
+to
+```shell
+SystemMaxUse=100M
+```
+
+Read more at `man journald.conf`
+
+Here's a fantastic guide on the topic:
+<https://www.loggly.com/ultimate-guide/managing-journal-size/>
+
