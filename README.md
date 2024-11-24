@@ -12,10 +12,10 @@ General deployment (ties together many of these howtos)
 * [Deploy and Configure a Fedora Linux Server](https://github.com/taw00/howto/blob/master/howto-deploy-and-configure-a-minimalistic-fedora-linux-server.md)
 
 Specific applications
-* [Deploying Ghost on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md) - OUT-OF-DATE!
-* [Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md)
+* [Install Syncthing on a Headless Linux Server](https://github.com/taw00/howto/blob/master/howto-install-syncthing-on-a-headless-linux-server.md)
+* ~~[Deploying Ghost on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md) - OUT-OF-DATE!~~
+* ~~[Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md) - OUT OF DATE~~
 * [Install the Joplin secure notebook management application](https://github.com/taw00/joplin-rpm) on the Fedora, OpenSUSE, and CentOS Linux Desktop
-<!-- * [Install the Element secure group chat application](https://github.com/taw00/element-rpm) on the Fedora, OpenSUSE, and CentOS Linux Desktop -->
 * Backup your linux machine using the [Rsync Time Backup (rtb)](https://github.com/taw00/rtb-rpm) command line utility
 
 Networking and Access
