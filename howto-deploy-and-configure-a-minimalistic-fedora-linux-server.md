@@ -110,14 +110,6 @@ As `root`...
 dnf install -y vim-enhanced findutils screen
 dnf upgrade -y
 ```
-<!--
-```
-# If CentOS7 or RHEL7...
-#yum install -y epel-release
-#yum install -y vim-enhanced findutils screen
-#yum update -y
-```
--->
 
 ## [2] Add swap space to give your system memory some elbow room...
 
@@ -243,14 +235,6 @@ As root...
 # If Fedora or CentOS8+...
 dnf install -y firewalld
 ```
-
-<!--
-```
-# If CentOS7 or RHEL7...
-#yum install -y firewalld
-```
--->
-
 
 **Configure**
 
