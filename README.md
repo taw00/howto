@@ -13,6 +13,7 @@ General deployment (ties together many of these howtos)
 
 Specific applications
 * [Install Syncthing on a Headless Linux Server](https://github.com/taw00/howto/blob/master/howto-install-syncthing-on-a-headless-linux-server.md)
+* [Install Syncthing on a Linux Desktop](https://github.com/taw00/howto/blob/master/howto-install-syncthing-on-a-linux-desktop.md)
 * ~~[Deploying Ghost on Fedora Linux](https://github.com/taw00/howto/blob/master/howto-install-ghost-on-fedora.md) - OUT-OF-DATE!~~
 * ~~[Install Wordpress on Fedora Linux, MariaDB (Mysql), and Nginx](https://github.com/taw00/howto/blob/master/howto-install-wordpress-on-fedora.md) - OUT OF DATE~~
 * [Install the Joplin secure notebook management application](https://github.com/taw00/joplin-rpm) on the Fedora, OpenSUSE, and CentOS Linux Desktop
