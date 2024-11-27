@@ -64,7 +64,7 @@ In your desktop interface, find the _Syncthing Tray_ application, and run it. Se
 
 Done. You should now see a little Syncthing icon in your system tray if you have that enabled. If you don't see it, you may have to enable the visibility of system tray icons. On GNOME, you do that with the [AppIndicator and KStatusNotifierItem Support](https://extensions.gnome.org/extension/615/appindicator-support/) GNOME Extension. I recommend installing that. Note that you may have to use Firefox to install extensions. I don't know. That is beyond the scope of this document.
 
-If you screw up the Syncthing Tray set up, it is easiest to uninstall it, then start over with the wizard configuration. You will have to uninstall it _and_ quit the icon in the system tray (click on it and select quit).
+If you screw up the Syncthing Tray set up, it is easiest to uninstall it, then start over with the wizard configuration. You will have to uninstall it _and_ close the icon in the system tray (click on the icon and select `Close`).
 
 FYI. The Syncthing Tray application is only useful as an service-wellness barometer. Otherwise it doesn't do much. You can also kick open the webUI with it as well. The color will be green if the `syncthing` service is running okay and it will some other color if something seems to be amiss.
 
