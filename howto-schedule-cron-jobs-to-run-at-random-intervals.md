@@ -139,7 +139,8 @@ You can either wipe out the examples in your crontab or save them for future ref
 
 ### Feedback
 
-I hope this was of help. Send comments and feedback to <t0dd@protonmail.com>
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>
 
 &nbsp;
 

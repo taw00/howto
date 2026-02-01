@@ -54,4 +54,5 @@ Other other!
 
 All documents are [CC-BY-SA](https://github.com/taw00/howto/blob/master/LICENSE.cc-by-sa.md)
 
-Comments and feedback &mdash; <t0dd@protonmail.com>
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>

@@ -157,5 +157,6 @@ And then add this line; save; and exit...
 It's really that simple though this only touches upon the extensive
 configurability of logrotate. `man logrotate` for more detail.
 
-Please feel free to send feedback or comment to <t0dd@protonmail.com>
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>
 

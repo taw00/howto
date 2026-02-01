@@ -106,5 +106,5 @@ them.
 
 ## Good luck!
 
-Comments and feedback to <t0dd@protonmail.com>
-
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>

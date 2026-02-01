@@ -279,4 +279,5 @@ Done! Now follow the docs for using the service.
 
 ## Good luck!
 
-Comments and feedback to <t0dd@protonmail.com>
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>

@@ -134,5 +134,6 @@ sudo umount /run/media/todd/toddsusb
 
 ## That's it! Pretty powerful, actually. I hope this was helpful.
 
-Feedback and comments welcome at <t0dd@protonmail.com>
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>
 

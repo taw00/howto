@@ -436,7 +436,9 @@ echo "This is the body of the email. Test. Test. Test." | mail -s "Group email t
 
 Now you have a scripting pattern for using with something like a monitoring system or cronjobed scripts, etc.
 
-Good luck. Send comments or feedback: <t0dd@protonmail.com>
+Good luck.
+Comments and feedback  
+—Todd Warner <a href="https://forms.gle/ogCeqcdqNSogYkPU8">(google contact form)</a>
 
 ----
 
